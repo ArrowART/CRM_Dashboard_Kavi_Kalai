@@ -7,10 +7,15 @@ import { MultiSelect } from "primereact/multiselect";
 export const Tableview = (props) => {
     const { tabledata, editfrom, cusfilter, first} = props;
     const [selectedRoles, setSelectedRoles] = useState([]);
+    const [activeButton, setActiveButton] = useState(null);
     const [filters, setFilters] = useState({
         Role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.IN }] },
     });
-
+    const handleButtonClick = (role) => {
+        setSelectedRoles([]);
+        setActiveButton(role);
+        filterByRole(role);
+    };
     const actionbotton = (rowData) => {
         return (
             <div className="flex justify-center gap-2">
@@ -90,9 +95,9 @@ export const Tableview = (props) => {
     return (
         <div>
             <div className="flex justify-center gap-4 mb-4">
-                <button onClick={() => filterByRole(null)} className="text-sm text-gray-600 hover:text-gray-800">All Users</button>
-                <button onClick={() => filterByRole('Team Leader')} className="text-sm text-gray-600 hover:text-gray-800">Team Leaders</button>
-                <button onClick={() => filterByRole('Telecaller')} className="text-sm text-gray-600 hover:text-gray-800">Telecallers</button>
+                <button onClick={() => handleButtonClick(null)} className={`px-3 p-2 text-sm text-white ${activeButton === null ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>All Users</button>
+                <button onClick={() => handleButtonClick('Team Leader')} className={`px-3 text-sm text-white ${activeButton === 'Team Leader' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Team Leaders</button>
+                <button onClick={() => handleButtonClick('Telecaller')} className={`px-3 text-sm text-white ${activeButton === 'Telecaller' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Telecallers</button>
             </div>
             <DataTable value={tabledata} scrollable scrollHeight="400px" className='!text-sm shadow-lg rounded-lg overflow-hidden' filters={filters} stateStorage="session" stateKey="dt-state-demo-local" >
                 <Column className="flex justify-center" header="S.No" style={{ minWidth: '40px' }} body={sno} />
