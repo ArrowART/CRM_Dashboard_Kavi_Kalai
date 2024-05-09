@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+/* eslint-disable react/prop-types */
+import { useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 import { savetelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation';
 
-export default function Tableheadpanel(props) {
+export default function Tableheadpanel ( props ) {
     const { newform, setglobalfilter, teamLeaders, teleCallers } = props;
     const [showModal, setShowModal] = useState(false);
     const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
@@ -43,7 +44,6 @@ export default function Tableheadpanel(props) {
             setShowModal(false);
         } catch (error) {
             console.error('Error:', error);
-            // Handle error here
         }
     };
 

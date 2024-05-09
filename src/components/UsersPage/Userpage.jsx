@@ -46,11 +46,9 @@ export default function Userspage(){
         setFirst(rows *(page -1));
         setRows(rows);
     };
-
     const cusfilter = (field, value) => {
         setcolFilter({...colfilter,...{[field]:value}})
     };
-
     const handlechange = (e)=>{
         if(e.target.files){
             setFormdata({...formdata,...{[e.target.name]:e.target.files}});
@@ -59,7 +57,6 @@ export default function Userspage(){
             setFormdata({...formdata,...{[e.target.name]:e.target.value}});
         }
     }
-
     const handlesave=async (e)=>{
         e.preventDefault();
         setLoading(true);
@@ -69,17 +66,14 @@ export default function Userspage(){
         setVisible(false);
         setLoading(false);
     }
-
     const newform=()=>{
         setFormdata({});
         setVisible(true);
     }
-    
     const editfrom=(data)=>{
         setFormdata(data);
         setVisible(true);
     }
-
     const handleupdate=async (e)=>{
         e.preventDefault();
         setLoading(true);
@@ -89,18 +83,19 @@ export default function Userspage(){
         setVisible(false);
         setLoading(false);
     }
-
     return(
         <div>
             <div className="bg-white border rounded-3xl">
-                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} teamLeaders={teamLeaders} teleCallers={teleCallers} />
+                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} teamLeaders={teamLeaders} 
+                teleCallers={teleCallers} />
 
-                <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} editfrom={editfrom} cusfilter={cusfilter} filtervalues={filtervalues}  onPage={onPage} />
+                <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} editfrom={editfrom} 
+                cusfilter={cusfilter} filtervalues={filtervalues} onPage={onPage} />
 
                 <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
 
-                <Addandeditform visible={visible} setVisible={setVisible} loading={loading} formdata={formdata} setFormdata={setFormdata}
-                    handlechange={handlechange} handlesave={handlesave} handleupdate={handleupdate} />
+                <Addandeditform visible={visible} setVisible={setVisible} loading={loading} formdata={formdata} 
+                setFormdata={setFormdata} handlechange={handlechange} handlesave={handlesave} handleupdate={handleupdate} />
                 <ConfirmDialog />
             </div>
         </div>

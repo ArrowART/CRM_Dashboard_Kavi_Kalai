@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+/* eslint-disable react/prop-types */
+import { useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 import { savetelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation';
+import toast from 'react-hot-toast';
 
-export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers }) => {
+export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTelecallerData,telecallerData}) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
     const [selectedTelecallers, setSelectedTelecallers] = useState([]);
@@ -14,8 +16,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers }) =>
         setShowModal(true);
     };
 
-    const handleAllocateConfirm = async (e) => {
-
+    const handleAllocateConfirm = async () => {
         try {
             const selectedTeamLeaderData = teamLeaders.find(
                 (leader) => leader.User_Id === selectedTeamLeader
@@ -35,16 +36,17 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers }) =>
                     };
                 }),
             };
-
             const response = await savetelecallerallocation(formattedData);
             console.log('Response:', response);
+            setTelecallerData([...telecallerData, formattedData]);
+            toast.success("Team Members allocated Successfully!");
             setShowModal(false);
         } catch (error) {
             console.error('Error:', error);
             // Handle error here
         }
     };
-
+    
     const handleAllocateCancel = () => {
         setSelectedTeamLeader('');
         setSelectedTelecallers([]);
