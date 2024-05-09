@@ -52,6 +52,14 @@ const Tableview = (props) =>{
             </div>
         )
     }
+
+ 
+    const filterByProduct = (role) => {
+        setFilters({
+            Product: { operator: FilterOperator.OR, constraints: [{ value: role, matchMode: FilterMatchMode.EQUALS }] }
+        });
+    };
+
     const columns = [
         {field: 'Region', header: 'Region', width:'300px',filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter},
         {field: 'Location', header: 'Location', width:'150px'},
@@ -68,11 +76,23 @@ const Tableview = (props) =>{
     return(
         <div >
             <div >
-              <div className="flex justify-center gap-4 mb-4 ">
-                <button onClick={() => filterByRole(null)} className="text-sm text-gray-600 hover:text-gray-800">BL&STPL Products</button>
-                <button onClick={() => filterByRole('Team Leader')} className="text-sm text-gray-600 hover:text-gray-800">PL Products</button>
-                <button onClick={() => filterByRole('Telecaller')} className="text-sm text-gray-600 hover:text-gray-800">DL Products</button>
-            </div>
+                <div className="flex justify-center gap-4 mb-4">
+                <button onClick={() => filterByProduct(null)} className="text-sm text-gray-600 hover:text-gray-800">
+                        ALL 
+                    </button>
+                    <button onClick={() => filterByProduct('STPL')} className="text-sm text-gray-600 hover:text-gray-800">
+                        STPL Products
+                    </button>
+                    <button onClick={() => filterByProduct('BL')} className="text-sm text-gray-600 hover:text-gray-800">
+                        BL Products
+                    </button>
+                    <button onClick={() => filterByProduct('PL')} className="text-sm text-gray-600 hover:text-gray-800">
+                        PL Products
+                    </button>
+                    <button onClick={() => filterByProduct('DL')} className="text-sm text-gray-600 hover:text-gray-800">
+                        DL Products
+                    </button>
+                </div>
                 <DataTable value={tabledata} scrollable scrollHeight="660px" className='!text-sm' filters={filters}  stateStorage="session" stateKey="dt-state-demo-local" >
                     <Column header="S.No" style={{minWidth:'40px'}} body={sno} />
                     {/* <Column header="Action" body={actionbotton} style={{ minWidth: '80px' }} /> */}
