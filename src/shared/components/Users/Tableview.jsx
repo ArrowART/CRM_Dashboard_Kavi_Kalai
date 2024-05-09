@@ -1,13 +1,14 @@
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Dropdown } from 'primereact/dropdown';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { useState } from "react";
+import { MultiSelect } from "primereact/multiselect";
 
 export const Tableview = (props) => {
-    const { tabledata, editfrom, cusfilter, first, filtervalues, handlefiltervalue } = props;
+    const { tabledata, editfrom, cusfilter, first} = props;
+    const [selectedRoles, setSelectedRoles] = useState([]);
     const [filters, setFilters] = useState({
-        Role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+        Role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.IN }] },
     });
 
     const actionbotton = (rowData) => {
@@ -21,29 +22,46 @@ export const Tableview = (props) => {
         )
     }
 
-    const statusItemTemplate = (option) => {
-        return option;
-    };
-
     const statusFilterTemplate = (options) => {
-        return <Dropdown value={options.value} options={filtervalues} onClick={() => handlefiltervalue(options.field)} onChange={(e) => options.filterCallback(e.value, options.index)} itemTemplate={statusItemTemplate} placeholder="Select One" className="p-column-filter" />;
+        const roles = [...new Set(tabledata.map((data) => data.Role))];
+        const roleOptions = roles.map((role) => ({ label: role, value: role }));
+
+        return (
+            <MultiSelect
+                value={selectedRoles}
+                options={roleOptions}
+                onChange={(e) => setSelectedRoles(e.value)}
+                placeholder="Select Roles"
+                optionLabel="label"
+                showClear
+                filter
+                className="p-column-filter"
+            />
+        );
     };
 
-    const filterapply = (e) => {
+    const filterapply = (field) => {
         return (
-            <>
-                <button onClick={() => cusfilter(e.field, e.filterModel.constraints[0].value)} className="text-sm text-gray-600 hover:text-gray-800">Apply</button>
-            </>
-        )
-    }
+            <button onClick={() => {
+                const updatedFilters = { ...filters };
+                updatedFilters.Role.constraints[0].value = selectedRoles;
+                setFilters(updatedFilters);
+                cusfilter(field, selectedRoles);
+            }}>Apply</button>
+        );
+    };
 
-    const filterclear = (e) => {
+    const filterclear = (field) => {
         return (
-            <>
-                <button onClick={() => { e.filterModel.constraints[0].value = null; cusfilter(e.field, ''); }} className="text-sm text-gray-600 hover:text-gray-800">Clear</button>
-            </>
-        )
-    }
+            <button onClick={() => {
+                setSelectedRoles([]);
+                const updatedFilters = { ...filters };
+                updatedFilters[field].constraints[0].value = null;
+                setFilters(updatedFilters);
+                cusfilter(field, '');
+            }}>Clear</button>
+        );
+    };
 
     const sno = (rowData, rowIndex) => {
         return (
@@ -59,7 +77,7 @@ export const Tableview = (props) => {
         { field: 'Last_Name', header: 'Last Name', width: "200px" },
         { field: 'Email', header: 'Email', width: "200px" },
         { field: 'Password', header: 'Password', width: "140px" },
-        { field: 'Role', header: 'Role', width: "200px", filter: false, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter },
+        { field: 'Role', header: 'Role', width: "200px", filter: true, filterElement: statusFilterTemplate },
         { field: 'User_Status', header: 'Status', width: "200px" },
     ];
 
@@ -80,8 +98,10 @@ export const Tableview = (props) => {
                 <Column className="flex justify-center" header="S.No" style={{ minWidth: '40px' }} body={sno} />
                 <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
                 {columns.map((col, i) => (
-                    <Column key={i} field={col.field} filterApply={filterapply} filterClear={filterclear} filter={col.filter} filterElement={col.filterElement} header={col.header} />
-                ))}
+                        <Column key={i} field={col.field} filterApply={() => filterapply(col.field)} showFilterMatchModes={false} 
+                        filterClear={() => filterclear(col.field)} filter={col.filter} filterElement={col.filterElement} 
+                        header={col.header} />
+                    ))}
             </DataTable>
         </div>
     )
