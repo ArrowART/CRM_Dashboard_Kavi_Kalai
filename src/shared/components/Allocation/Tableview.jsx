@@ -13,6 +13,7 @@ const Tableview = (props) =>{
         Status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
     
     });
+    const [activeButton, setActiveButton] = useState(null);
     // const actionbotton = (rowData) => {
     //     return (
     //     <div className="flex gap-2">
@@ -52,14 +53,12 @@ const Tableview = (props) =>{
             </div>
         )
     }
-
- 
     const filterByProduct = (role) => {
+        setActiveButton(role);
         setFilters({
             Product: { operator: FilterOperator.OR, constraints: [{ value: role, matchMode: FilterMatchMode.EQUALS }] }
         });
     };
-
     const columns = [
         {field: 'Region', header: 'Region', width:'300px',filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter},
         {field: 'Location', header: 'Location', width:'150px'},
@@ -76,24 +75,24 @@ const Tableview = (props) =>{
     return(
         <div >
             <div >
-                <div className="flex justify-center gap-4 mb-4">
-                <button onClick={() => filterByProduct(null)} className="text-sm text-gray-600 hover:text-gray-800">
-                        ALL 
+            <div className="flex justify-center gap-4 mb-4">
+                    <button onClick={() => filterByProduct(null)} className={`p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg `}>
+                        ALL
                     </button>
-                    <button onClick={() => filterByProduct('STPL')} className="text-sm text-gray-600 hover:text-gray-800">
+                    <button onClick={() => filterByProduct('STPL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'STPL' ? 'blue' : 'green'}-500 rounded-t-lg `}>
                         STPL Products
                     </button>
-                    <button onClick={() => filterByProduct('BL')} className="text-sm text-gray-600 hover:text-gray-800">
+                    <button onClick={() => filterByProduct('BL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'BL' ? 'blue' : 'green'}-500 rounded-t-lg `}>
                         BL Products
                     </button>
-                    <button onClick={() => filterByProduct('PL')} className="text-sm text-gray-600 hover:text-gray-800">
+                    <button onClick={() => filterByProduct('PL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'PL' ? 'blue' : 'green'}-500 rounded-t-lg `}>
                         PL Products
                     </button>
-                    <button onClick={() => filterByProduct('DL')} className="text-sm text-gray-600 hover:text-gray-800">
+                    <button onClick={() => filterByProduct('DL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'DL' ? 'blue' : 'green'}-500 rounded-t-lg `}>
                         DL Products
                     </button>
                 </div>
-                <DataTable value={tabledata} scrollable scrollHeight="660px" className='!text-sm' filters={filters}  stateStorage="session" stateKey="dt-state-demo-local" >
+                <DataTable value={tabledata} scrollable scrollHeight="660px" className='!text-sm' filters={filters} stateStorage="session" stateKey="dt-state-demo-local" >
                     <Column header="S.No" style={{minWidth:'40px'}} body={sno} />
                     {/* <Column header="Action" body={actionbotton} style={{ minWidth: '80px' }} /> */}
                     {columns.map((col, i) => (
