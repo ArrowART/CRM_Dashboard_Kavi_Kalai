@@ -93,7 +93,7 @@ export const Tableview = (props) => {
     };
 
     return (
-        <div>
+       <>
             <div className="flex justify-center gap-4 mb-4">
                 <button onClick={() => handleButtonClick(null)} className={`px-3 p-2 text-sm text-white ${activeButton === null ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>All Users</button>
                 <button onClick={() => handleButtonClick('Team Leader')} className={`px-3 text-sm text-white ${activeButton === 'Team Leader' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Team Leaders</button>
@@ -108,6 +108,6 @@ export const Tableview = (props) => {
                         header={col.header} />
                     ))}
             </DataTable>
-        </div>
+            </>
     )
 }
