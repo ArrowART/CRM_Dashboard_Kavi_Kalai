@@ -20,7 +20,7 @@ export const TeamPage = () => {
     try {
       const res = await getallusers({ first, rows, globalfilter, ...colfilter });
       setTotalRecords(res?.totallength);
-      const teamLeaders = res?.resdata.filter(user => user.Role === "Team Leader");
+      const teamLeaders = res?.resdata.filter(user => user.Role === "TeamLeader");
       const teleCallers = res?.resdata.filter(user => user.Role === "Telecaller");
       setTeamLeaders(teamLeaders);
       setTeleCallers(teleCallers);
