@@ -70,7 +70,9 @@ const Tableview = (props) =>{
         {field: 'Compaign_Name', header: 'Campaign Name', width:'100px'},
         {field: 'Disposition', header: 'Disposition', width:'150px'},
         {field: 'Sub_Disposition', header: 'Sub Disposition', width:'150px'},
-        {field: 'Remarks', header: 'Remarks(upto 1000O)words', filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter}
+        {field: 'Remarks', header: 'Remarks(upto 1000O)words', filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter},
+        {field: 'selectedTeamLeader', header: 'Team Leader', filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter}
+       
     ];
     return(
         <div >

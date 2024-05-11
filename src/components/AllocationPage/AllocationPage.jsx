@@ -116,7 +116,7 @@ export default function AllocationPage(){
     return(
         <div>
             <div className="bg-white border rounded-3xl">
-                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform} handleDeleteAll={handleDeleteAll} />
+                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform} handleDeleteAll={handleDeleteAll} tabledata={tabledata}  />
 
                 <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} editfrom={editfrom} 
                     cusfilter={cusfilter} filtervalues={filtervalues} />

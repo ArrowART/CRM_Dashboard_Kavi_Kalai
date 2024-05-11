@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { getallusers } from '../../services/apiusers/apiusers';
-
+import { allocateteamleader, getallallocation } from '../../services/apiallocation/apiallocation';
 
 export default function Tableheadpanel(props) {
-    const { handleDeleteAll, Uploadform, setglobalfilter } = props;
+    const { handleDeleteAll, Uploadform, setglobalfilter, tabledata, setFile, setUploadVisible } = props;
     const [showModal, setShowModal] = useState(false);
     const [allocationType, setAllocationType] = useState('teamLeader');
     const [selectedUser, setSelectedUser] = useState('');
     const [teamLeaders, setTeamLeaders] = useState([]);
     const [telecallers, setTelecallers] = useState([]);
-    const [from, setFrom] = useState('');
-    const [to, setTo] = useState('');
-    const [data, setData] = useState([]);
+    const [productType, setProductType] = useState('ALL');
+    const [allocationRange, setAllocationRange] = useState();
+    const [allocationRange1, setAllocationRange1] = useState();
 
     // Function to handle modal visibility
     const toggleModal = () => {
@@ -23,25 +23,50 @@ export default function Tableheadpanel(props) {
     // Function to handle allocation cancel
     const handleAllocateCancel = () => {
         setShowModal(false);
-        // Reset any state if needed
     };
 
-    // Function to handle allocation confirmation
-    const handleAllocateConfirm = () => {
-        // Perform allocation logic here
+    const handleAllocateConfirm = async () => {
+        try {
+            if (!tabledata || tabledata.length === 0) {
+                console.error("Table data is not available.");
+                return;
+            }
+
+            // Filter the tabledata based on the allocation range
+            const allocatedData = tabledata.slice(allocationRange - 1, allocationRange1);
+            
+            if (!allocatedData || allocatedData.length === 0) {
+                console.error("No data to allocate.");
+                return;
+            }
+
+            await allocateteamleader({
+                data: allocatedData, // Sending allocated data to the backend
+                selectedTeamLeader: selectedUser // Sending selected team leader to the backend
+            });
+            console.log('Bulk allocation saved successfully.');
+        } catch (error) {
+            console.error('Error saving bulk allocation:', error);
+        }
         setShowModal(false);
-        // Reset any state if needed
+        getallallocation()
     };
-
-    // Effect to set initial values when component mounts
+    
+    // Effect to fetch users data when component mounts
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const userData = await getallusers({});
-                const allTeamLeaders = userData.resdata.filter(user => user.Role === 'Team Leader');
+                const allTeamLeaders = userData.resdata.filter(user => user.Role === 'TeamLeader');
                 const allTelecallers = userData.resdata.filter(user => user.Role === 'Telecaller');
+                
+                // Filter out the allocated records from the fetched data
+                const filteredData = userData.resdata.filter(user => !user.selectedTeamLeader);
+                
                 setTeamLeaders(allTeamLeaders);
                 setTelecallers(allTelecallers);
+                // Set the filtered data
+                setTabledata(filteredData);
             } catch (error) {
                 console.error("Error fetching users:", error);
             }
@@ -52,9 +77,7 @@ export default function Tableheadpanel(props) {
     return (
         <div className="items-center justify-between px-6 py-4 space-y-3 lg:space-y-0 lg:flex">
             <div>
-                <h2 className="mx-1 text-xl font-semibold text-gray-800">
-                    Allocation
-                </h2>
+                <h2 className="mx-1 text-xl font-semibold text-gray-800">Allocation</h2>
             </div>
 
             <div>
@@ -70,15 +93,15 @@ export default function Tableheadpanel(props) {
                     <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
                         <i className="fi fi-rr-trash"></i> Delete All
                     </button>
-
                 </div>
             </div>
+
 
             {/* Modal for allocation */}
             <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal style={{ width: '30vw' }} className="p-4 bg-white rounded-lg">
                 <div className="p-fluid">
                     <div className="mb-4 p-field">
-                        <label htmlFor="allocationType" className="block mb-1">Allocate By</label>
+                        <label htmlFor="allocationType" className="block mb-1">Allocate To</label>
                         <select
                             id="allocationType"
                             value={allocationType}
@@ -97,7 +120,7 @@ export default function Tableheadpanel(props) {
                             onChange={(e) => setSelectedUser(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
                         >
-                            <option value="">Select {allocationType === 'teamLeader' ? 'a Team Leader' : 'a Telecaller'}</option>
+                            <option value="">Select {allocationType === 'teamLeader' ? 'a TeamLeader' : 'a Telecaller'}</option>
                             {allocationType === 'teamLeader' ? (
                                 teamLeaders.map((user) => (
                                     <option key={user.User_Id} value={user.User_Id}>
@@ -113,7 +136,49 @@ export default function Tableheadpanel(props) {
                             )}
                         </select>
                     </div>
-                    {/* Other fields for allocation */}
+                    <div className="mb-4 p-field">
+                        <label htmlFor="productType" className="block mb-1">Product Type</label>
+                        <select
+                            id="productType"
+                            value={productType}
+                            onChange={(e) => setProductType(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                        >
+                            <option value="ALL">ALL</option>
+                            <option value="PL">PL</option>
+                            <option value="DL">DL</option>
+                            <option value="BL">BL</option>
+                            <option value="STPL">STPL</option>
+                        </select>
+                    </div>
+                    <div className="mb-4 p-field">
+                        <label htmlFor="From" className="block mb-1">From</label>
+                        <input
+                            type="number"
+                            id="allocationRange"
+                            value={allocationRange}
+                            onChange={(e) => {
+                                console.log('Allocation Range changed:', e.target.value);
+                                setAllocationRange(e.target.value);
+                            }}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                            min="1"
+                        />
+                    </div>
+                    <div className="mb-4 p-field">
+                        <label htmlFor="To" className="block mb-1">To</label>
+                        <input
+                            type="number"
+                            id="allocationRange1"
+                            value={allocationRange1}
+                            onChange={(e) => {
+                                console.log('Allocation Range 1 changed:', e.target.value);
+                                setAllocationRange1(e.target.value);
+                            }}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                            min="0"
+                        />
+                    </div>
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button label="Cancel" className="px-2 mr-2 text-white bg-red-500 p-button-text hover:bg-red-600" onClick={handleAllocateCancel} />

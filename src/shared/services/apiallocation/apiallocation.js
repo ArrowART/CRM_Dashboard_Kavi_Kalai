@@ -17,6 +17,16 @@ export const getallallocation = async(params)=>{
     }
  }
 
+ export const allocateteamleader=async(datas)=>{
+   try {
+      var res=await axios.post(`${apiurl()}/allocation/apiallocateteamleader`,datas,{ headers: {"Authorization" : `Bearer ${gettoken()}`}});
+      return res.data;
+   }
+   catch(err){
+      console.log(err);
+   }
+}
+
  export const deleteAllAllocation = async () => {
    try {
        const res = await axios.delete(`${apiurl()}/allocation/apideleteallocation`, {
