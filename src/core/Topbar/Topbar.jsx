@@ -7,6 +7,27 @@ export default function Topbar() {
   const { userdetails, logout } = useAuth()
   const navigate = useNavigate();
 
+  const imageMap = {
+    'SuperAdmin': '../images/square-s.png',
+    'Team Leader': '../images/square-t.png',
+    'Telecaller': '../images/square-c.png',
+    'default': 'https://example.com/default.png',
+  };
+
+  const getAvatarImage = () => {
+    const role = userdetails()?.Role;
+    switch (role) {
+      case 'SuperAdmin':
+        return  imageMap['SuperAdmin']
+      case 'Team Leader':
+        return  imageMap['Team Leader']
+      case 'Telecaller':
+        return  imageMap['Telecaller']
+      default:
+        return  imageMap['default']
+    }
+  };
+
   const handleLogout = () => {
     logout(); 
     navigate('/'); 
@@ -33,15 +54,18 @@ export default function Topbar() {
             </div>
           </div>
           <div className="flex flex-row items-center justify-end gap-2">
+            <div className="">
+              <h1 className="mx-3 text-xl font-semibold text-blue-600">{userdetails()?.Role}</h1>
+            </div>
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
-                <Avatar
-                  isBordered
-                  as="button"
-                  size="sm"
-                  className="transition-transform "
-                  src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                />
+              <Avatar
+                isBordered
+                as="button"
+                size="sm"
+                className="transition-transform"
+                src={getAvatarImage()}
+              />
               </DropdownTrigger>
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="gap-2 h-14">

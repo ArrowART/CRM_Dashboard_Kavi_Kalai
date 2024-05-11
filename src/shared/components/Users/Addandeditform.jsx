@@ -46,7 +46,7 @@ export default function Addandeditform(props) {
                             </div>
                             <select name="Role" value={formdata?.Role} onChange={handlechange} className="w-full px-4 py-2 border rounded-md outline-none" required >
                                 <option value="">---Select Role---</option>
-                                <option value="Team Leader">Team Leader</option>
+                                <option value="TeamLeader">Team Leader</option>
                                 <option value="Telecaller">Telecaller</option>
                             </select>
                         </div>
