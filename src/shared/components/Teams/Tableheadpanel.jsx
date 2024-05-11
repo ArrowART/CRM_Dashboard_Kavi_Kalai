@@ -19,19 +19,19 @@ export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTel
     const handleAllocateConfirm = async () => {
         try {
             const selectedTeamLeaderData = teamLeaders.find(
-                (leader) => leader.User_Id === selectedTeamLeader
+                (leader) => leader.UserName === selectedTeamLeader
             );
             const formattedData = {
                 teamleader: [
                     {
-                        User_Id: selectedTeamLeader,
+                        UserName: selectedTeamLeader,
                         First_Name: selectedTeamLeaderData ? selectedTeamLeaderData.First_Name : '',
                     },
                 ],
-                telecaller: selectedTelecallers.map((userId) => {
-                    const user = teleCallers.find((user) => user.User_Id === userId);
+                telecaller: selectedTelecallers.map((UserName) => {
+                    const user = teleCallers.find((user) => user.UserName === UserName);
                     return {
-                        User_Id: userId,
+                        UserName: UserName,
                         First_Name: user ? user.First_Name : '',
                     };
                 }),
@@ -103,8 +103,8 @@ export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTel
                         >
                             <option value="">Select a Team Leader</option>
                             {teamLeaders.map((user) => (
-                                <option key={user.User_Id} value={user.User_Id}>
-                                    {user.First_Name} ({user.User_Id})
+                                <option key={user.UserName} value={user.UserName}>
+                                    {user.First_Name} ({user.UserName})
                                 </option>
                             ))}
                         </select>
@@ -119,8 +119,8 @@ export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTel
                             onChange={(e) => setSelectedTelecallers(e.value)}
                             className="w-full border border-gray-300 rounded-md p-multiselect"
                             options={teleCallers.map((user) => ({
-                                label: `${user.First_Name} (${user.User_Id})`,
-                                value: user.User_Id,
+                                label: `${user.First_Name} (${user.UserName})`,
+                                value: user.UserName,
                             }))}
                             filter
                             filterValue={telecallerFilter}

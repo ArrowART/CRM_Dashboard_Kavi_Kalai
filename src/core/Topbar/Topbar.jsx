@@ -9,7 +9,7 @@ export default function Topbar() {
 
   const imageMap = {
     'SuperAdmin': '../images/square-s.png',
-    'Team Leader': '../images/square-t.png',
+    'TeamLeader': '../images/square-t.png',
     'Telecaller': '../images/square-c.png',
     'default': 'https://example.com/default.png',
   };
@@ -19,8 +19,8 @@ export default function Topbar() {
     switch (role) {
       case 'SuperAdmin':
         return  imageMap['SuperAdmin']
-      case 'Team Leader':
-        return  imageMap['Team Leader']
+      case 'TeamLeader':
+        return  imageMap['TeamLeader']
       case 'Telecaller':
         return  imageMap['Telecaller']
       default:

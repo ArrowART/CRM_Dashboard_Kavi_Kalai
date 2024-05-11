@@ -59,7 +59,7 @@ export default function Sidebar() {
             </li>
             <li>
               <NavLink to={'/teams'} className={({ isActive }) => (`flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? ' bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow' : ''}  text-sm text-slate-700  hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd]  hover:shadow`)}>
-                <i className="fi fi-sr-users-alt"></i> Teams
+              <i className="fi fi-ss-team-check"></i> Teams
               </NavLink>
             </li>
           </ul>

@@ -68,7 +68,7 @@ export default function Dashboard() {
     <div className="flex card justify-content-center">
       <div className="p-5" style={{ width: '400px', height: '300px' }}>
         <h1 className='text-2xl font-semibold'>Total Users</h1>
-        <Chart type="pie" data={chartData} options={chartOptions} className="" />
+        <Chart type="pie" data={chartData} options={chartOptions} className=""/>
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ export const Tableview = (props) => {
     }
 
     const columns = [
-        { field: 'User_Id', header: 'User Id', width: "140px" },
+        { field: 'UserName', header: 'User Name', width: "140px" },
         { field: 'First_Name', header: 'First Name', width: "200px" },
         { field: 'Last_Name', header: 'Last Name', width: "200px" },
         { field: 'Email', header: 'Email', width: "200px" },
@@ -97,7 +97,7 @@ export const Tableview = (props) => {
         <div>
             <div className="flex justify-center gap-4 mb-4">
                 <button onClick={() => handleButtonClick(null)} className={`px-3 p-2 text-sm text-white ${activeButton === null ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>All Users</button>
-                <button onClick={() => handleButtonClick('TeamLeader')} className={`px-3 text-sm text-white ${activeButton === 'Team Leader' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Team Leaders</button>
+                <button onClick={() => handleButtonClick('TeamLeader')} className={`px-3 text-sm text-white ${activeButton === 'TeamLeader' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Team Leaders</button>
                 <button onClick={() => handleButtonClick('Telecaller')} className={`px-3 text-sm text-white ${activeButton === 'Telecaller' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Telecallers</button>
             </div>
             <DataTable value={tabledata} scrollable scrollHeight="400px" className='!text-sm shadow-lg rounded-lg overflow-hidden' filters={filters} stateStorage="session" stateKey="dt-state-demo-local" >

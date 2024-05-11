@@ -21,11 +21,21 @@ export default function AllocationPage(){
     const [filtervalues, setfiltervalues]=useState([]);
     const [UploadVisible,setUploadVisible]=useState(false);
     const [File, setFile] = useState([]);
+    const [productCounts, setProductCounts] = useState({});
     let isMounted = true;
     const getallallocations = useCallback(async ()=>{
         const res= await getallallocation({first,rows,globalfilter,...colfilter});
         setTabledata(res?.resdata);
         setTotalRecords(res?.totallength);
+        const counts = res?.resdata.reduce((acc, item) => {
+            const product = item.Product;
+            if (product === 'PL' || product === 'DL' || product === 'BL' || product === 'STPL') {
+                acc.ALL = (acc.ALL || 0) + 1;
+                acc[product] = (acc[product] || 0) + 1;
+            }
+            return acc;
+        }, {});
+        setProductCounts(counts);
     },[first,rows,globalfilter,colfilter]);
 
     useEffect(()=>{
@@ -34,10 +44,14 @@ export default function AllocationPage(){
         }
         return(()=>isMounted = false);
     },[first,rows,globalfilter,colfilter])
-
     const cusfilter = (field, value) => {
         setcolFilter({...colfilter,...{[field]:value}})
     };
+
+    const updateTableData = async () => {
+        await getallallocations();
+    };
+    
 
     const newform=()=>{
         setFormdata({});
@@ -116,7 +130,8 @@ export default function AllocationPage(){
     return(
         <div>
             <div className="bg-white border rounded-3xl">
-                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform} handleDeleteAll={handleDeleteAll} tabledata={tabledata}  />
+                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform}
+                 handleDeleteAll={handleDeleteAll} tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData}/>
 
                 <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} editfrom={editfrom} 
                     cusfilter={cusfilter} filtervalues={filtervalues} />

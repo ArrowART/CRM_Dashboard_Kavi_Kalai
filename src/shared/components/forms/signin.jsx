@@ -4,7 +4,7 @@ const SignIn = (props) => {
     const { handlechange, handlelogin } = props;
 
     return (
-        <section className="relative flex items-center justify-center overflow-hidden h-dvh bg-[url(/images/bg-pattern.jpg)] bg-no-repeat bg-cover">
+        <section className="relative flex items-center justify-center overflow-hidden bg-no-repeat bg-cover h-dvh">
             <div className="max-w-[30rem] w-full px-4 md:px-6  mx-auto">
                 <div className="">
                     <img src="/images/logo.svg" alt="" />

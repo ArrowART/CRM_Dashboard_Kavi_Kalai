@@ -59,6 +59,7 @@ const Tableview = (props) =>{
             Product: { operator: FilterOperator.OR, constraints: [{ value: role, matchMode: FilterMatchMode.EQUALS }] }
         });
     };
+    
     const columns = [
         {field: 'Region', header: 'Region', width:'300px',filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter},
         {field: 'Location', header: 'Location', width:'150px'},
@@ -71,7 +72,7 @@ const Tableview = (props) =>{
         {field: 'Disposition', header: 'Disposition', width:'150px'},
         {field: 'Sub_Disposition', header: 'Sub Disposition', width:'150px'},
         {field: 'Remarks', header: 'Remarks(upto 1000O)words', filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter},
-        {field: 'selectedTeamLeader', header: 'Team Leader', filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter}
+        {field: 'selectedTeamLeader', header: 'Team Leader',width:'170px', filter: true, filterElement: statusFilterTemplate, filterMatchMode: "custom", filterFunction: cusfilter}
        
     ];
     return(

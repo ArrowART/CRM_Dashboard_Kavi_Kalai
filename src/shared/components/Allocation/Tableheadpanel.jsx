@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { getallusers } from '../../services/apiusers/apiusers';
-import { allocateteamleader, getallallocation } from '../../services/apiallocation/apiallocation';
+import { allocateteamleader } from '../../services/apiallocation/apiallocation';
 
 export default function Tableheadpanel(props) {
-    const { handleDeleteAll, Uploadform, setglobalfilter, tabledata, setFile, setUploadVisible } = props;
+    const { handleDeleteAll, Uploadform, setglobalfilter, tabledata,productCounts,updateTableData } = props;
     const [showModal, setShowModal] = useState(false);
     const [allocationType, setAllocationType] = useState('teamLeader');
     const [selectedUser, setSelectedUser] = useState('');
@@ -14,13 +15,10 @@ export default function Tableheadpanel(props) {
     const [productType, setProductType] = useState('ALL');
     const [allocationRange, setAllocationRange] = useState();
     const [allocationRange1, setAllocationRange1] = useState();
-
-    // Function to handle modal visibility
+    
     const toggleModal = () => {
         setShowModal(!showModal);
     };
-
-    // Function to handle allocation cancel
     const handleAllocateCancel = () => {
         setShowModal(false);
     };
@@ -31,41 +29,33 @@ export default function Tableheadpanel(props) {
                 console.error("Table data is not available.");
                 return;
             }
-
-            // Filter the tabledata based on the allocation range
             const allocatedData = tabledata.slice(allocationRange - 1, allocationRange1);
-            
             if (!allocatedData || allocatedData.length === 0) {
                 console.error("No data to allocate.");
                 return;
             }
-
             await allocateteamleader({
-                data: allocatedData, // Sending allocated data to the backend
-                selectedTeamLeader: selectedUser // Sending selected team leader to the backend
+                data: allocatedData, 
+                selectedTeamLeader: selectedUser 
             });
             console.log('Bulk allocation saved successfully.');
+            updateTableData();
         } catch (error) {
             console.error('Error saving bulk allocation:', error);
         }
         setShowModal(false);
-        getallallocation()
+        
     };
-    
-    // Effect to fetch users data when component mounts
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const userData = await getallusers({});
                 const allTeamLeaders = userData.resdata.filter(user => user.Role === 'TeamLeader');
                 const allTelecallers = userData.resdata.filter(user => user.Role === 'Telecaller');
-                
-                // Filter out the allocated records from the fetched data
                 const filteredData = userData.resdata.filter(user => !user.selectedTeamLeader);
-                
                 setTeamLeaders(allTeamLeaders);
                 setTelecallers(allTelecallers);
-                // Set the filtered data
                 setTabledata(filteredData);
             } catch (error) {
                 console.error("Error fetching users:", error);
@@ -95,8 +85,6 @@ export default function Tableheadpanel(props) {
                     </button>
                 </div>
             </div>
-
-
             {/* Modal for allocation */}
             <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal style={{ width: '30vw' }} className="p-4 bg-white rounded-lg">
                 <div className="p-fluid">
@@ -123,14 +111,14 @@ export default function Tableheadpanel(props) {
                             <option value="">Select {allocationType === 'teamLeader' ? 'a TeamLeader' : 'a Telecaller'}</option>
                             {allocationType === 'teamLeader' ? (
                                 teamLeaders.map((user) => (
-                                    <option key={user.User_Id} value={user.User_Id}>
-                                        {user.First_Name} ({user.User_Id})
+                                    <option key={user.UserName} value={user.UserName}>
+                                        {user.First_Name} ({user.UserName})
                                     </option>
                                 ))
                             ) : (
                                 telecallers.map((user) => (
-                                    <option key={user.User_Id} value={user.User_Id}>
-                                        {user.First_Name} ({user.User_Id})
+                                    <option key={user.UserName} value={user.UserName}>
+                                        {user.First_Name} ({user.UserName})
                                     </option>
                                 ))
                             )}
@@ -144,11 +132,11 @@ export default function Tableheadpanel(props) {
                             onChange={(e) => setProductType(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
                         >
-                            <option value="ALL">ALL</option>
-                            <option value="PL">PL</option>
-                            <option value="DL">DL</option>
-                            <option value="BL">BL</option>
-                            <option value="STPL">STPL</option>
+                            <option value="ALL">ALL ({productCounts.ALL || 0})</option>
+                            <option value="PL">PL ({productCounts.PL || 0})</option>
+                            <option value="DL">DL ({productCounts.DL || 0})</option>
+                            <option value="BL">BL ({productCounts.BL || 0})</option>
+                            <option value="STPL">STPL ({productCounts.STPL || 0})</option>
                         </select>
                     </div>
                     <div className="mb-4 p-field">
