@@ -18,3 +18,10 @@ export const savetelecallerallocation = async(datas)=>{
        console.log(err);
     }
  }
+
+ export const updatetelecallerallocation = async(datas)=>{
+   var data = {...datas, Category:checkValueType( datas.Category) =="Array"? datas.Category:datas.Category?.split(',')}
+   console.log(data)
+   var res = await axios.put(`${apiurl()}/telecallerallocation/apisavetelecallerallocation`,data,{params:{_id:datas?._id}, headers: {"Authorization" : `Bearer ${gettoken()}`}});
+   return res.data;
+}
