@@ -17,7 +17,7 @@ const SigninPage = () => {
         const res = await apilogin(formdata);
         console.log(res); 
         if (res.status === "Success") {
-          toast.success(res.status);
+          toast.success("Login successfully")
           navigate('/dashboard')
         } else{
             toast.error(res.status);
