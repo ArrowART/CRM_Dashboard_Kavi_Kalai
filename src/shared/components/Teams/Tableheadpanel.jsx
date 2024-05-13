@@ -1,12 +1,11 @@
-/* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 import { savetelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation';
 import toast from 'react-hot-toast';
 
-export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTelecallerData,telecallerData}) => {
+export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setTelecallerData, telecallerData }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
     const [selectedTelecallers, setSelectedTelecallers] = useState([]);
@@ -46,7 +45,7 @@ export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTel
             // Handle error here
         }
     };
-    
+
     const handleAllocateCancel = () => {
         setSelectedTeamLeader('');
         setSelectedTelecallers([]);
@@ -56,6 +55,19 @@ export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTel
     const handleFilterChange = (event) => {
         setglobalfilter(event.target.value);
     };
+
+    // Filter out already allocated team leaders and telecallers
+    const filteredTeamLeaders = useMemo(() => {
+        return teamLeaders.filter((leader) => {
+            return !telecallerData.some((data) => data.teamleader[0].UserName === leader.UserName);
+        });
+    }, [teamLeaders, telecallerData]);
+
+    const filteredTeleCallers = useMemo(() => {
+        return teleCallers.filter((telecaller) => {
+            return !telecallerData.some((data) => data.telecaller.some((caller) => caller.UserName === telecaller.UserName));
+        });
+    }, [teleCallers, telecallerData]);
 
     return (
         <div className="flex justify-between px-6 py-4 space-y-3 lg:space-y-0 lg:flex">
@@ -102,7 +114,7 @@ export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTel
                             className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
                         >
                             <option value="">Select a Team Leader</option>
-                            {teamLeaders.map((user) => (
+                            {filteredTeamLeaders.map((user) => (
                                 <option key={user.UserName} value={user.UserName}>
                                     {user.First_Name} ({user.UserName})
                                 </option>
@@ -118,7 +130,7 @@ export const Tableheadpanel = ({setglobalfilter, teamLeaders, teleCallers,setTel
                             value={selectedTelecallers}
                             onChange={(e) => setSelectedTelecallers(e.value)}
                             className="w-full border border-gray-300 rounded-md p-multiselect"
-                            options={teleCallers.map((user) => ({
+                            options={filteredTeleCallers.map((user) => ({
                                 label: `${user.First_Name} (${user.UserName})`,
                                 value: user.UserName,
                             }))}
