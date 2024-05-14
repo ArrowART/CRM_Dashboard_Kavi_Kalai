@@ -7,26 +7,25 @@ import LeadsandWipPage from "../components/LeadsandWipPage/LeadsandWipPage";
 import Userpage from "../components/UsersPage/Userpage";
 import { TeamPage } from "../components/TeamPage/TeamPage";
 import AllocationPage from "../components/AllocationPage/AllocationPage";
+import ProtectedRoute from "../shared/services/token/ProtectedRoute";
 
 
 const AppRouter = () => {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<SigninPage />} />
-          <Route element={<Main/>}>
-            <Route path="/dashboard" element={<Dashboardpage />}/>
-            <Route path="/productivity" element={<ProductivityPage />}/>
-            <Route path="/leadsandwip" element={<LeadsandWipPage />}/>
-            <Route path="/users" element={<Userpage/>}/>
-            <Route path="/allocation" element={<AllocationPage/>}/>
-            <Route path="/teams" element={<TeamPage/>}/>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<SigninPage />} />
+        <Route element={<Main />}>
+          <Route path="/dashboard" element={<ProtectedRoute> <Dashboardpage /> </ProtectedRoute>} />
+          <Route path="/productivity" element={<ProtectedRoute>  <ProductivityPage /></ProtectedRoute>}/>
+          <Route path="/leadsandwip" element={ <ProtectedRoute> <LeadsandWipPage /> </ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute> <Userpage /></ProtectedRoute>} />
+          <Route path="/allocation" element={<ProtectedRoute><AllocationPage /></ProtectedRoute>} />
+          <Route path="/teams" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </>
-  )
-}
 export default AppRouter;
