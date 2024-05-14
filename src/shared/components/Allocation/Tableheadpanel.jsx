@@ -99,8 +99,9 @@ export default function Tableheadpanel(props) {
                     {userdetails()?.Role === 'SuperAdmin' && (
                         <>
                             <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                                <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
-                            </button>
+    <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
+</button>
+
                             <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
                                 <i className="fi fi-rr-trash"></i> Delete All
                             </button>

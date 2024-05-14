@@ -43,6 +43,16 @@ export default function Sidebar() {
               </NavLink>
             </li>
             <li>
+              <NavLink to={'/telecallerleads'} className={({ isActive }) => (`flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? ' bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow' : ''}  text-sm text-slate-700  hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd]  hover:shadow`)}>
+              <i className="fi fi-rr-megaphone"></i> Telecaller Leads
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to={'/followup'} className={({ isActive }) => (`flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? ' bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow' : ''}  text-sm text-slate-700  hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd]  hover:shadow`)}>
+              <i className="fi fi-rr-megaphone"></i>Follow Up
+              </NavLink>
+            </li>
+            <li>
               <NavLink to={'/leadsandwip'} className={({ isActive }) => (`flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? ' bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow' : ''}  text-sm text-slate-700  hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd]  hover:shadow`)}>
                 <i className="fi fi-rr-box-open-full"></i> Leads and Wip
               </NavLink>

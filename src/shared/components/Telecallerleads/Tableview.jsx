@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { useState, useEffect } from 'react';
-import { Dropdown } from 'primereact/dropdown';
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { useEffect, useState } from "react";
+import { MultiSelect } from "primereact/multiselect";
+import { Dropdown } from "primereact/dropdown";
 
-const Tableview = (props) => {
+export const Tableview = (props) => {
     const { tabledata, cusfilter, filtervalues, handlefiltervalue, first } = props;
     const [activeButton, setActiveButton] = useState(null);
     const [rowDataState, setRowDataState] = useState([]);
@@ -95,25 +97,22 @@ const Tableview = (props) => {
         { field: 'selectedTeamLeader', header: 'Team Leader', width: '170px', filter: true, filterElement: statusFilterTemplate },
         { field: 'selectedTelecaller', header: 'Tele Caller', width: '170px', filter: true, filterElement: statusFilterTemplate },
         {
-            field: 'Disposition', header: 'Disposition', width: '150px', body: (rowData, { rowIndex }) => (
+            field: 'Disposition', header: 'Disposition', width: '150px', filter: true, filterElement: statusFilterTemplate, body: (rowData, { rowIndex }) => (
                 <Dropdown value={rowData.selectedDisposition} options={dispositionOptions} onChange={(e) => handleDispositionChange(rowIndex, e)} placeholder="Select Disposition" />
             )
         },
         {
-            field: 'Sub_Disposition', header: 'Sub Disposition', width: '150px', body: (rowData) => (
+            field: 'Sub_Disposition', header: 'Sub Disposition', width: '150px', filter: true, filterElement: statusFilterTemplate, body: (rowData) => (
                 <Dropdown value={rowData.selectedSubDisposition} options={subDispositionOptionsMap[rowData.selectedDisposition] || []} onChange={(e) => handleSubDispositionChange(rowData, e)} placeholder="Select Sub Disposition" />
             )
         }
     ];
+    
 
     return (
         <div>
-             <div className="flex justify-center gap-4 mb-4">
-                <button onClick={() => filterByProduct(null)} className={`p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>ALL</button>
-                <button onClick={() => filterByProduct('STPL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'STPL' ? 'blue' : 'green'}-500 rounded-t-lg`}>STPL Products</button>
-                <button onClick={() => filterByProduct('BL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'BL' ? 'blue' : 'green'}-500 rounded-t-lg`}>BL Products</button>
-                <button onClick={() => filterByProduct('PL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'PL' ? 'blue' : 'green'}-500 rounded-t-lg`}>PL Products</button>
-                <button onClick={() => filterByProduct('DL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'DL' ? 'blue' : 'green'}-500 rounded-t-lg`}>DL Products</button>
+            <div className="flex justify-center gap-4 mb-4">
+                {/* Buttons for filtering products */}
             </div>
             <div className="flex items-center justify-end mb-4">
                 <span>Show:</span>
@@ -141,5 +140,3 @@ const Tableview = (props) => {
         </div>
     );
 };
-
-export default Tableview;

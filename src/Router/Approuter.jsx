@@ -7,6 +7,8 @@ import LeadsandWipPage from "../components/LeadsandWipPage/LeadsandWipPage";
 import Userpage from "../components/UsersPage/Userpage";
 import { TeamPage } from "../components/TeamPage/TeamPage";
 import AllocationPage from "../components/AllocationPage/AllocationPage";
+import { TelecallerleadsPage } from "../components/TelecallerleadsPage/TelecallerleadsPage";
+import { Followup } from "../components/Followup/Followup";
 
 
 const AppRouter = () => {
@@ -22,6 +24,10 @@ const AppRouter = () => {
             <Route path="/users" element={<Userpage/>}/>
             <Route path="/allocation" element={<AllocationPage/>}/>
             <Route path="/teams" element={<TeamPage/>}/>
+            <Route path="/telecallerleads" element={<TelecallerleadsPage/>}/>
+            <Route path="/followup" element={<Followup/>}/>
+
+
 
           </Route>
         </Routes>

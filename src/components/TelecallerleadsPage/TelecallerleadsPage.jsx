@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useState } from "react"
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-import * as XLSX from 'xlsx';
-import Tableview from "../../shared/components/Allocation/Tableview";
-import Tableheadpanel from "../../shared/components/Allocation/Tableheadpanel";
-import UploadForm from "../../shared/components/Allocation/Upload";
-import Tablepagination from "../../shared/components/others/Tablepagination";
+import React from 'react'
+import { useCallback, useEffect, useState } from "react";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import toast from "react-hot-toast";
+import Tableheadpanel from '../../shared/components/Telecallerleads/Tableheadpanel'
+import { Tableview } from '../../shared/components/Telecallerleads/Tableview'
 import { deleteAllAllocation, getallallocation, savebulkallocation } from "../../shared/services/apiallocation/apiallocation";
-
-export default function AllocationPage(){
+export const TelecallerleadsPage = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [first, setFirst] = useState(0);
     const [page, setPage] = useState(1);
@@ -127,18 +125,15 @@ export default function AllocationPage(){
         setLoading(false)
     }
 
-    return(
+    return (
         <div>
-            <div className="bg-white border rounded-3xl">
-                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform}
-                 handleDeleteAll={handleDeleteAll} tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData}/>
-
+            <div>
+                <Tableheadpanel/>
+            
                 <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} editfrom={editfrom} 
-                    cusfilter={cusfilter} filtervalues={filtervalues} />     
-                <UploadForm uploadfile={uploadfile} handleupload={handleupload} UploadVisible={UploadVisible} setUploadVisible={setUploadVisible} />
-                <ConfirmDialog   />
+                cusfilter={cusfilter} filtervalues={filtervalues} onPage={onPage} />
+
             </div>
-    
         </div>
     )
 }
