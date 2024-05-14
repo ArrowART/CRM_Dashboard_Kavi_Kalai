@@ -19,9 +19,23 @@ export const savetelecallerallocation = async(datas)=>{
     }
  }
 
- export const updatetelecallerallocation = async(datas)=>{
-   var data = {...datas, Category:checkValueType( datas.Category) =="Array"? datas.Category:datas.Category?.split(',')}
-   console.log(data)
-   var res = await axios.put(`${apiurl()}/telecallerallocation/apisavetelecallerallocation`,data,{params:{_id:datas?._id}, headers: {"Authorization" : `Bearer ${gettoken()}`}});
+ export const updatetelecallerallocation = async (id, data) => {
+   try {
+     const res = await axios.put(
+       `${apiurl()}/telecallerallocation/apiupdatetelecallerallocation?_id=${id}`,
+       data,
+       { headers: { Authorization: `Bearer ${gettoken()}` } }
+     );
+     return res.data;
+   } catch (error) {
+     console.error('Error updating telecaller allocation:', error);
+     throw error;
+   }
+ };
+ 
+ 
+
+export const deletetelecallerallocation=async(id)=>{
+   var res=await axios.delete(`${apiurl()}/telecallerallocation/apideletetelecallerallocation`,{params:{_id:id}, headers: {"Authorization" : `Bearer ${gettoken()}`}});
    return res.data;
 }

@@ -1,18 +1,21 @@
-import {useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getuserdetails } from './token';
 import useAuth from '../store/useAuth';
 
-const ProtectedRoute = ({children, allowedRoles }) => {
-  const navigate=useNavigate()
-  const { isLoggedIn } = useAuth();
-  const userRole = getuserdetails() ? getuserdetails().Role : false;
+
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const navigate = useNavigate();
+  const { isLoggedIn, userdetails } = useAuth();
+  const userRole = userdetails() ? userdetails().Role : null;
+
   useEffect(() => {
-    if (!isLoggedIn || !allowedRoles?.includes(userRole)) {
-      navigate('/login');
+    if (!isLoggedIn || (allowedRoles && !allowedRoles.includes(userRole))) {
+      navigate('/');
     }
   }, [isLoggedIn, allowedRoles, userRole, navigate]);
-  return children;
+
+  return isLoggedIn ? children : null;
 };
 
 export default ProtectedRoute;

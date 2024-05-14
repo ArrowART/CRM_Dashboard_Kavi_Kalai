@@ -1,18 +1,32 @@
-import { useState, useMemo } from 'react';
+/* eslint-disable react/prop-types */
+import { useState, useMemo, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
-import { savetelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation';
+import { savetelecallerallocation, updatetelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation'; 
 import toast from 'react-hot-toast';
 
-export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setTelecallerData, telecallerData }) => {
-    const [showModal, setShowModal] = useState(false);
+export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setTelecallerData, telecallerData, visible, setVisible, formdata, setFormdata }) => {
     const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
     const [selectedTelecallers, setSelectedTelecallers] = useState([]);
     const [telecallerFilter, setTelecallerFilter] = useState('');
 
+    useEffect(() => {
+        if (visible) {
+            if (formdata.teamleader) {
+                setSelectedTeamLeader(formdata.teamleader[0].UserName);
+            }
+            if (formdata.telecaller) {
+                setSelectedTelecallers(formdata.telecaller.map(caller => caller.UserName));
+            }
+        }
+    }, [visible, formdata]);
+
     const handleAllocate = () => {
-        setShowModal(true);
+        setFormdata({});
+        setSelectedTeamLeader('');
+        setSelectedTelecallers([]);
+        setVisible(true);
     };
 
     const handleAllocateConfirm = async () => {
@@ -35,37 +49,49 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                     };
                 }),
             };
-            const response = await savetelecallerallocation(formattedData);
-            console.log('Response:', response);
-            setTelecallerData([...telecallerData, formattedData]);
-            toast.success("Team Members allocated Successfully!");
-            setShowModal(false);
+            let response;
+            if (formdata._id) {
+                response = await updatetelecallerallocation(formdata._id, formattedData);
+                const updatedData = telecallerData.map(data => 
+                  data._id === formdata._id ? response : data
+                );
+                setTelecallerData(updatedData);
+              } else {
+                response = await savetelecallerallocation(formattedData);
+                setTelecallerData([...telecallerData, response]);
+              }
+            toast.success("Team Members allocated successfully!");
+            setVisible(false);
+            setFormdata({});
         } catch (error) {
             console.error('Error:', error);
-            // Handle error here
+            toast.error("Error in allocating team members");
         }
     };
 
     const handleAllocateCancel = () => {
         setSelectedTeamLeader('');
         setSelectedTelecallers([]);
-        setShowModal(false);
+        setVisible(false);
     };
 
     const handleFilterChange = (event) => {
         setglobalfilter(event.target.value);
     };
 
-    // Filter out already allocated team leaders and telecallers
     const filteredTeamLeaders = useMemo(() => {
         return teamLeaders.filter((leader) => {
-            return !telecallerData.some((data) => data.teamleader[0].UserName === leader.UserName);
+            if (telecallerData && telecallerData.length > 0) {
+                return !telecallerData?.some((data) => data.teamleader && data.teamleader.length > 0 && data.teamleader[0].UserName === leader.UserName);
+            }
+            return true;
         });
     }, [teamLeaders, telecallerData]);
+    
 
     const filteredTeleCallers = useMemo(() => {
         return teleCallers.filter((telecaller) => {
-            return !telecallerData.some((data) => data.telecaller.some((caller) => caller.UserName === telecaller.UserName));
+            return !telecallerData.some((data) => data.telecaller?.some((caller) => caller.UserName === telecaller.UserName));
         });
     }, [teleCallers, telecallerData]);
 
@@ -84,7 +110,6 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                         className="px-4 py-2 border outline-none rounded-xl"
                         onChange={handleFilterChange}
                     />
-                    {/* Allocate button */}
                     <button
                         onClick={handleAllocate}
                         className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none"
@@ -93,11 +118,10 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                     </button>
                 </div>
             </div>
-            {/* Modal for allocation */}
             <Dialog
                 header="Allocate Team Members"
-                visible={showModal}
-                onHide={() => setShowModal(false)}
+                visible={visible}
+                onHide={() => setVisible(false)}
                 modal
                 style={{ width: '30vw' }}
                 className="p-4 bg-white rounded-lg"

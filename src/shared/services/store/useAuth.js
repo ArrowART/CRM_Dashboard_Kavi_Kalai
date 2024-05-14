@@ -1,8 +1,10 @@
-import {create} from 'zustand';
-const tokenname="CRMAPPSECRET";
+import { create } from 'zustand';
+import { useNavigate } from 'react-router-dom';
+
+const tokenname = "CRMAPPSECRET";
+
 const useAuth = create((set) => ({
-  
-  isLoggedIn: localStorage.getItem(tokenname)?true:false,
+  isLoggedIn: !!localStorage.getItem(tokenname),
 
   login: (token) => {
     localStorage.setItem(tokenname, token);
@@ -10,14 +12,14 @@ const useAuth = create((set) => ({
   },
 
   logout: () => {
-    //const navigate = useNavigate();
     localStorage.removeItem(tokenname);
     set({ isLoggedIn: false, user: null });
-    //navigate('/login')
+    const navigate = useNavigate();
+    navigate('/'); // Redirect to signin page
   },
 
   userdetails: () => {
-    const token =  localStorage.getItem(tokenname);
+    const token = localStorage.getItem(tokenname);
     if (token) {
       return JSON.parse(window.atob(token.split('.')[1]));
     } else {
