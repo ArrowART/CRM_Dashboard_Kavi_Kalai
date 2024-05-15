@@ -19,11 +19,10 @@ export const Tableview = (props) => {
     };
     const actionbotton = (rowData) => {
         return (
-            <div className="flex justify-center gap-2">
-                <button onClick={() => editfrom(rowData)} className="inline-flex items-center text-sm text-blue-600 hover:text-blue-900" >
-                    <i className="fi fi-rr-edit-alt"></i>
-                    <span>Edit</span>
-                </button>
+            <div className="flex gap-2">
+                <button onClick={() => editfrom(rowData)} className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 " >
+          <i className="fi fi-rr-pen-circle"></i>
+        </button>
             </div>
         )
     }

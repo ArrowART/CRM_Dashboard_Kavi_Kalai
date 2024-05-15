@@ -21,6 +21,11 @@ export const getallallocation = async(params)=>{
     }
  }
 
+ export const getallfollowup = async(params)=>{
+   var res=await axios.get(`${apiurl()}/allocation/apigetfollowupandfuturefollowupdata`,{params:params, headers: {"Authorization" : `Bearer ${gettoken()}`}});
+   return res.data;
+}
+
  export const allocateteamleader=async(datas)=>{
    try {
       var res=await axios.post(`${apiurl()}/allocation/apiallocateteamleader`,datas,{ headers: {"Authorization" : `Bearer ${gettoken()}`}});
@@ -46,3 +51,4 @@ export const getallallocation = async(params)=>{
        throw error; // Optionally, handle the error based on your requirements
    }
 };
+

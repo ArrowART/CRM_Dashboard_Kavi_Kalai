@@ -56,10 +56,10 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                   data._id === formdata._id ? response : data
                 );
                 setTelecallerData(updatedData);
-              } else {
+            } else {
                 response = await savetelecallerallocation(formattedData);
                 setTelecallerData([...telecallerData, response]);
-              }
+            }
             toast.success("Team Members allocated successfully!");
             setVisible(false);
             setFormdata({});
@@ -68,6 +68,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
             toast.error("Error in allocating team members");
         }
     };
+    
 
     const handleAllocateCancel = () => {
         setSelectedTeamLeader('');

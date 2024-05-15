@@ -9,7 +9,8 @@ import { TeamPage } from "../components/TeamPage/TeamPage";
 import AllocationPage from "../components/AllocationPage/AllocationPage";
 import ProtectedRoute from "../shared/services/token/ProtectedRoute";
 import { TelecallerleadsPage } from "../components/TelecallerleadsPage/TelecallerleadsPage";
-import { Followup } from "../components/Followup/Followup";
+import { FollowupPage } from "../components/Followup/FollowupPage";
+
 
 
 const AppRouter = () => {
@@ -24,9 +25,8 @@ const AppRouter = () => {
           <Route path="/users" element={<ProtectedRoute> <Userpage /></ProtectedRoute>} />
           <Route path="/allocation" element={<ProtectedRoute><AllocationPage /></ProtectedRoute>} />
           <Route path="/teams" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
-          <Route path="/teams" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
           <Route path="/telecallerleads" element={<ProtectedRoute><TelecallerleadsPage /></ProtectedRoute>} />
-          <Route path="/followup" element={<ProtectedRoute><Followup /></ProtectedRoute>} />
+          <Route path="/followup" element={<ProtectedRoute><FollowupPage /></ProtectedRoute>} />
         </Route>
       </Routes>
     </BrowserRouter>
