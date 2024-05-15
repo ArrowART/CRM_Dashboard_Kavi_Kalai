@@ -7,6 +7,10 @@ export const getallallocation = async(params)=>{
     return res.data;
  }
 
+ export const getallselectedteamleaderandtelecaller = async(params)=>{
+   var res=await axios.get(`${apiurl()}/allocation/apigetselectedteamleaderandtelecallerdata`,{params:params, headers: {"Authorization" : `Bearer ${gettoken()}`}});
+   return res.data;
+}
  export const savebulkallocation=async(datas)=>{
     try {
        var res=await axios.post(`${apiurl()}/allocation/apisavebulkallocation`,datas,{ headers: {"Authorization" : `Bearer ${gettoken()}`}});
@@ -26,6 +30,10 @@ export const getallallocation = async(params)=>{
       console.log(err);
    }
 }
+
+
+
+
 
  export const deleteAllAllocation = async () => {
    try {

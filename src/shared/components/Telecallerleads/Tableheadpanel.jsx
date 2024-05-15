@@ -1,8 +1,4 @@
-/* eslint-disable react/prop-types */
-import { useState } from 'react';
-import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
-import { MultiSelect } from 'primereact/multiselect';
+
 
 
 export default function Tableheadpanel (  ) {
