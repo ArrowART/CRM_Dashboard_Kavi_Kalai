@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom";
+import useAuth from "../../shared/services/store/useAuth";
 
 export default function Sidebar() {
+  const { userdetails } = useAuth();
   return (
     <>
     <div className="sticky inset-x-0 top-0 z-20 px-4 bg-white border-y sm:px-6 md:px-8 lg:hidden">
@@ -62,11 +64,13 @@ export default function Sidebar() {
               <i className="fi fi-sr-cloud-upload-alt"></i> Allocation
               </NavLink>
             </li>
+            {(userdetails()?.Role === 'SuperAdmin') && (
             <li>
               <NavLink to={'/users'} className={({ isActive }) => (`flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? ' bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow' : ''}  text-sm text-slate-700  hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd]  hover:shadow`)}>
                 <i className="fi fi-sr-users-alt"></i> Users
               </NavLink>
             </li>
+            )}
             <li>
               <NavLink to={'/teams'} className={({ isActive }) => (`flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? ' bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow' : ''}  text-sm text-slate-700  hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd]  hover:shadow`)}>
               <i className="fi fi-ss-team-check"></i> Teams

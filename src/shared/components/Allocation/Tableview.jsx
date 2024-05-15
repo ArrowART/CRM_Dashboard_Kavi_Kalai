@@ -70,6 +70,7 @@ const Tableview = (props) => {
         });
         setRowDataState(updatedRowData);
     };
+    
 
     const handleSubDispositionChange = (rowData, e) => {
         const updatedRowData = rowDataState.map((row) => {
@@ -91,24 +92,24 @@ const Tableview = (props) => {
         { field: 'Mobile1', header: 'Mobile 1', width: '100px' },
         { field: 'Mobile2', header: 'Mobile 2', width: '100px' },
         { field: 'Compaign_Name', header: 'Campaign Name', width: '100px' },
-        { field: 'Remarks', header: 'Remarks (up to 1000 words)', filter: true, filterElement: statusFilterTemplate },
+        { field: 'Remarks', header: 'Remarks', width: '150px', filter: true, filterElement: statusFilterTemplate },
         { field: 'selectedTeamLeader', header: 'Team Leader', width: '170px', filter: true, filterElement: statusFilterTemplate },
         { field: 'selectedTelecaller', header: 'Tele Caller', width: '170px', filter: true, filterElement: statusFilterTemplate },
         {
             field: 'Disposition', header: 'Disposition', width: '150px', body: (rowData, { rowIndex }) => (
-                <Dropdown value={rowData.selectedDisposition} options={dispositionOptions} onChange={(e) => handleDispositionChange(rowIndex, e)} placeholder="Select Disposition" />
+                <Dropdown value={rowData.selectedDisposition} options={dispositionOptions} className='text-sm' onChange={(e) => handleDispositionChange(rowIndex, e)} placeholder="Select Disposition" />
             )
         },
         {
             field: 'Sub_Disposition', header: 'Sub Disposition', width: '150px', body: (rowData) => (
-                <Dropdown value={rowData.selectedSubDisposition} options={subDispositionOptionsMap[rowData.selectedDisposition] || []} onChange={(e) => handleSubDispositionChange(rowData, e)} placeholder="Select Sub Disposition" />
+                <Dropdown value={rowData.selectedSubDisposition} className='text-sm' options={subDispositionOptionsMap[rowData.selectedDisposition] || []} onChange={(e) => handleSubDispositionChange(rowData, e)} placeholder="Select Sub Disposition" />
             )
         }
     ];
 
     return (
         <div>
-             <div className="flex justify-center gap-4 mb-4">
+            <div className="flex justify-center gap-4 mb-4">
                 <button onClick={() => filterByProduct(null)} className={`p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>ALL</button>
                 <button onClick={() => filterByProduct('STPL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'STPL' ? 'blue' : 'green'}-500 rounded-t-lg`}>STPL Products</button>
                 <button onClick={() => filterByProduct('BL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'BL' ? 'blue' : 'green'}-500 rounded-t-lg`}>BL Products</button>
@@ -117,13 +118,12 @@ const Tableview = (props) => {
             </div>
             <div className="flex items-center justify-end mb-4">
                 <span>Show:</span>
-                <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-1 mx-2">
+                <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-3">
                     <option value={10}>10</option>
                     <option value={20}>20</option>
                     <option value={50}>50</option>
                     <option value={100}>100</option>
                     <option value={500}>1000</option>
-
                 </select>
                 <span>rows per page</span>
             </div>
@@ -133,9 +133,12 @@ const Tableview = (props) => {
                 rows={rowsPerPage}
                 first={first}
                 onPage={onPage}
+                scrollable
+                scrollHeight="600px"
+                className='text-sm'
             >
                 {columns.map((col, index) => (
-                    <Column key={index} field={col.field} header={col.header} body={col.body} filter filterElement={col.filterElement} />
+                    <Column key={index} field={col.field} header={col.header} body={col.body} />
                 ))}
             </DataTable>
         </div>
