@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getallfollowup } from "../../shared/services/apiallocation/apiallocation";
 import Tablepagination from "../../shared/components/others/Tablepagination";
 import { Tableview } from "../../shared/components/Followup/Tableview";
+import Tableheadpanel from "../../shared/components/Followup/Tableheadpanel";
 export const FollowupPage = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [first, setFirst] = useState(0);
@@ -38,6 +39,7 @@ export const FollowupPage = () => {
     return (
         <div>
             <div>
+                <Tableheadpanel/>
                 <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first}
                     cusfilter={cusfilter} filtervalues={filtervalues} onPage={onPage} />
                 <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />

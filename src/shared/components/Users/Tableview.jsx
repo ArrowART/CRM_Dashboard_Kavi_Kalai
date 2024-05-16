@@ -99,7 +99,10 @@ export const Tableview = (props) => {
                 <button onClick={() => handleButtonClick('TeamLeader')} className={`px-3 text-sm text-white ${activeButton === 'TeamLeader' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Team Leaders</button>
                 <button onClick={() => handleButtonClick('Telecaller')} className={`px-3 text-sm text-white ${activeButton === 'Telecaller' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Telecallers</button>
             </div>
-            <DataTable value={tabledata} scrollable scrollHeight="400px" className='!text-sm shadow-lg rounded-lg overflow-hidden' filters={filters} stateStorage="session" stateKey="dt-state-demo-local" >
+            <DataTable value={tabledata} scrollable scrollHeight="400px" className='!text-sm shadow-lg rounded-lg overflow-hidden' 
+            filters={filters} stateStorage="session" stateKey="dt-state-demo-local"  resizableColumns 
+            stripedRows
+            showGridlines tableStyle={{ minWidth: '50rem' }}>
                 <Column className="flex justify-center" header="S.No" style={{ minWidth: '40px' }} body={sno} />
                 <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
                 {columns.map((col, i) => (

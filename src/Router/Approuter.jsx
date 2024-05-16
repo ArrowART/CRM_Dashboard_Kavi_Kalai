@@ -2,7 +2,6 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Main } from "../core/Main/Main";
 import SigninPage from "../components/SignIn/SigninPage";
 import { Dashboardpage } from "../components/DashboardPage/Dashboardpage";
-import ProductivityPage from "../components/ProductivityPage/ProductivityPage";
 import LeadsandWipPage from "../components/LeadsandWipPage/LeadsandWipPage";
 import Userpage from "../components/UsersPage/Userpage";
 import { TeamPage } from "../components/TeamPage/TeamPage";
@@ -10,6 +9,7 @@ import AllocationPage from "../components/AllocationPage/AllocationPage";
 import ProtectedRoute from "../shared/services/token/ProtectedRoute";
 import { TelecallerleadsPage } from "../components/TelecallerleadsPage/TelecallerleadsPage";
 import { FollowupPage } from "../components/Followup/FollowupPage";
+import { ProductivityPage } from "../components/ProductivityPage/ProductivityPage";
 
 
 

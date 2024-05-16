@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useCallback, useEffect, useState } from "react";
 import Tableheadpanel from '../../shared/components/Telecallerleads/Tableheadpanel';
 import { Tableview } from '../../shared/components/Telecallerleads/Tableview';
 import { getallselectedteamleaderandtelecaller } from "../../shared/services/apiallocation/apiallocation";
+import Tablepagination from "../../shared/components/others/Tablepagination";
 
 export const TelecallerleadsPage = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [first, setFirst] = useState(0);
+    const [page, setPage] = useState(1);
     const [rows, setRows] = useState(20);
     const [tabledata, setTabledata] = useState([]);
     const [colfilter, setcolFilter] = useState({});
@@ -30,6 +31,12 @@ export const TelecallerleadsPage = () => {
     const cusfilter = (field, value) => {
         setcolFilter({ ...colfilter, ...{ [field]: value } });
     };
+
+    const onPage = (page) => {
+        setPage(page)
+        setFirst(rows *(page -1));
+        setRows(rows);
+    };
     return (
         <div>
             <div>
@@ -41,6 +48,7 @@ export const TelecallerleadsPage = () => {
                     cusfilter={cusfilter}
                     filtervalues={filtervalues}
                 />
+                 <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
             </div>
         </div>
     );

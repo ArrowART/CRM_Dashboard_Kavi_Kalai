@@ -30,6 +30,9 @@ export const Teamtable = (props) => {
     <div className="container mx-auto">
       <DataTable
         value={telecallerData}
+        resizableColumns 
+        stripedRows
+        showGridlines tableStyle={{ minWidth: '50rem' }}
         globalFilter={globalfilter}
         className="mb-4 overflow-hidden border-b border-gray-200 shadow sm:rounded-lg"
       >

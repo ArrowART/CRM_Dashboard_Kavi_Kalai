@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import  { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import useAuth from '../../services/store/useAuth';
@@ -84,7 +85,7 @@ export default function Tableheadpanel(props) {
     }, [selectedTeamLeader]);
 
     return (
-        <div className="items-center justify-between px-6 py-4 space-y-3 lg:space-y-0 lg:flex">
+        <div className="items-center justify-between px-6 py-4 lg:space-y-0 lg:flex">
             <div>
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">Allocation</h2>
             </div>
@@ -180,7 +181,7 @@ export default function Tableheadpanel(props) {
                             )}
                         </>
                     )}
-                    <div className="mb-4 p-field">
+                    {/* <div className="mb-4 p-field">
                         <label htmlFor="productType" className="block mb-1">Product Type</label>
                         <select
                             id="productType"
@@ -194,7 +195,7 @@ export default function Tableheadpanel(props) {
                             <option value="BL">BL ({productCounts.BL || 0})</option>
                             <option value="STPL">STPL ({productCounts.STPL || 0})</option>
                         </select>
-                    </div>
+                    </div> */}
                     <div className="mb-4 p-field">
                         <label htmlFor="From" className="block mb-1">From</label>
                         <input

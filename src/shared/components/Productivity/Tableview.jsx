@@ -3,9 +3,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { allocateteamleader } from "../../services/apiallocation/apiallocation";
-import { InputTextarea } from "primereact/inputtextarea";
+
 
 export const Tableview = (props) => {
   const { tabledata, filtervalues, handlefiltervalue, first } = props;
@@ -22,11 +20,6 @@ export const Tableview = (props) => {
       })));
     }
   }, [tabledata]);
-
-  
-  useEffect(() => {
-    saveData(rowDataState);
-  }, [rowDataState]);
 
   const parseDispositionValue = (dispositionValue) => {
     if (dispositionValue) {
@@ -49,16 +42,6 @@ export const Tableview = (props) => {
       return timestamp.slice(0, -1); 
     }
     return null;
-  };
-
-  const handleRemarksChange = (rowIndex, value) => {
-    const updatedRowData = rowDataState.map((row, index) => {
-      if (index === rowIndex) {
-        return { ...row, Remarks: value };
-      }
-      return row;
-    });
-    setRowDataState(updatedRowData);
   };
 
   const handleRowsPerPageChange = (event) => {
@@ -116,24 +99,6 @@ export const Tableview = (props) => {
     setRowDataState(updatedRowData);
   };
 
-  const saveData = async (rowData) => {
-    try {
-      const requestBody = {
-        data: rowData.map((row) => ({
-          ...row,
-          selectedTeamLeader: row.selectedTeamLeader,
-          selectedTelecaller: row.selectedTelecaller,
-          Remarks: row.Remarks, // Include the remarks field
-        })),
-      };
-      const res = await allocateteamleader(requestBody);
-      // toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
-    } catch (err) {
-      toast.error("Error in saving data");
-      console.log(err);
-    }
-  };
-
   const getDispositionColor = (option) => {
     switch (option) {
         case 'Submit Lead':
@@ -150,6 +115,7 @@ export const Tableview = (props) => {
             return '#E4C1F9'
     }
 };
+
 
   return (
     <div>
@@ -176,6 +142,8 @@ export const Tableview = (props) => {
         <Column field="Compaign_Name" header="Compaign Name" />
         <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }}/>
         <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
+        <Column field="Productivity_Status" header="Productivity Status" style={{ minWidth: '10rem' }} />
+
         <Column
                         field="Disposition"
                         header="Disposition"
@@ -200,7 +168,6 @@ export const Tableview = (props) => {
                         filterElement={statusFilterTemplate}
                         width="150px"
                     />
-
         <Column
           field="Sub_Disposition"
           header="Sub Disposition"
@@ -224,21 +191,7 @@ export const Tableview = (props) => {
           )}
           style={{ minWidth: '10rem' }}
         />
-       <Column
-  field="Remarks"
-  header="Remarks"
-  width="200px"
-  filter
-  filterElement={statusFilterTemplate}
-  body={(rowData, { rowIndex }) => (
-    <InputTextarea
-      value={rowData.Remarks}
-      onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-      rows={3}
-      className="w-full"
-    />
-  )}
-/>
+        <Column field="Remarks" header="Remarks" filter filterElement={statusFilterTemplate} />
       </DataTable>
     </div>
   );

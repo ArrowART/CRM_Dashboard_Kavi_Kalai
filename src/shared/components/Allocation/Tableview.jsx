@@ -3,9 +3,10 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useState, useEffect } from 'react';
 import { Dropdown } from 'primereact/dropdown';
+import { InputTextarea } from 'primereact/inputtextarea';
 
 const Tableview = (props) => {
-    const { tabledata, cusfilter, filtervalues, handlefiltervalue, first } = props;
+    const { tabledata, filtervalues, handlefiltervalue, first } = props;
     const [activeButton, setActiveButton] = useState(null);
     const [rowDataState, setRowDataState] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -70,7 +71,6 @@ const Tableview = (props) => {
         });
         setRowDataState(updatedRowData);
     };
-    
 
     const handleSubDispositionChange = (rowData, e) => {
         const updatedRowData = rowDataState.map((row) => {
@@ -81,32 +81,32 @@ const Tableview = (props) => {
         });
         setRowDataState(updatedRowData);
     };
+    const handleRemarksChange = (rowIndex, value) => {
+        const updatedRowData = rowDataState.map((row, index) => {
+            if (index === rowIndex) {
+                return { ...row, Remarks: value };
+            }
+            return row;
+        });
+        setRowDataState(updatedRowData);
+    };
 
-    const columns = [
-        { field: 'sno', header: 'S.No', body: sno, width: '50px' },
-        { field: 'Region', header: 'Region', width: '150px', filter: true, filterElement: statusFilterTemplate },
-        { field: 'Location', header: 'Location', width: '150px' },
-        { field: 'Product', header: 'Product', width: '150px' },
-        { field: 'Name', header: 'Name', width: '150px' },
-        { field: 'Firm_Name', header: 'Firm Name', width: '150px' },
-        { field: 'Mobile1', header: 'Mobile 1', width: '100px' },
-        { field: 'Mobile2', header: 'Mobile 2', width: '100px' },
-        { field: 'Compaign_Name', header: 'Campaign Name', width: '100px' },
-        { field: 'Remarks', header: 'Remarks', width: '150px', filter: true, filterElement: statusFilterTemplate },
-        { field: 'selectedTeamLeader', header: 'Team Leader', width: '170px', filter: true, filterElement: statusFilterTemplate },
-        { field: 'selectedTelecaller', header: 'Tele Caller', width: '170px', filter: true, filterElement: statusFilterTemplate },
-        {
-            field: 'Disposition', header: 'Disposition', width: '150px', body: (rowData, { rowIndex }) => (
-                <Dropdown value={rowData.selectedDisposition} options={dispositionOptions} className='text-sm' onChange={(e) => handleDispositionChange(rowIndex, e)} placeholder="Select Disposition" />
-            )
-        },
-        {
-            field: 'Sub_Disposition', header: 'Sub Disposition', width: '150px', body: (rowData) => (
-                <Dropdown value={rowData.selectedSubDisposition} className='text-sm' options={subDispositionOptionsMap[rowData.selectedDisposition] || []} onChange={(e) => handleSubDispositionChange(rowData, e)} placeholder="Select Sub Disposition" />
-            )
+    const getDispositionColor = (option) => {
+        switch (option) {
+            case 'Submit Lead':
+                return '#FF99C8';
+            case 'Not Int':
+                return '#FEC8C3';
+            case 'Call Back':
+                return '#FCF6BD';
+            case 'DNE':
+                return '#D0F4DE';
+            case 'Followup':
+                return '#A9DEF9';
+            case 'Future Followup' :
+                return '#E4C1F9'
         }
-    ];
-
+    };
     return (
         <div>
             <div className="flex justify-center gap-4 mb-4">
@@ -128,21 +128,96 @@ const Tableview = (props) => {
                 <span>rows per page</span>
             </div>
             <DataTable
+                resizableColumns
+                stripedRows
+                showGridlines tableStyle={{ minWidth: '50rem' }}
                 value={rowDataState}
                 paginator
                 rows={rowsPerPage}
                 first={first}
                 onPage={onPage}
                 scrollable
-                scrollHeight="600px"
+                scrollHeight="550px"
                 className='text-sm'
             >
-                {columns.map((col, index) => (
-                    <Column key={index} field={col.field} header={col.header} body={col.body} />
-                ))}
+                <Column field="sno" header="S.No" body={sno} />
+                <Column field="Region" header="Region" filter={true} filterElement={statusFilterTemplate} sortable style={{ width: '25%' }} />
+                <Column field="Location" header="Location" sortable style={{ width: '25%' }} />
+                <Column field="Product" header="Product" />
+                <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
+                <Column field="Firm_Name" header="Firm Name" />
+                <Column field="Mobile1" header="Mobile 1" />
+                <Column field="Mobile2" header="Mobile 2" />
+                <Column field="Compaign_Name" header="Compaign Name" />
+                <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
+                <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
+                <Column
+                        field="Disposition"
+                        header="Disposition"
+                        body={(rowData, { rowIndex }) => (
+                            <Dropdown
+                                value={rowData.selectedDisposition}
+                                options={dispositionOptions}
+                                onChange={(e) => handleDispositionChange(rowIndex, e)}
+                                placeholder="Select Disposition"
+                                optionLabel={(option) => option}
+                                optionStyle={(option) => ({
+                                    color: 'white',
+                                    backgroundColor: getDispositionColor(option)
+                                })}
+                                style={{
+                                    width: '150px',
+                                    backgroundColor: getDispositionColor(rowData.selectedDisposition)
+                                }}
+                            />
+                        )}
+                        filter
+                        filterElement={statusFilterTemplate}
+                        width="150px"
+                    />
+                <Column
+                    field="Sub_Disposition"
+                    header="Sub Disposition"
+                    body={(rowData) => (
+                        <Dropdown
+                            value={rowData.selectedSubDisposition}
+                            options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
+                            onChange={(e) => handleSubDispositionChange(rowData, e)}
+                            placeholder="Select Sub Disposition"
+                        />
+                    )}
+                    filter
+                    filterElement={statusFilterTemplate}
+                    width="150px"
+                />
+                <Column
+                    field="timestamp"
+                    header="Date & Time"
+                    body={(rowData) => (
+                        <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
+                    )}
+                    style={{ minWidth: '10rem' }}
+                />
+                <Column
+                    field="Remarks"
+                    header="Remarks"
+                    width="200px"
+                    filter
+                    filterElement={statusFilterTemplate}
+                    body={(rowData, { rowIndex }) => (
+                        <InputTextarea
+                            value={rowData.Remarks}
+                            onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+                            rows={3}
+                            className="w-full"
+                        />
+                    )}
+                />
             </DataTable>
         </div>
     );
 };
 
 export default Tableview;
+
+// headerStyle={{ backgroundColor: '#006400', color: 'white' }} bodyStyle={{ backgroundColor: '#38B000', color: 'white' }}

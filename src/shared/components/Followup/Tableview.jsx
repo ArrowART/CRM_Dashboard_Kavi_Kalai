@@ -3,15 +3,14 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
-import { Button } from "primereact/button";
-
 import toast from "react-hot-toast";
 import { allocateteamleader } from "../../services/apiallocation/apiallocation";
+import { InputTextarea } from "primereact/inputtextarea";
 
 export const Tableview = (props) => {
   const { tabledata, filtervalues, handlefiltervalue, first } = props;
   const [rowDataState, setRowDataState] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState();
 
   useEffect(() => {
     if (tabledata) {
@@ -23,7 +22,12 @@ export const Tableview = (props) => {
       })));
     }
   }, [tabledata]);
+
   
+  useEffect(() => {
+    saveData(rowDataState);
+  }, [rowDataState]);
+
   const parseDispositionValue = (dispositionValue) => {
     if (dispositionValue) {
       const [value] = dispositionValue.split(' (');
@@ -31,7 +35,7 @@ export const Tableview = (props) => {
     }
     return null;
   };
-  
+
   const parseSubDispositionValue = (subDispositionValue) => {
     if (subDispositionValue) {
       const [value] = subDispositionValue.split(' (');
@@ -42,9 +46,19 @@ export const Tableview = (props) => {
   const parseTimestamp = (value) => {
     if (value) {
       const [_, timestamp] = value.split(' (');
-      return timestamp.slice(0, -1);
+      return timestamp.slice(0, -1); 
     }
     return null;
+  };
+
+  const handleRemarksChange = (rowIndex, value) => {
+    const updatedRowData = rowDataState.map((row, index) => {
+      if (index === rowIndex) {
+        return { ...row, Remarks: value };
+      }
+      return row;
+    });
+    setRowDataState(updatedRowData);
   };
 
   const handleRowsPerPageChange = (event) => {
@@ -102,73 +116,129 @@ export const Tableview = (props) => {
     setRowDataState(updatedRowData);
   };
 
-  const handleSubmit = async (rowData) => {
+  const saveData = async (rowData) => {
     try {
       const requestBody = {
-        data: [rowData],
-        selectedTeamLeader: rowData.selectedTeamLeader,
-        selectedTelecaller: rowData.selectedTelecaller,
+        data: rowData.map((row) => ({
+          ...row,
+          selectedTeamLeader: row.selectedTeamLeader,
+          selectedTelecaller: row.selectedTelecaller,
+          Remarks: row.Remarks, // Include the remarks field
+        })),
       };
       const res = await allocateteamleader(requestBody);
-      toast.success("Disposition and Sub-Disposition saved successfully");
+      // toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
     } catch (err) {
       toast.error("Error in saving data");
       console.log(err);
     }
   };
-  const columns = [
-    { field: 'sno', header: 'S.No', body: sno, width: '50px' },
-    { field: 'Region', header: 'Region', width: '150px', filter: true, filterElement: statusFilterTemplate },
-    { field: 'Location', header: 'Location', width: '150px' },
-    { field: 'Product', header: 'Product', width: '150px' },
-    { field: 'Name', header: 'Name', width: '150px' },
-    { field: 'Firm_Name', header: 'Firm Name', width: '150px' },
-    { field: 'Mobile1', header: 'Mobile 1', width: '100px' },
-    { field: 'Mobile2', header: 'Mobile 2', width: '100px' },
-    { field: 'Compaign_Name', header: 'Campaign Name', width: '100px' },
-    { field: 'selectedTeamLeader', header: 'Team Leader', width: '170px', filter: true, filterElement: statusFilterTemplate },
-    { field: 'selectedTelecaller', header: 'Tele Caller', width: '170px', filter: true, filterElement: statusFilterTemplate },
-    {
-      field: 'Disposition', header: 'Disposition', width: '150px', filter: true, filterElement: statusFilterTemplate, body: (rowData, { rowIndex }) => (
-        <Dropdown value={rowData.selectedDisposition} options={dispositionOptions} onChange={(e) => handleDispositionChange(rowIndex, e)} placeholder="Select Disposition" />
-      )
-    },
-    {
-      field: 'Sub_Disposition', header: 'Sub Disposition', width: '150px', filter: true, filterElement: statusFilterTemplate, body: (rowData) => (
-        <Dropdown value={rowData.selectedSubDisposition} options={subDispositionOptionsMap[rowData.selectedDisposition] || []} onChange={(e) => handleSubDispositionChange(rowData, e)} placeholder="Select Sub Disposition" />
-      )
-    },
-    {
-      field: 'timestamp',
-      header: 'Date & Time',
-      width: '170px',
-      body: (rowData) => (
-        <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
-      )
-    },
-    { field: 'Remarks', header: 'Remarks', filter: true, filterElement: statusFilterTemplate },
-    {
-      field: 'action', header: 'Action', width: '170px', body: (rowData) => (
-        <Button label="Submit" onClick={() => handleSubmit(rowData)} style={{ backgroundColor: 'green', borderColor: 'green', color: 'white',padding:'2px' }} />
-      )
+
+  const getDispositionColor = (option) => {
+    switch (option) {
+        case 'Submit Lead':
+            return '#FF99C8';
+        case 'Not Int':
+            return '#FEC8C3';
+        case 'Call Back':
+            return '#FCF6BD';
+        case 'DNE':
+            return '#D0F4DE';
+        case 'Followup':
+            return '#A9DEF9';
+        case 'Future Followup' :
+            return '#E4C1F9'
     }
-    
-  ];
+};
 
   return (
     <div>
       <DataTable
+      resizableColumns 
+      stripedRows
+      showGridlines tableStyle={{ minWidth: '50rem' }}
         value={rowDataState}
         rows={rowsPerPage}
         first={first}
         onPage={onPage}
         className="text-sm"
-        scrollHeight="700px"
+        scrollable
+        scrollHeight="660px"
       >
-        {columns.map((col, index) => (
-          <Column key={index} field={col.field} header={col.header} body={col.body}  />
-        ))}
+        <Column field="sno" header="S.No" body={sno} />
+        <Column field="Region" header="Region" filter={true} filterElement={statusFilterTemplate} sortable style={{ width: '25%' }} />
+        <Column field="Location" header="Location" sortable style={{ width: '25%' }} />
+        <Column field="Product" header="Product" />
+        <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
+        <Column field="Firm_Name" header="Firm Name"  />
+        <Column field="Mobile1" header="Mobile 1" />
+        <Column field="Mobile2" header="Mobile 2" />
+        <Column field="Compaign_Name" header="Compaign Name" />
+        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }}/>
+        <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
+                     <Column
+                        field="Disposition"
+                        header="Disposition"
+                        body={(rowData, { rowIndex }) => (
+                            <Dropdown
+                                value={rowData.selectedDisposition}
+                                options={dispositionOptions}
+                                onChange={(e) => handleDispositionChange(rowIndex, e)}
+                                placeholder="Select Disposition"
+                                optionLabel={(option) => option}
+                                optionStyle={(option) => ({
+                                    color: 'white',
+                                    backgroundColor: getDispositionColor(option)
+                                })}
+                                style={{
+                                    width: '150px',
+                                    backgroundColor: getDispositionColor(rowData.selectedDisposition)
+                                }}
+                            />
+                        )}
+                        filter
+                        filterElement={statusFilterTemplate}
+                        width="150px"
+                    />
+        <Column
+          field="Sub_Disposition"
+          header="Sub Disposition"
+          body={(rowData) => (
+            <Dropdown
+              value={rowData.selectedSubDisposition}
+              options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
+              onChange={(e) => handleSubDispositionChange(rowData, e)}
+              placeholder="Select Sub Disposition"
+            />
+          )}
+          filter
+          filterElement={statusFilterTemplate}
+          width="150px"
+        />
+        <Column
+          field="timestamp"
+          header="Date & Time"
+          body={(rowData) => (
+            <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
+          )}
+          style={{ minWidth: '10rem' }}
+        />
+       <Column
+  field="Remarks"
+  header="Remarks"
+  width="200px"
+  filter
+  filterElement={statusFilterTemplate}
+  body={(rowData, { rowIndex }) => (
+    <InputTextarea
+      value={rowData.Remarks}
+      onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+      rows={3}
+      className="w-full"
+    />
+  )}
+/>
       </DataTable>
     </div>
   );
-};                   
+};

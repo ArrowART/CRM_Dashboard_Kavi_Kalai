@@ -4,7 +4,7 @@ export default function Tableheadpanel (  ) {
         <div className="items-center justify-between px-6 py-1 space-y-3 lg:space-y-0 lg:flex">
             <div>
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">
-                    Telecaller Leads
+                    Follow Up
                 </h2>
             </div>
             <div>
