@@ -3,7 +3,8 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
-import { getDispositionColor, getSubDispositionColor } from "../Allocation/optionColors";
+import { getDispositionColor, getSubDispositionColor } from "./ProductivityoptionColors";
+
 
 
 export const Tableview = (props) => {

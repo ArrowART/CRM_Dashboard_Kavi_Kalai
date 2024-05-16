@@ -130,7 +130,7 @@ export const Tableview = (props) => {
         })),
       };
       const res = await allocateteamleader(requestBody);
-      toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
+      // toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
     } catch (err) {
       toast.error("Error in saving data");
       console.log(err);
