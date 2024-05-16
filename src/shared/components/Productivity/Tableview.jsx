@@ -40,7 +40,7 @@ export const Tableview = (props) => {
   const parseTimestamp = (value) => {
     if (value) {
       const [_, timestamp] = value.split(' (');
-      return timestamp.slice(0, -1); 
+      return timestamp.slice(0, -1);
     }
     return null;
   };
@@ -70,14 +70,15 @@ export const Tableview = (props) => {
     <div>{first + rowIndex + 1}</div>
   );
 
-  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup'];
+  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup','Lead Accepted','Lead Declined'];
   const subDispositionOptionsMap = {
     'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
     'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
     'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
     'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
     'Followup': ['Option M', 'Option N', 'Option O'],
-    'Future Followup': ['Option W', 'Option X', 'Option Y']
+    'Future Followup': ['Option W', 'Option X', 'Option Y'],
+    'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND','Login Pending','Declined Re-look','Fully Declined','Docs to be collected']
   };
 
   const handleDispositionChange = (rowDataIndex, e) => {
@@ -99,12 +100,12 @@ export const Tableview = (props) => {
     });
     setRowDataState(updatedRowData);
   };
-   return (
+  return (
     <div>
       <DataTable
-      resizableColumns 
-      stripedRows
-      showGridlines tableStyle={{ minWidth: '50rem' }}
+        resizableColumns
+        stripedRows
+        showGridlines tableStyle={{ minWidth: '50rem' }}
         value={rowDataState}
         rows={rowsPerPage}
         first={first}
@@ -118,38 +119,38 @@ export const Tableview = (props) => {
         <Column field="Location" header="Location" sortable style={{ width: '25%' }} />
         <Column field="Product" header="Product" />
         <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
-        <Column field="Firm_Name" header="Firm Name"  />
+        <Column field="Firm_Name" header="Firm Name" />
         <Column field="Mobile1" header="Mobile 1" />
         <Column field="Mobile2" header="Mobile 2" />
         <Column field="Compaign_Name" header="Compaign Name" />
-        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }}/>
+        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
         <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
         <Column field="Productivity_Status" header="Productivity Status" style={{ minWidth: '10rem' }} />
 
         <Column
-                        field="Disposition"
-                        header="Disposition"
-                        body={(rowData, { rowIndex }) => (
-                            <Dropdown
-                                value={rowData.selectedDisposition}
-                                options={dispositionOptions}
-                                onChange={(e) => handleDispositionChange(rowIndex, e)}
-                                placeholder="Select Disposition"
-                                optionLabel={(option) => option}
-                                optionStyle={(option) => ({
-                                    color: 'white',
-                                    backgroundColor: getDispositionColor(option)
-                                })}
-                                style={{
-                                    width: '150px',
-                                    backgroundColor: getDispositionColor(rowData.selectedDisposition)
-                                }}
-                            />
-                        )}
-                        filter
-                        filterElement={statusFilterTemplate}
-                        width="150px"
-                    />
+          field="Disposition"
+          header="Disposition"
+          body={(rowData, { rowIndex }) => (
+            <Dropdown
+              value={rowData.selectedDisposition}
+              options={dispositionOptions}
+              onChange={(e) => handleDispositionChange(rowIndex, e)}
+              placeholder="Select Disposition"
+              optionLabel={(option) => option}
+              optionStyle={(option) => ({
+                color: 'white',
+                backgroundColor: getDispositionColor(option)
+              })}
+              style={{
+                width: '150px',
+                backgroundColor: getDispositionColor(rowData.selectedDisposition)
+              }}
+            />
+          )}
+          filter
+          filterElement={statusFilterTemplate}
+          width="150px"
+        />
         <Column
           field="Sub_Disposition"
           header="Sub Disposition"
@@ -161,12 +162,12 @@ export const Tableview = (props) => {
               placeholder="Select Sub Disposition"
               optionLabel={(option) => option}
               optionStyle={(option) => ({
-                  color: 'white',
-                  backgroundColor: getSubDispositionColor(option)
+                color: 'white',
+                backgroundColor: getSubDispositionColor(option)
               })}
               style={{
-                  width: '150px',
-                  backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
+                width: '150px',
+                backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
               }}
             />
           )}
