@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
@@ -9,9 +8,10 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { getDispositionColor, getSubDispositionColor } from "../Allocation/optionColors";
 
 export const Tableview = (props) => {
-  const { tabledata, filtervalues, handlefiltervalue, first } = props;
+  const { tabledata, filtervalues, handlefiltervalue, first, setFirst } = props;
   const [rowDataState, setRowDataState] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState();
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [activeButton, setActiveButton] = useState(null);
 
   useEffect(() => {
     if (tabledata) {
@@ -24,7 +24,6 @@ export const Tableview = (props) => {
     }
   }, [tabledata]);
 
-  
   useEffect(() => {
     saveData(rowDataState);
   }, [rowDataState]);
@@ -44,10 +43,11 @@ export const Tableview = (props) => {
     }
     return null;
   };
+
   const parseTimestamp = (value) => {
     if (value) {
       const [_, timestamp] = value.split(' (');
-      return timestamp.slice(0, -1); 
+      return timestamp.slice(0, -1);
     }
     return null;
   };
@@ -87,14 +87,16 @@ export const Tableview = (props) => {
     <div>{first + rowIndex + 1}</div>
   );
 
-  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup'];
+  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup','Lead Accepted','Lead Declined'];
   const subDispositionOptionsMap = {
     'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
     'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
     'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
     'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
     'Followup': ['Option M', 'Option N', 'Option O'],
-    'Future Followup': ['Option W', 'Option X', 'Option Y']
+    'Future Followup': ['Option W', 'Option X', 'Option Y'],
+    'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND','Login Pending','Declined Re-look','Fully Declined','Docs to be collected']
+
   };
 
   const handleDispositionChange = (rowDataIndex, e) => {
@@ -124,26 +126,73 @@ export const Tableview = (props) => {
           ...row,
           selectedTeamLeader: row.selectedTeamLeader,
           selectedTelecaller: row.selectedTelecaller,
-          Remarks: row.Remarks, // Include the remarks field
+          Remarks: row.Remarks,
         })),
       };
       const res = await allocateteamleader(requestBody);
-      // toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
+      toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
     } catch (err) {
       toast.error("Error in saving data");
       console.log(err);
     }
   };
 
+  const filterByDisposition = (rowData) => {
+    switch (activeButton) {
+      case 'Submit Lead':
+        return rowData.selectedDisposition === 'Submit Lead';
+      case 'Not Int':
+        return rowData.selectedDisposition === 'Not Int';
+      case 'Call Back':
+        return rowData.selectedDisposition === 'Call Back';
+      case 'DNE':
+        return rowData.selectedDisposition === 'DNE';
+      case 'Followup':
+        return rowData.selectedDisposition === 'Followup';
+      case 'Future Followup':
+        return rowData.selectedDisposition === 'Future Followup';
+      default:
+        return rowData.selectedDisposition !== 'Call Back'; // Hide "Call Back" from other categories
+    }
+  };
 
+  const filteredData = rowDataState.filter(filterByDisposition);
 
   return (
     <div>
+      <div className="flex justify-center gap-4 mb-4">
+        <button
+          onClick={() => setActiveButton(null)}
+          className={`p-2 px-3 text-sm text-white ${activeButton === null ? 'bg-blue-500' : 'bg-green-500'} rounded-t-lg`}>
+          Allocated Leads
+        </button>
+        <button
+          onClick={() => setActiveButton('Call Back')}
+          className={`p-2 px-3 text-sm text-white ${activeButton === 'Call Back' ? 'bg-blue-500' : 'bg-green-500'} rounded-t-lg`}>
+          Workable Leads
+        </button>
+        <button
+          onClick={() => setActiveButton('Not Int')}
+          className={`p-2 px-3 text-sm text-white ${activeButton === 'Not Int' ? 'bg-blue-500' : 'bg-green-500'} rounded-t-lg`}>
+          NonWorkable Leads
+        </button>
+        <button
+          onClick={() => setActiveButton('Followup')}
+          className={`p-2 px-3 text-sm text-white ${activeButton === 'Followup' ? 'bg-blue-500' : 'bg-green-500'} rounded-t-lg`}>
+          Followups
+        </button>
+        <button
+          onClick={() => setActiveButton('Submit Lead')}
+          className={`p-2 px-3 text-sm text-white ${activeButton === 'Submit Lead' ? 'bg-blue-500' : 'bg-green-500'} rounded-t-lg`}>
+          Lead Submitted
+        </button>
+      </div>
       <DataTable
-      resizableColumns 
-      stripedRows
-      showGridlines tableStyle={{ minWidth: '50rem' }}
-        value={rowDataState}
+        resizableColumns
+        stripedRows
+        showGridlines
+        tableStyle={{ minWidth: '50rem' }}
+        value={filteredData}
         rows={rowsPerPage}
         first={first}
         onPage={onPage}
@@ -156,37 +205,36 @@ export const Tableview = (props) => {
         <Column field="Location" header="Location" sortable style={{ width: '25%' }} />
         <Column field="Product" header="Product" />
         <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
-        <Column field="Firm_Name" header="Firm Name"  />
+        <Column field="Firm_Name" header="Firm Name" />
         <Column field="Mobile1" header="Mobile 1" />
         <Column field="Mobile2" header="Mobile 2" />
         <Column field="Compaign_Name" header="Compaign Name" />
-        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }}/>
+        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
         <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
         <Column
-                        field="Disposition"
-                        header="Disposition"
-                        body={(rowData, { rowIndex }) => (
-                            <Dropdown
-                                value={rowData.selectedDisposition}
-                                options={dispositionOptions}
-                                onChange={(e) => handleDispositionChange(rowIndex, e)}
-                                placeholder="Select Disposition"
-                                optionLabel={(option) => option}
-                                optionStyle={(option) => ({
-                                    color: 'white',
-                                    backgroundColor: getDispositionColor(option)
-                                })}
-                                style={{
-                                    width: '150px',
-                                    backgroundColor: getDispositionColor(rowData.selectedDisposition)
-                                }}
-                            />
-                        )}
-                        filter
-                        filterElement={statusFilterTemplate}
-                        width="150px"
-                    />
-
+          field="Disposition"
+          header="Disposition"
+          body={(rowData, { rowIndex }) => (
+            <Dropdown
+              value={rowData.selectedDisposition}
+              options={dispositionOptions}
+              onChange={(e) => handleDispositionChange(rowIndex, e)}
+              placeholder="Select Disposition"
+              optionLabel={(option) => option}
+              optionStyle={(option) => ({
+                color: 'white',
+                backgroundColor: getDispositionColor(option)
+              })}
+              style={{
+                width: '150px',
+                backgroundColor: getDispositionColor(rowData.selectedDisposition)
+              }}
+            />
+          )}
+          filter
+          filterElement={statusFilterTemplate}
+          width="150px"
+        />
         <Column
           field="Sub_Disposition"
           header="Sub Disposition"
@@ -198,12 +246,12 @@ export const Tableview = (props) => {
               placeholder="Select Sub Disposition"
               optionLabel={(option) => option}
               optionStyle={(option) => ({
-                  color: 'white',
-                  backgroundColor: getSubDispositionColor(option)
+                color: 'white',
+                backgroundColor: getSubDispositionColor(option)
               })}
               style={{
-                  width: '150px',
-                  backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
+                width: '150px',
+                backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
               }}
             />
           )}
@@ -219,21 +267,21 @@ export const Tableview = (props) => {
           )}
           style={{ minWidth: '10rem' }}
         />
-       <Column
-  field="Remarks"
-  header="Remarks"
-  width="200px"
-  filter
-  filterElement={statusFilterTemplate}
-  body={(rowData, { rowIndex }) => (
-    <InputTextarea
-      value={rowData.Remarks}
-      onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-      rows={3}
-      className="w-full"
-    />
-  )}
-/>
+        <Column
+          field="Remarks"
+          header="Remarks"
+          width="200px"
+          filter
+          filterElement={statusFilterTemplate}
+          body={(rowData, { rowIndex }) => (
+            <InputTextarea
+              value={rowData.Remarks}
+              onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+              rows={3}
+              className="w-full"
+            />
+          )}
+        />
       </DataTable>
     </div>
   );

@@ -34,21 +34,22 @@ export const TelecallerleadsPage = () => {
 
     const onPage = (page) => {
         setPage(page)
-        setFirst(rows *(page -1));
+        setFirst(rows * (page - 1));
         setRows(rows);
     };
+
     return (
         <div>
             <div>
                 <Tableheadpanel />
                 <Tableview
                     tabledata={tabledata}
-                    totalRecords={totalRecords}
-                    first={first}
-                    cusfilter={cusfilter}
                     filtervalues={filtervalues}
+                    handlefiltervalue={cusfilter}
+                    first={first}
+                    setFirst={setFirst}
                 />
-                 <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
+                <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
             </div>
         </div>
     );
