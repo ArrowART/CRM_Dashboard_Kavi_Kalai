@@ -4,6 +4,7 @@ import { Column } from 'primereact/column';
 import { useState, useEffect } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
+import { getDispositionColor, getSubDispositionColor } from './optionColors';
 
 const Tableview = (props) => {
     const { tabledata, filtervalues, handlefiltervalue, first } = props;
@@ -90,23 +91,6 @@ const Tableview = (props) => {
         });
         setRowDataState(updatedRowData);
     };
-
-    const getDispositionColor = (option) => {
-        switch (option) {
-            case 'Submit Lead':
-                return '#FF99C8';
-            case 'Not Int':
-                return '#FEC8C3';
-            case 'Call Back':
-                return '#FCF6BD';
-            case 'DNE':
-                return '#D0F4DE';
-            case 'Followup':
-                return '#A9DEF9';
-            case 'Future Followup' :
-                return '#E4C1F9'
-        }
-    };
     return (
         <div>
             <div className="flex justify-center gap-4 mb-4">
@@ -184,6 +168,15 @@ const Tableview = (props) => {
                             options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
                             onChange={(e) => handleSubDispositionChange(rowData, e)}
                             placeholder="Select Sub Disposition"
+                            optionLabel={(option) => option}
+                                optionStyle={(option) => ({
+                                    color: 'white',
+                                    backgroundColor: getSubDispositionColor(option)
+                                })}
+                                style={{
+                                    width: '150px',
+                                    backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
+                                }}
                         />
                     )}
                     filter

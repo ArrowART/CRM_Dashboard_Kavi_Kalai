@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { allocateteamleader } from "../../services/apiallocation/apiallocation";
 import { InputTextarea } from "primereact/inputtextarea";
+import { getDispositionColor, getSubDispositionColor } from "../Allocation/optionColors";
 
 export const Tableview = (props) => {
   const { tabledata, filtervalues, handlefiltervalue, first } = props;
@@ -23,7 +24,7 @@ export const Tableview = (props) => {
     }
   }, [tabledata]);
 
-  
+
   useEffect(() => {
     saveData(rowDataState);
   }, [rowDataState]);
@@ -46,7 +47,7 @@ export const Tableview = (props) => {
   const parseTimestamp = (value) => {
     if (value) {
       const [_, timestamp] = value.split(' (');
-      return timestamp.slice(0, -1); 
+      return timestamp.slice(0, -1);
     }
     return null;
   };
@@ -133,30 +134,12 @@ export const Tableview = (props) => {
       console.log(err);
     }
   };
-
-  const getDispositionColor = (option) => {
-    switch (option) {
-        case 'Submit Lead':
-            return '#FF99C8';
-        case 'Not Int':
-            return '#FEC8C3';
-        case 'Call Back':
-            return '#FCF6BD';
-        case 'DNE':
-            return '#D0F4DE';
-        case 'Followup':
-            return '#A9DEF9';
-        case 'Future Followup' :
-            return '#E4C1F9'
-    }
-};
-
   return (
     <div>
       <DataTable
-      resizableColumns 
-      stripedRows
-      showGridlines tableStyle={{ minWidth: '50rem' }}
+        resizableColumns
+        stripedRows
+        showGridlines tableStyle={{ minWidth: '50rem' }}
         value={rowDataState}
         rows={rowsPerPage}
         first={first}
@@ -170,36 +153,36 @@ export const Tableview = (props) => {
         <Column field="Location" header="Location" sortable style={{ width: '25%' }} />
         <Column field="Product" header="Product" />
         <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
-        <Column field="Firm_Name" header="Firm Name"  />
+        <Column field="Firm_Name" header="Firm Name" />
         <Column field="Mobile1" header="Mobile 1" />
         <Column field="Mobile2" header="Mobile 2" />
         <Column field="Compaign_Name" header="Compaign Name" />
-        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }}/>
+        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
         <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
-                     <Column
-                        field="Disposition"
-                        header="Disposition"
-                        body={(rowData, { rowIndex }) => (
-                            <Dropdown
-                                value={rowData.selectedDisposition}
-                                options={dispositionOptions}
-                                onChange={(e) => handleDispositionChange(rowIndex, e)}
-                                placeholder="Select Disposition"
-                                optionLabel={(option) => option}
-                                optionStyle={(option) => ({
-                                    color: 'white',
-                                    backgroundColor: getDispositionColor(option)
-                                })}
-                                style={{
-                                    width: '150px',
-                                    backgroundColor: getDispositionColor(rowData.selectedDisposition)
-                                }}
-                            />
-                        )}
-                        filter
-                        filterElement={statusFilterTemplate}
-                        width="150px"
-                    />
+        <Column
+          field="Disposition"
+          header="Disposition"
+          body={(rowData, { rowIndex }) => (
+            <Dropdown
+              value={rowData.selectedDisposition}
+              options={dispositionOptions}
+              onChange={(e) => handleDispositionChange(rowIndex, e)}
+              placeholder="Select Disposition"
+              optionLabel={(option) => option}
+              optionStyle={(option) => ({
+                color: 'white',
+                backgroundColor: getDispositionColor(option)
+              })}
+              style={{
+                width: '150px',
+                backgroundColor: getDispositionColor(rowData.selectedDisposition)
+              }}
+            />
+          )}
+          filter
+          filterElement={statusFilterTemplate}
+          width="150px"
+        />
         <Column
           field="Sub_Disposition"
           header="Sub Disposition"
@@ -209,6 +192,15 @@ export const Tableview = (props) => {
               options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
               onChange={(e) => handleSubDispositionChange(rowData, e)}
               placeholder="Select Sub Disposition"
+              optionLabel={(option) => option}
+              optionStyle={(option) => ({
+                color: 'white',
+                backgroundColor: getSubDispositionColor(option)
+              })}
+              style={{
+                width: '150px',
+                backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
+              }}
             />
           )}
           filter
@@ -223,21 +215,21 @@ export const Tableview = (props) => {
           )}
           style={{ minWidth: '10rem' }}
         />
-       <Column
-  field="Remarks"
-  header="Remarks"
-  width="200px"
-  filter
-  filterElement={statusFilterTemplate}
-  body={(rowData, { rowIndex }) => (
-    <InputTextarea
-      value={rowData.Remarks}
-      onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-      rows={3}
-      className="w-full"
-    />
-  )}
-/>
+        <Column
+          field="Remarks"
+          header="Remarks"
+          width="200px"
+          filter
+          filterElement={statusFilterTemplate}
+          body={(rowData, { rowIndex }) => (
+            <InputTextarea
+              value={rowData.Remarks}
+              onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+              rows={3}
+              className="w-full"
+            />
+          )}
+        />
       </DataTable>
     </div>
   );
