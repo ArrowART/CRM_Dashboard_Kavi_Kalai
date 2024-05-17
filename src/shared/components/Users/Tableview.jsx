@@ -106,7 +106,7 @@ export const Tableview = (props) => {
                 <Column className="flex justify-center" header="S.No" style={{ minWidth: '40px' }} body={sno} />
                 <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
                 {columns.map((col, i) => (
-                        <Column key={i} field={col.field} filterApply={() => filterapply(col.field)} showFilterMatchModes={false} 
+                        <Column key={i} field={col.field} filterApply={() => filterapply(col.field)} showFilterMatchModes={false} showFilterMenuOptions={false}
                         filterClear={() => filterclear(col.field)} filter={col.filter} filterElement={col.filterElement} 
                         header={col.header} />
                     ))}
