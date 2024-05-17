@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useState, useEffect } from 'react';
@@ -108,12 +107,12 @@ const Tableview = (props) => {
 
     return (
         <div>
-            <div className="flex justify-center gap-4 mb-4">
-                <button onClick={() => filterByProduct(null)} className={`p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>ALL</button>
-                <button onClick={() => filterByProduct('STPL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'STPL' ? 'blue' : 'green'}-500 rounded-t-lg`}>STPL Products</button>
-                <button onClick={() => filterByProduct('BL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'BL' ? 'blue' : 'green'}-500 rounded-t-lg`}>BL Products</button>
-                <button onClick={() => filterByProduct('PL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'PL' ? 'blue' : 'green'}-500 rounded-t-lg`}>PL Products</button>
-                <button onClick={() => filterByProduct('DL')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'DL' ? 'blue' : 'green'}-500 rounded-t-lg`}>DL Products</button>
+            <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
+                <button onClick={() => filterByProduct(null)} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>ALL</button>
+                <button onClick={() => filterByProduct('STPL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'STPL' ? 'blue' : 'green'}-500 rounded-t-lg`}>STPL Products</button>
+                <button onClick={() => filterByProduct('BL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'BL' ? 'blue' : 'green'}-500 rounded-t-lg`}>BL Products</button>
+                <button onClick={() => filterByProduct('PL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'PL' ? 'blue' : 'green'}-500 rounded-t-lg`}>PL Products</button>
+                <button onClick={() => filterByProduct('DL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'DL' ? 'blue' : 'green'}-500 rounded-t-lg`}>DL Products</button>
             </div>
             <div className="flex items-center justify-end mb-4">
                 <span>Show:</span>

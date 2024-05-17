@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import useAuth from '../../services/store/useAuth';
@@ -41,7 +41,7 @@ export default function Tableheadpanel(props) {
             await allocateteamleader({
                 data: allocatedData,
                 selectedTeamLeader,
-                selectedTelecaller  
+                selectedTelecaller
             });
             console.log('Bulk allocation saved successfully.');
             updateTableData();
@@ -85,33 +85,32 @@ export default function Tableheadpanel(props) {
     }, [selectedTeamLeader]);
 
     return (
-        <div className="items-center justify-between px-6 py-4 lg:space-y-0 lg:flex">
+        <div className="flex items-center justify-between px-6 py-4 lg:space-y-0">
             <div>
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">Allocation</h2>
             </div>
-            <div>
-                <div className="inline-flex lg:gap-x-2 gap-x-3">
-                    <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[200px] md:w-[250px]" onChange={(e) => setglobalfilter(e.target.value)} />
+                <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
+                    <input type="input" placeholder="Search..." className="px-4 py-2  border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
+                    <div className="py-2">
                     {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
-                <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                    <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
-                </button>
-            )}
+                        <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
+                            <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
+                        </button>
+                    )}
                     {userdetails()?.Role === 'SuperAdmin' && (
                         <>
-                            <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-    <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
-</button>
+                            <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
+                                <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
+                            </button>
 
                             <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
-                                <i className="fi fi-rr-trash"></i> Delete All
+                                <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
                             </button>
                         </>
                     )}
-          
+                    </div>
                 </div>
-            </div>
-            <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal style={{ width: '30vw' }} className="p-4 bg-white rounded-lg">
+            <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal className="p-4 bg-white rounded-lg w-[600px]">
                 <div className="p-fluid">
                     {userdetails()?.Role === 'TeamLeader' ? (
                         <div className="mb-4 p-field">

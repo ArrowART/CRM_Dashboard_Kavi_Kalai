@@ -36,14 +36,14 @@ export default function Topbar() {
     <header className="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white  text-sm py-2.5 sm:py-4 lg:ps-[17rem] ">
       <nav className="flex items-center w-full px-4 mx-auto basis-full sm:px-6 md:px-8" aria-label="Global">
         <div className="me-5 lg:me-0 lg:hidden">
-          <a className="flex-none text-xl font-semibold " href="#" aria-label="Brand">Brand</a>
+          <img src="../images/cashflow-logo.png" alt="" />
         </div>
         <div className="flex items-center justify-end w-full ms-auto sm:justify-between sm:gap-x-3 sm:order-3 lg:rounded-xl lg:border lg:p-5">
-          <div className="sm:hidden">
+          {/* <div className="sm:hidden">
             <button type="button" className="w-[2.375rem] h-[2.375rem] inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none ">
               <svg className="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
             </button>
-          </div>
+          </div> */}
           <div className="hidden sm:block">
             <label htmlFor="icon" className="sr-only">Search</label>
             <div className="relative">
@@ -55,7 +55,7 @@ export default function Topbar() {
           </div>
           <div className="flex flex-row items-center justify-end gap-2">
             <div className="">
-              <h1 className="mx-3 text-xl font-semibold text-blue-600">{userdetails()?.Role}</h1>
+              <h1 className="font-semibold text-blue-600 mx-1text-lg lg:text-xl">{userdetails()?.Role}</h1>
             </div>
             <Dropdown placement="bottom-end">
               <DropdownTrigger>

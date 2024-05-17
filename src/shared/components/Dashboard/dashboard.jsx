@@ -70,6 +70,7 @@ export default function Dashboard() {
         <h1 className='text-2xl font-semibold'>Total Users</h1>
         <Chart type="pie" data={chartData} options={chartOptions} className=""/>
       </div>
+
     </div>
   );
 }

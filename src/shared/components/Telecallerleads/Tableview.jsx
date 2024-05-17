@@ -186,20 +186,20 @@ export const Tableview = (props) => {
   };
   return (
     <div>
-       <div className="flex justify-center gap-4 mb-4">
-  <button onClick={() => handleButtonClick(null)} className={`p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>
+       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
+  <button onClick={() => handleButtonClick(null)} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>
     Allocated Leads
   </button>
-  <button onClick={() => handleButtonClick('Workableleads' )} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'Workableleads' ? 'blue' : 'green'}-500 rounded-t-lg`}>
+  <button onClick={() => handleButtonClick('Workableleads' )} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Workableleads' ? 'blue' : 'green'}-500 rounded-t-lg`}>
   Workable Leads
   </button>
-  <button onClick={() => handleButtonClick('Nonworkableleads')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'Nonworkableleads' ? 'blue' : 'green'}-500 rounded-t-lg`}>
+  <button onClick={() => handleButtonClick('Nonworkableleads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Nonworkableleads' ? 'blue' : 'green'}-500 rounded-t-lg`}>
     Non Workable Leads
   </button>
-  <button onClick={() => handleButtonClick('Followups')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'Followups' ? 'blue' : 'green'}-500 rounded-t-lg`}>
+  <button onClick={() => handleButtonClick('Followups')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Followups' ? 'blue' : 'green'}-500 rounded-t-lg`}>
     Followups
   </button>
-  <button onClick={() => handleButtonClick('Lead Submitted')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Submitted' ? 'blue' : 'green'}-500 rounded-t-lg`}>
+  <button onClick={() => handleButtonClick('Lead Submitted')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Submitted' ? 'blue' : 'green'}-500 rounded-t-lg`}>
     Lead Submitted
   </button>
 </div>

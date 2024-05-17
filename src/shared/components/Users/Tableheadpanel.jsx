@@ -62,9 +62,9 @@ export default function Tableheadpanel ( props ) {
             </div>
             <div>
                 <div className="inline-flex lg:gap-x-2 gap-x-3">
-                    <input type="text" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl" onChange={(e) => setglobalfilter(e.target.value)} />
+                    <input type="text" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[200px] lg:w-[250px]" onChange={(e) => setglobalfilter(e.target.value)} />
                     <button onClick={newform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                        <span>Add New</span>
+                    <i className="fi fi-rr-add"></i> <span className="hidden md:block">Add New</span>
                     </button>
 {/*                   
                     <button onClick={handleAllocate} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
