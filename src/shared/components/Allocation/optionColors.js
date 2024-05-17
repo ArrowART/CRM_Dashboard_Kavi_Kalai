@@ -13,6 +13,10 @@ export const getDispositionColor = (option) => {
             return '#A9DEF9';
         case 'Future Followup':
             return '#E4C1F9';
+            case 'Lead Accepted':
+            return '#C8B6FF';
+        case 'Lead Declined':
+            return '#EA720D';
         default:
             return null;
     }
@@ -48,6 +52,14 @@ export const getSubDispositionColor = (option) => {
         case 'Option X':
         case 'Option Y':
             return '#FF8FAB';
+            case 'Logged WIP':
+        case 'In Credit':
+        case 'ABND':
+        case 'Login Pending':
+        case 'Declined Re-look':
+        case 'Fully Declined':
+        case 'Docs to be collected':
+            return '#9688C0';
         default:
             return null;
     }

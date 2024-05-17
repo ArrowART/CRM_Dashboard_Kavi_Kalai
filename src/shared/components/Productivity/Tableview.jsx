@@ -1,17 +1,17 @@
-/* eslint-disable react/prop-types */
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { allocateteamleader } from "../../services/apiallocation/apiallocation";
+import { InputTextarea } from "primereact/inputtextarea";
 import { getDispositionColor, getSubDispositionColor } from "./ProductivityoptionColors";
 
-
-
 export const Tableview = (props) => {
-  const { tabledata, filtervalues, handlefiltervalue, first } = props;
+  const { tabledata, filtervalues, handlefiltervalue, first, setFirst } = props;
   const [rowDataState, setRowDataState] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState();
-
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [activeButton, setActiveButton] = useState(null);
   useEffect(() => {
     if (tabledata) {
       setRowDataState(tabledata.map(row => ({
@@ -38,12 +38,23 @@ export const Tableview = (props) => {
     }
     return null;
   };
+
   const parseTimestamp = (value) => {
     if (value) {
       const [_, timestamp] = value.split(' (');
       return timestamp.slice(0, -1);
     }
     return null;
+  };
+
+  const handleRemarksChange = (rowIndex, value) => {
+    const updatedRowData = rowDataState.map((row, index) => {
+      if (index === rowIndex) {
+        return { ...row, Remarks: value };
+      }
+      return row;
+    });
+    setRowDataState(updatedRowData);
   };
 
   const handleRowsPerPageChange = (event) => {
@@ -71,7 +82,11 @@ export const Tableview = (props) => {
     <div>{first + rowIndex + 1}</div>
   );
 
-  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup','Lead Accepted','Lead Declined'];
+  const dispositionOptions = [
+    'Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup',
+    'Future Followup', 'Lead Accepted', 'Lead Declined'
+  ];
+
   const subDispositionOptionsMap = {
     'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
     'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
@@ -79,7 +94,7 @@ export const Tableview = (props) => {
     'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
     'Followup': ['Option M', 'Option N', 'Option O'],
     'Future Followup': ['Option W', 'Option X', 'Option Y'],
-    'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND','Login Pending','Declined Re-look','Fully Declined','Docs to be collected']
+    'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected']
   };
 
   const handleDispositionChange = (rowDataIndex, e) => {
@@ -92,21 +107,87 @@ export const Tableview = (props) => {
     setRowDataState(updatedRowData);
   };
 
-  const handleSubDispositionChange = (rowData, e) => {
-    const updatedRowData = rowDataState.map((row) => {
-      if (row === rowData) {
+  const handleSubDispositionChange = (rowDataIndex, e) => {
+    const updatedRowData = rowDataState.map((row, index) => {
+      if (index === rowDataIndex) {
         return { ...row, selectedSubDisposition: e.value };
       }
       return row;
     });
     setRowDataState(updatedRowData);
   };
+
+  const saveData = async (rowIndex) => {
+    try {
+      const row = rowDataState[rowIndex];
+      const requestBody = {
+        data: [{
+          ...row,
+          selectedTeamLeader: row.selectedTeamLeader,
+          selectedTelecaller: row.selectedTelecaller,
+          Remarks: row.Remarks,
+        }],
+      };
+      const res = await allocateteamleader(requestBody);
+      toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
+    } catch (err) {
+      toast.error("Error in saving data");
+      console.log(err);
+    }
+  };
+  // const filterByProductivitystatus = (role) => {
+  //   setActiveButton(role);
+  //   if (role) {
+  //     const filteredData = tabledata.filter(item => item.Productivity_Status === role);
+  //     setRowDataState(filteredData.map(row => ({
+  //       ...row,
+  //       selectedDisposition: parseDispositionValue(row.Disposition),
+  //       selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
+  //       timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
+  //     })));
+  //   } else {
+  //     setRowDataState(tabledata.map(row => ({
+  //       ...row,
+  //       selectedDisposition: parseDispositionValue(row.Disposition),
+  //       selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
+  //       timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
+  //     })));
+  //   }
+  // };
+  const filterByProductivitystatus = (role) => {
+    setActiveButton(role);
+    if (role) {
+      const filteredData = tabledata.filter(item => item.Productivity_Status.trim() === role.trim());
+      setRowDataState(filteredData.map(row => ({
+        ...row,
+        selectedDisposition: parseDispositionValue(row.Disposition),
+        selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
+        timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
+      })));
+    } else {
+      setRowDataState(tabledata.map(row => ({
+        ...row,
+        selectedDisposition: parseDispositionValue(row.Disposition),
+        selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
+        timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
+      })));
+    }
+  };
+  
   return (
     <div>
+      <div className="flex justify-center gap-4 mb-4">
+                <button onClick={() => filterByProductivitystatus(null)} className={`p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>All Leads</button>
+                <button onClick={() => filterByProductivitystatus('Worked Leads')}  className={`p-2 px-3 text-sm text-white bg-${activeButton === 'Worked Leads' ? 'blue' : 'green'}-500 rounded-t-lg`}>Worked Leads</button>
+                <button onClick={() => filterByProductivitystatus('Reached')}  className={`p-2 px-3 text-sm text-white bg-${activeButton === 'Reached' ? 'blue' : 'green'}-500 rounded-t-lg`}>Reached Leads</button>
+                <button onClick={() => filterByProductivitystatus('Not Reached')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'Not Reached' ? 'blue' : 'green'}-500 rounded-t-lg`}>Not Reached Leads</button>
+                <button onClick={() => filterByProductivitystatus('Lead Accepted')} className={`p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Accepted' ? 'blue' : 'green'}-500 rounded-t-lg`}>Lead Acepted Leads</button>
+            </div>
       <DataTable
         resizableColumns
         stripedRows
-        showGridlines tableStyle={{ minWidth: '50rem' }}
+        showGridlines
+        tableStyle={{ minWidth: '50rem' }}
         value={rowDataState}
         rows={rowsPerPage}
         first={first}
@@ -138,7 +219,7 @@ export const Tableview = (props) => {
               onChange={(e) => handleDispositionChange(rowIndex, e)}
               placeholder="Select Disposition"
               optionLabel={(option) => option}
-              optionStyle={(option) => ({
+              optionStyle={(option) =>({
                 color: 'white',
                 backgroundColor: getDispositionColor(option)
               })}
@@ -155,11 +236,11 @@ export const Tableview = (props) => {
         <Column
           field="Sub_Disposition"
           header="Sub Disposition"
-          body={(rowData) => (
+          body={(rowData, { rowIndex }) => (
             <Dropdown
               value={rowData.selectedSubDisposition}
               options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
-              onChange={(e) => handleSubDispositionChange(rowData, e)}
+              onChange={(e) => handleSubDispositionChange(rowIndex, e)}
               placeholder="Select Sub Disposition"
               optionLabel={(option) => option}
               optionStyle={(option) => ({
@@ -184,8 +265,34 @@ export const Tableview = (props) => {
           )}
           style={{ minWidth: '10rem' }}
         />
-        <Column field="Remarks" header="Remarks" filter filterElement={statusFilterTemplate} />
+        <Column
+          field="Remarks"
+          header="Remarks"
+          width="200px"
+          filter
+          filterElement={statusFilterTemplate}
+          body={(rowData, { rowIndex }) => (
+            <InputTextarea
+              value={rowData.Remarks}
+              onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+              rows={3}
+              className="w-full"
+            />
+          )}
+        />
+        <Column
+          body={(rowData, { rowIndex }) => (
+            <button
+              onClick={() => saveData(rowIndex)}
+              disabled={!rowData.selectedDisposition || !rowData.selectedSubDisposition}
+              className={`p-2 px-4 text-white rounded-lg ${rowData.selectedDisposition && rowData.selectedSubDisposition ? 'bg-blue-500' : 'bg-gray-400 cursor-not-allowed'}`}>
+              Submit
+            </button>
+          )}
+          style={{ minWidth: '10rem' }}
+        />
       </DataTable>
     </div>
   );
 };
+

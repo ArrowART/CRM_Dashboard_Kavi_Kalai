@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
@@ -9,12 +8,14 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { getDispositionColor, getSubDispositionColor } from "../Allocation/optionColors";
 
 export const Tableview = (props) => {
-  const { tabledata, filtervalues, handlefiltervalue, first } = props;
+  const { tabledata, filtervalues, handlefiltervalue, first, setFirst } = props;
   const [rowDataState, setRowDataState] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState();
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [activeButton, setActiveButton] = useState(null);
 
   useEffect(() => {
     if (tabledata) {
+      console.log("Received tabledata:", tabledata);
       setRowDataState(tabledata.map(row => ({
         ...row,
         selectedDisposition: parseDispositionValue(row.Disposition),
@@ -23,11 +24,6 @@ export const Tableview = (props) => {
       })));
     }
   }, [tabledata]);
-
-
-  useEffect(() => {
-    saveData(rowDataState);
-  }, [rowDataState]);
 
   const parseDispositionValue = (dispositionValue) => {
     if (dispositionValue) {
@@ -44,6 +40,7 @@ export const Tableview = (props) => {
     }
     return null;
   };
+
   const parseTimestamp = (value) => {
     if (value) {
       const [_, timestamp] = value.split(' (');
@@ -87,14 +84,15 @@ export const Tableview = (props) => {
     <div>{first + rowIndex + 1}</div>
   );
 
-  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup'];
+  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup', 'Lead Accepted', 'Lead Declined'];
   const subDispositionOptionsMap = {
     'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
     'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
     'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
     'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
     'Followup': ['Option M', 'Option N', 'Option O'],
-    'Future Followup': ['Option W', 'Option X', 'Option Y']
+    'Future Followup': ['Option W', 'Option X', 'Option Y'],
+    'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected']
   };
 
   const handleDispositionChange = (rowDataIndex, e) => {
@@ -107,9 +105,9 @@ export const Tableview = (props) => {
     setRowDataState(updatedRowData);
   };
 
-  const handleSubDispositionChange = (rowData, e) => {
-    const updatedRowData = rowDataState.map((row) => {
-      if (row === rowData) {
+  const handleSubDispositionChange = (rowDataIndex, e) => {
+    const updatedRowData = rowDataState.map((row, index) => {
+      if (index === rowDataIndex) {
         return { ...row, selectedSubDisposition: e.value };
       }
       return row;
@@ -117,29 +115,32 @@ export const Tableview = (props) => {
     setRowDataState(updatedRowData);
   };
 
-  const saveData = async (rowData) => {
+  const saveData = async (rowIndex) => {
     try {
+      const row = rowDataState[rowIndex];
       const requestBody = {
-        data: rowData.map((row) => ({
+        data: [{
           ...row,
           selectedTeamLeader: row.selectedTeamLeader,
           selectedTelecaller: row.selectedTelecaller,
-          Remarks: row.Remarks, // Include the remarks field
-        })),
+          Remarks: row.Remarks,
+        }],
       };
       const res = await allocateteamleader(requestBody);
-      // toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
+      toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
     } catch (err) {
       toast.error("Error in saving data");
       console.log(err);
     }
   };
+
   return (
     <div>
       <DataTable
         resizableColumns
         stripedRows
-        showGridlines tableStyle={{ minWidth: '50rem' }}
+        showGridlines
+        tableStyle={{ minWidth: '50rem' }}
         value={rowDataState}
         rows={rowsPerPage}
         first={first}
@@ -177,60 +178,72 @@ export const Tableview = (props) => {
                 width: '150px',
                 backgroundColor: getDispositionColor(rowData.selectedDisposition)
               }}
-            />
-          )}
-          filter
-          filterElement={statusFilterTemplate}
-          width="150px"
-        />
-        <Column
-          field="Sub_Disposition"
-          header="Sub Disposition"
-          body={(rowData) => (
-            <Dropdown
-              value={rowData.selectedSubDisposition}
-              options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
-              onChange={(e) => handleSubDispositionChange(rowData, e)}
-              placeholder="Select Sub Disposition"
-              optionLabel={(option) => option}
-              optionStyle={(option) => ({
-                color: 'white',
-                backgroundColor: getSubDispositionColor(option)
-              })}
-              style={{
-                width: '150px',
-                backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
-              }}
-            />
-          )}
-          filter
-          filterElement={statusFilterTemplate}
-          width="150px"
-        />
-        <Column
-          field="timestamp"
-          header="Date & Time"
-          body={(rowData) => (
-            <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
-          )}
-          style={{ minWidth: '10rem' }}
-        />
-        <Column
-          field="Remarks"
-          header="Remarks"
-          width="200px"
-          filter
-          filterElement={statusFilterTemplate}
-          body={(rowData, { rowIndex }) => (
-            <InputTextarea
-              value={rowData.Remarks}
-              onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-              rows={3}
-              className="w-full"
-            />
-          )}
-        />
-      </DataTable>
-    </div>
-  );
-};
+              />
+            )}
+            filter
+            filterElement={statusFilterTemplate}
+            width="150px"
+          />
+          <Column
+            field="Sub_Disposition"
+            header="Sub Disposition"
+            body={(rowData, { rowIndex }) => (
+              <Dropdown
+                value={rowData.selectedSubDisposition}
+                options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
+                onChange={(e) => handleSubDispositionChange(rowIndex, e)}
+                placeholder="Select Sub Disposition"
+                optionLabel={(option) => option}
+                optionStyle={(option) => ({
+                  color: 'white',
+                  backgroundColor: getSubDispositionColor(option)
+                })}
+                style={{
+                  width: '150px',
+                  backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
+                }}
+              />
+            )}
+            filter
+            filterElement={statusFilterTemplate}
+            width="150px"
+          />
+          <Column
+            field="timestamp"
+            header="Date & Time"
+            body={(rowData) => (
+              <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
+            )}
+            style={{ minWidth: '10rem' }}
+          />
+          <Column
+            field="Remarks"
+            header="Remarks"
+            width="200px"
+            filter
+            filterElement={statusFilterTemplate}
+            body={(rowData, { rowIndex }) => (
+              <InputTextarea
+                value={rowData.Remarks}
+                onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+                rows={3}
+                className="w-full"
+              />
+            )}
+          />
+          <Column
+            body={(rowData, { rowIndex }) => (
+              <button
+                onClick={() => saveData(rowIndex)}
+                disabled={!rowData.selectedDisposition || !rowData.selectedSubDisposition}
+                className={`p-2 px-4 text-white rounded-lg ${rowData.selectedDisposition && rowData.selectedSubDisposition ? 'bg-blue-500' : 'bg-gray-400 cursor-not-allowed'}`}>
+                Submit
+              </button>
+            )}
+            style={{ minWidth: '10rem' }}
+          />
+        </DataTable>
+      </div>
+    );
+    };
+    
