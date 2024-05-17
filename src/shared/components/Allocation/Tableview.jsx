@@ -5,17 +5,29 @@ import { useState, useEffect } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { getDispositionColor, getSubDispositionColor } from './optionColors';
+import { Skeleton } from 'primereact/skeleton';
+import useRegionFilter from './RegionFilters';
+import useLocationFilter from './LocationFilters';
 
 const Tableview = (props) => {
-    const { tabledata, filtervalues, handlefiltervalue, first } = props;
+    const { tabledata, filtervalues, handlefiltervalue, first, cusfilter } = props;
     const [activeButton, setActiveButton] = useState(null);
     const [rowDataState, setRowDataState] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [isLoading, setIsLoading] = useState(true);
+    const {
+        filters,
+        regionFilterTemplate,
+        filterApply,
+        filterClear
+    } = useRegionFilter(tabledata, cusfilter);
+    const { selectedLocation1, setSelectedLocation1, filterApply1, filterClear1,LocationFilterTemplate } = useLocationFilter(tabledata, cusfilter);
 
     useEffect(() => {
         if (tabledata) {
             setRowDataState(tabledata.map(row => ({ ...row, selectedDisposition: null, selectedSubDisposition: null })));
         }
+        setIsLoading(false);
     }, [tabledata]);
 
     const handleRowsPerPageChange = (event) => {
@@ -27,6 +39,7 @@ const Tableview = (props) => {
     };
 
     const statusItemTemplate = (option) => option;
+
     const statusFilterTemplate = (options) => (
         <Dropdown
             value={options.value}
@@ -82,6 +95,7 @@ const Tableview = (props) => {
         });
         setRowDataState(updatedRowData);
     };
+
     const handleRemarksChange = (rowIndex, value) => {
         const updatedRowData = rowDataState.map((row, index) => {
             if (index === rowIndex) {
@@ -91,6 +105,7 @@ const Tableview = (props) => {
         });
         setRowDataState(updatedRowData);
     };
+
     return (
         <div>
             <div className="flex justify-center gap-4 mb-4">
@@ -111,31 +126,30 @@ const Tableview = (props) => {
                 </select>
                 <span>rows per page</span>
             </div>
-            <DataTable
-                resizableColumns
-                stripedRows
-                showGridlines tableStyle={{ minWidth: '50rem' }}
-                value={rowDataState}
-                paginator
-                rows={rowsPerPage}
-                first={first}
-                onPage={onPage}
-                scrollable
-                scrollHeight="550px"
-                className='text-sm'
-            >
-                <Column field="sno" header="S.No" body={sno} />
-                <Column field="Region" header="Region" filter={true} filterElement={statusFilterTemplate} sortable style={{ width: '25%' }} />
-                <Column field="Location" header="Location" sortable style={{ width: '25%' }} />
-                <Column field="Product" header="Product" />
-                <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
-                <Column field="Firm_Name" header="Firm Name" />
-                <Column field="Mobile1" header="Mobile 1" />
-                <Column field="Mobile2" header="Mobile 2" />
-                <Column field="Compaign_Name" header="Compaign Name" />
-                <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
-                <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
-                <Column
+            {isLoading ? (
+                <div className="p-4">
+                    <Skeleton height="3rem" className="mb-2"></Skeleton>
+                    <Skeleton height="3rem" className="mb-2"></Skeleton>
+                    <Skeleton height="3rem" width="100%"></Skeleton>
+                </div>
+            ) : (
+                <>
+                <DataTable resizableColumns stripedRows showGridlines tableStyle={{ minWidth: '50rem' }} value={rowDataState} paginator
+                    rows={rowsPerPage} first={first} onPage={onPage} scrollable scrollHeight="550px" className='text-sm' filters={{...filters, Location: selectedLocation1}} 
+                    filterDisplay="menu"
+                >
+                    <Column field="sno" header="S.No" body={sno} />
+                    <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} />
+                    <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />
+                    <Column field="Product" header="Product" />
+                    <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
+                    <Column field="Firm_Name" header="Firm Name" />
+                    <Column field="Mobile1" header="Mobile 1" />
+                    <Column field="Mobile2" header="Mobile 2" />
+                    <Column field="Compaign_Name" header="Compaign Name" />
+                    <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
+                    <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
+                    <Column
                         field="Disposition"
                         header="Disposition"
                         body={(rowData, { rowIndex }) => (
@@ -159,16 +173,16 @@ const Tableview = (props) => {
                         filterElement={statusFilterTemplate}
                         width="150px"
                     />
-                <Column
-                    field="Sub_Disposition"
-                    header="Sub Disposition"
-                    body={(rowData) => (
-                        <Dropdown
-                            value={rowData.selectedSubDisposition}
-                            options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
-                            onChange={(e) => handleSubDispositionChange(rowData, e)}
-                            placeholder="Select Sub Disposition"
-                            optionLabel={(option) => option}
+                    <Column
+                        field="Sub_Disposition"
+                        header="Sub Disposition"
+                        body={(rowData) => (
+                            <Dropdown
+                                value={rowData.selectedSubDisposition}
+                                options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
+                                onChange={(e) => handleSubDispositionChange(rowData, e)}
+                                placeholder="Select Sub Disposition"
+                                optionLabel={(option) => option}
                                 optionStyle={(option) => ({
                                     color: 'white',
                                     backgroundColor: getSubDispositionColor(option)
@@ -177,40 +191,41 @@ const Tableview = (props) => {
                                     width: '150px',
                                     backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
                                 }}
-                        />
-                    )}
-                    filter
-                    filterElement={statusFilterTemplate}
-                    width="150px"
-                />
-                <Column
-                    field="timestamp"
-                    header="Date & Time"
-                    body={(rowData) => (
-                        <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
-                    )}
-                    style={{ minWidth: '10rem' }}
-                />
-                <Column
-                    field="Remarks"
-                    header="Remarks"
-                    width="200px"
-                    filter
-                    filterElement={statusFilterTemplate}
-                    body={(rowData, { rowIndex }) => (
-                        <InputTextarea
-                            value={rowData.Remarks}
-                            onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-                            rows={3}
-                            className="w-full"
-                        />
-                    )}
-                />
-            </DataTable>
+                            />
+                        )}
+                        filter
+                        filterElement={statusFilterTemplate}
+                        width="150px"
+                    />
+                    <Column
+                        field="timestamp"
+                        header="Date & Time"
+                        body={(rowData) => (
+                            <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
+                        )}
+                        style={{ minWidth: '10rem' }}
+                    />
+                    <Column
+                        field="Remarks"
+                        header="Remarks"
+                        width="200px"
+                        filter
+                        filterElement={statusFilterTemplate}
+                        body={(rowData, { rowIndex }) => (
+                            <InputTextarea
+                                value={rowData.Remarks}
+                                onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+                                rows={3}
+                                className="w-full"
+                            />
+                        )}
+                    />
+                </DataTable>
+                </>
+            )}
+            
         </div>
     );
 };
 
 export default Tableview;
-
-// headerStyle={{ backgroundColor: '#006400', color: 'white' }} bodyStyle={{ backgroundColor: '#38B000', color: 'white' }}
