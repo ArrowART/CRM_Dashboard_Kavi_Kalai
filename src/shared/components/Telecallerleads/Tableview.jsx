@@ -9,7 +9,7 @@ import { getDispositionColor, getSubDispositionColor } from "../Allocation/optio
 import { Skeleton } from "primereact/skeleton";
 
 export const Tableview = (props) => {
-  const { tabledata, filtervalues, handlefiltervalue, first, setFirst } = props;
+  const { tabledata, filtervalues, handlefiltervalue, first, setFirst,updateData } = props;
   const [rowDataState, setRowDataState] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [activeButton, setActiveButton] = useState(null);
@@ -127,6 +127,7 @@ export const Tableview = (props) => {
       };
       const res = await allocateteamleader(requestBody);
       toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
+      await updateData();
     } catch (err) {
       toast.error("Error in saving data");
       console.log(err);

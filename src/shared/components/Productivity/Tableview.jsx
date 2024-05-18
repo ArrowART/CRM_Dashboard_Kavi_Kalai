@@ -182,6 +182,7 @@ export const Tableview = (props) => {
                 <button onClick={() => filterByProductivitystatus('Reached')}  className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Reached' ? 'blue' : 'green'}-500 rounded-t-lg`}>Reached Leads</button>
                 <button onClick={() => filterByProductivitystatus('Not Reached')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Reached' ? 'blue' : 'green'}-500 rounded-t-lg`}>Not Reached Leads</button>
                 <button onClick={() => filterByProductivitystatus('Lead Accepted')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Accepted' ? 'blue' : 'green'}-500 rounded-t-lg`}>Lead Acepted Leads</button>
+                <button onClick={() => filterByProductivitystatus('Not Updated')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Updated' ? 'blue' : 'green'}-500 rounded-t-lg`}>Notupdated Leads</button>
             </div>
       <DataTable
         resizableColumns

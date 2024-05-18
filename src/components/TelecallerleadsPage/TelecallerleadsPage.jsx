@@ -31,6 +31,9 @@ export const TelecallerleadsPage = () => {
     const cusfilter = (field, value) => {
         setcolFilter({ ...colfilter, ...{ [field]: value } });
     };
+    const updateData = async () => {
+        await getallteamleaderandtelecaller();
+    };
 
     const onPage = (page) => {
         setPage(page)
@@ -48,6 +51,7 @@ export const TelecallerleadsPage = () => {
                     handlefiltervalue={cusfilter}
                     first={first}
                     setFirst={setFirst}
+                    updateData={updateData}
                 />
                 <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
             </div>
