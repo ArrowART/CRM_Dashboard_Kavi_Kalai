@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useState, useEffect } from 'react';
@@ -14,13 +15,8 @@ const Tableview = (props) => {
     const [rowDataState, setRowDataState] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(20);
     const [isLoading, setIsLoading] = useState(true);
-    const {
-        filters,
-        regionFilterTemplate,
-        filterApply,
-        filterClear
-    } = useRegionFilter(tabledata, cusfilter);
-    const { selectedLocation1, setSelectedLocation1, filterApply1, filterClear1,LocationFilterTemplate } = useLocationFilter(tabledata, cusfilter);
+    const {filters, regionFilterTemplate, filterApply, filterClear} = useRegionFilter(tabledata, cusfilter);
+    const { filters1, LocationFilterTemplate,filterApply1,filterClear1 } = useLocationFilter(tabledata, cusfilter);
 
     useEffect(() => {
         if (tabledata) {
@@ -133,8 +129,20 @@ const Tableview = (props) => {
                 </div>
             ) : (
                 <>
-                <DataTable resizableColumns stripedRows showGridlines tableStyle={{ minWidth: '50rem' }} value={rowDataState} paginator
-                    rows={rowsPerPage} first={first} onPage={onPage} scrollable scrollHeight="550px" className='text-sm' filters={{...filters, Location: selectedLocation1}} 
+                <DataTable
+                    resizableColumns
+                    stripedRows
+                    showGridlines
+                    tableStyle={{ minWidth: '50rem' }}
+                    value={rowDataState}
+                    paginator
+                    rows={rowsPerPage}
+                    first={first}
+                    onPage={onPage}
+                    scrollable
+                    scrollHeight="550px"
+                    className="text-sm"
+                    filters={{ ...filters, ...filters1 }}
                     filterDisplay="menu"
                 >
                     <Column field="sno" header="S.No" body={sno} />
@@ -222,7 +230,6 @@ const Tableview = (props) => {
                 </DataTable>
                 </>
             )}
-            
         </div>
     );
 };

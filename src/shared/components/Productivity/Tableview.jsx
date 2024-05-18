@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
@@ -6,12 +7,16 @@ import toast from "react-hot-toast";
 import { allocateteamleader } from "../../services/apiallocation/apiallocation";
 import { InputTextarea } from "primereact/inputtextarea";
 import { getDispositionColor, getSubDispositionColor } from "./ProductivityoptionColors";
+import useRegionFilter from "../Allocation/RegionFilters";
+import useLocationFilter from "../Allocation/LocationFilters";
 
 export const Tableview = (props) => {
-  const { tabledata, filtervalues, handlefiltervalue, first, setFirst } = props;
+  const { tabledata, filtervalues, handlefiltervalue, first, setFirst, cusfilter } = props;
   const [rowDataState, setRowDataState] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [activeButton, setActiveButton] = useState(null);
+  const {filters, regionFilterTemplate, filterApply, filterClear} = useRegionFilter(tabledata, cusfilter);
+  const { filters1, LocationFilterTemplate,filterApply1,filterClear1 } = useLocationFilter(tabledata, cusfilter);
   useEffect(() => {
     if (tabledata) {
       setRowDataState(tabledata.map(row => ({
@@ -196,10 +201,11 @@ export const Tableview = (props) => {
         className="text-sm"
         scrollable
         scrollHeight="660px"
+        filters={{ ...filters, ...filters1 }}
       >
         <Column field="sno" header="S.No" body={sno} />
-        <Column field="Region" header="Region" filter={true} filterElement={statusFilterTemplate} sortable style={{ width: '25%' }} />
-        <Column field="Location" header="Location" sortable style={{ width: '25%' }} />
+        <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} />
+        <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />
         <Column field="Product" header="Product" />
         <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
         <Column field="Firm_Name" header="Firm Name" />

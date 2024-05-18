@@ -23,10 +23,10 @@ const useLocationFilter = (tabledata, cusfilter) => {
         cusfilter('Location', '');
     };
     
-
     const filterApply1 = () => (
         <button onClick={applyLocationFilter1} className="p-1 px-2 text-white bg-blue-500 rounded-lg">Apply</button>
     );
+    
     const filterClear1 = () => (
         <button onClick={clearLocationFilter1} className="p-1 px-2 text-white bg-blue-500 rounded-lg">Clear</button>
     );
