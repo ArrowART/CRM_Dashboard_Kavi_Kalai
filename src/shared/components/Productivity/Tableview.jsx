@@ -211,7 +211,7 @@ export const Tableview = (props) => {
         <Column field="Firm_Name" header="Firm Name" />
         <Column field="Mobile1" header="Mobile 1" />
         <Column field="Mobile2" header="Mobile 2" />
-        <Column field="Compaign_Name" header="Compaign Name" />
+        <Column field="Campaign_Name" header="Campaign Name" />
         <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
         <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
         <Column field="Productivity_Status" header="Productivity Status" style={{ minWidth: '10rem' }} />

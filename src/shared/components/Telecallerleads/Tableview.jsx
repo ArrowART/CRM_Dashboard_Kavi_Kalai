@@ -10,10 +10,12 @@ import { getDispositionColor, getSubDispositionColor } from "../Allocation/optio
 import { Skeleton } from "primereact/skeleton";
 import useRegionFilter from "../Allocation/RegionFilters";
 import useLocationFilter from "../Allocation/LocationFilters";
+import useAuth from "../../services/store/useAuth";
 
 export const Tableview = (props) => {
   const { tabledata, first, setFirst,updateData,cusfilter } = props;
   const [rowDataState, setRowDataState] = useState([]);
+  const { userdetails } = useAuth();
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [activeButton, setActiveButton] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +36,33 @@ export const Tableview = (props) => {
     return null;
   };
 
+  const formatMobileNumber = (mobileNumber, userDetails) => {
+    const userRole = userDetails?.Role; // Get the user's role from the userDetails object
+  
+    if (userRole === 'SuperAdmin' || userRole === 'TeamLeader') {
+      return mobileNumber; // Show the full mobile number for superadmins and team leaders
+    } else {
+      // Show the first 4 digits and mask the rest for other roles
+      return `${mobileNumber.slice(0, 4)}******`;
+    }
+  };
+  
+  // const formatMobileForCall = (mobileNumber, userDetails) => {
+  //   const userRole = userDetails?.Role;
+  
+  //   if (userRole === 'SuperAdmin' || userRole === 'TeamLeader') {
+  //     return `tel:${mobileNumber}`; // Return the full mobile number for superadmins and team leaders
+  //   } else {
+  //     // Mask the mobile number for other roles
+  //     const maskedNumber = `${mobileNumber.slice(0, 4)}******`;
+  //     return `tel:${maskedNumber}`;
+  //   }
+  // };
+  
+  const formatMobileForCall = (mobileNumber) => {
+    return `tel:${mobileNumber}`; // Always return the full mobile number for making a call
+  };
+  
   const parseSubDispositionValue = (subDispositionValue) => {
     if (subDispositionValue) {
       const [value] = subDispositionValue.split(' (');
@@ -225,9 +254,28 @@ export const Tableview = (props) => {
         <Column field="Product" header="Product" />
         <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
         <Column field="Firm_Name" header="Firm Name" />
-        <Column field="Mobile1" header="Mobile 1" />
-        <Column field="Mobile2" header="Mobile 2" />
-        <Column field="Compaign_Name" header="Compaign Name" />
+        <Column field="Mobile1" header="Mobile 1" body={(rowData) => formatMobileNumber(rowData.Mobile1, userdetails())} />
+<Column field="Mobile2" header="Mobile 2" body={(rowData) => formatMobileNumber(rowData.Mobile2, userdetails())} />
+        {/* <Column field="Call" header={<> Call </>} body={(rowData) => (<button><img src="./images/phonecall.png" alt="" /></button>)}/> */}
+        {/* <Column
+  field="Call"
+  header={<> Call </>}
+  body={(rowData) => (
+    <a href={`tel:${rowData.Mobile1}`}>
+      <img src="./images/phonecall.png" alt="Call" />
+    </a>
+  )}
+/> */}
+<Column
+  field="Call"
+  header={<> Call </>}
+  body={(rowData) => (
+    <a href={formatMobileForCall(rowData.Mobile1, userdetails())}>
+      <img src="./images/phonecall.png" alt="Call" />
+    </a>
+  )}
+/>
+        <Column field="Campaign_Name" header="Campaign Name" />
         <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
         <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
         <Column
