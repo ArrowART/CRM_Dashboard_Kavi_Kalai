@@ -7,7 +7,7 @@ import { getalltelecallerallocation } from '../../services/apitelecalleralloacti
 import { allocateteamleader } from '../../services/apiallocation/apiallocation';
 
 export default function Tableheadpanel(props) {
-    const { handleDeleteAll, Uploadform, setglobalfilter, tabledata, productCounts, updateTableData } = props;
+    const { handleDeleteAll, Uploadform, setglobalfilter, tabledata, updateTableData } = props;
     const [showModal, setShowModal] = useState(false);
     const [allocationType, setAllocationType] = useState('teamLeader');
     const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
@@ -15,7 +15,6 @@ export default function Tableheadpanel(props) {
     const [teamLeaders, setTeamLeaders] = useState([]);
     const [telecallers, setTelecallers] = useState([]);
     const { userdetails } = useAuth();
-    const [productType, setProductType] = useState('ALL');
     const [allocationRange, setAllocationRange] = useState();
     const [allocationRange1, setAllocationRange1] = useState();
 

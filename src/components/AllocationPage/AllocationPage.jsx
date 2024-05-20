@@ -4,7 +4,6 @@ import * as XLSX from 'xlsx';
 import Tableview from "../../shared/components/Allocation/Tableview";
 import Tableheadpanel from "../../shared/components/Allocation/Tableheadpanel";
 import UploadForm from "../../shared/components/Allocation/Upload";
-import Tablepagination from "../../shared/components/others/Tablepagination";
 import { deleteAllAllocation, getallallocation, savebulkallocation } from "../../shared/services/apiallocation/apiallocation";
 
 export default function AllocationPage(){
