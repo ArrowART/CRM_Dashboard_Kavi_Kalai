@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { getallselectedteamleaderandtelecaller } from "../../shared/services/apiallocation/apiallocation";
 import Tablepagination from "../../shared/components/others/Tablepagination";
-
 import Tableheadpanel from "../../shared/components/Productivity/Tableheadpanel";
 import { Tableview } from "../../shared/components/Productivity/Tableview";
 
@@ -41,7 +40,7 @@ export const ProductivityPage = () => {
     return (
         <div>
             <div>
-                <Tableheadpanel />
+                <Tableheadpanel setglobalfilter={setglobalfilter} />
                 <Tableview
                     tabledata={tabledata}
                     totalRecords={totalRecords}
