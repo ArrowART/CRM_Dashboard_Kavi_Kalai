@@ -9,14 +9,20 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { getDispositionColor, getSubDispositionColor } from "./ProductivityoptionColors";
 import useRegionFilter from "../Allocation/RegionFilters";
 import useLocationFilter from "../Allocation/LocationFilters";
+import useCampanignFilter from "../Allocation/CampaingnFilters";
+import { MultiSelect } from 'primereact/multiselect';
 
 export const Tableview = (props) => {
-  const { tabledata, filtervalues, handlefiltervalue, first, setFirst, cusfilter } = props;
+  const { tabledata, first, setFirst, cusfilter } = props;
   const [rowDataState, setRowDataState] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [activeButton, setActiveButton] = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedColumns, setSelectedColumns] = useState(null);
   const {filters, regionFilterTemplate, filterApply, filterClear} = useRegionFilter(tabledata, cusfilter);
   const { filters1, LocationFilterTemplate,filterApply1,filterClear1 } = useLocationFilter(tabledata, cusfilter);
+  const { filters2, campaignFilterTemplate,filterApply2,filterClear2 } = useCampanignFilter(tabledata, cusfilter);
+
   useEffect(() => {
     if (tabledata) {
       setRowDataState(tabledata.map(row => ({
@@ -28,6 +34,13 @@ export const Tableview = (props) => {
     }
   }, [tabledata]);
 
+  useEffect(() => {
+    if (tabledata && tabledata.length > 0) {
+      const allColumns = Object.keys(tabledata[0]);
+      setSelectedColumns(allColumns);
+    }
+  }, [tabledata]);
+  
   const parseDispositionValue = (dispositionValue) => {
     if (dispositionValue) {
       const [value] = dispositionValue.split(' (');
@@ -69,19 +82,6 @@ export const Tableview = (props) => {
   const onPage = (event) => {
     setFirst(event.first);
   };
-
-  const statusItemTemplate = (option) => option;
-  const statusFilterTemplate = (options) => (
-    <Dropdown
-      value={options.value}
-      options={filtervalues}
-      onClick={() => handlefiltervalue(options.field)}
-      onChange={(e) => options.filterCallback(e.value, options.index)}
-      itemTemplate={statusItemTemplate}
-      placeholder="Select One"
-      className="p-column-filter"
-    />
-  );
 
   const sno = (rowData, { rowIndex }) => (
     <div>{first + rowIndex + 1}</div>
@@ -140,25 +140,6 @@ export const Tableview = (props) => {
       console.log(err);
     }
   };
-  // const filterByProductivitystatus = (role) => {
-  //   setActiveButton(role);
-  //   if (role) {
-  //     const filteredData = tabledata.filter(item => item.Productivity_Status === role);
-  //     setRowDataState(filteredData.map(row => ({
-  //       ...row,
-  //       selectedDisposition: parseDispositionValue(row.Disposition),
-  //       selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
-  //       timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
-  //     })));
-  //   } else {
-  //     setRowDataState(tabledata.map(row => ({
-  //       ...row,
-  //       selectedDisposition: parseDispositionValue(row.Disposition),
-  //       selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
-  //       timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
-  //     })));
-  //   }
-  // };
   const filterByProductivitystatus = (role) => {
     setActiveButton(role);
     if (role) {
@@ -178,6 +159,25 @@ export const Tableview = (props) => {
       })));
     }
   };
+
+  const columnOptions = [
+    { label: 'S.No', value: 'sno' },
+    { label: 'Region', value: 'Region' },
+    { label: 'Location', value: 'Location' },
+    { label: 'Product', value: 'Product' },
+    { label: 'Name', value: 'Name' },
+    { label: 'Firm Name', value: 'Firm_Name' },
+    { label: 'Mobile 1', value: 'Mobile1' },
+    { label: 'Mobile 2', value: 'Mobile2' },
+    { label: 'Campaign Name', value: 'Campaign_Name' },
+    { label: 'Team Leader', value: 'selectedTeamLeader' },
+    { label: 'Tele Caller', value: 'selectedTelecaller' },
+    { label: 'Productivity Status', value: 'Productivity_Status' },
+    { label: 'Disposition', value: 'Disposition' },
+    { label: 'Sub Disposition', value: 'Sub_Disposition' },
+    { label: 'Date & Time', value: 'timestamp' },
+    { label: 'Remarks', value: 'Remarks' },
+  ];
   
   return (
     <div>
@@ -187,106 +187,93 @@ export const Tableview = (props) => {
                 <button onClick={() => filterByProductivitystatus('Reached')}  className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Reached' ? 'blue' : 'green'}-500 rounded-t-lg`}>Reached Leads</button>
                 <button onClick={() => filterByProductivitystatus('Not Reached')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Reached' ? 'blue' : 'green'}-500 rounded-t-lg`}>Not Reached Leads</button>
                 <button onClick={() => filterByProductivitystatus('Lead Accepted')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Accepted' ? 'blue' : 'green'}-500 rounded-t-lg`}>Lead Acepted Leads</button>
-                <button onClick={() => filterByProductivitystatus('Not Updated')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Updated' ? 'blue' : 'green'}-500 rounded-t-lg`}>Notupdated Leads</button>
+                <button onClick={() => filterByProductivitystatus('Not Updated')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Updated' ? 'blue' : 'green'}-500 rounded-t-lg`}>Not Updated Leads</button>
             </div>
-      <DataTable
-        resizableColumns
-        stripedRows
-        showGridlines
-        tableStyle={{ minWidth: '50rem' }}
-        value={rowDataState}
-        rows={rowsPerPage}
-        first={first}
-        onPage={onPage}
-        className="text-sm"
-        scrollable
-        scrollHeight="660px"
-        filters={{ ...filters, ...filters1 }}
-      >
-        <Column field="sno" header="S.No" body={sno} />
-        <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} />
-        <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />
-        <Column field="Product" header="Product" />
-        <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
-        <Column field="Firm_Name" header="Firm Name" />
-        <Column field="Mobile1" header="Mobile 1" />
-        <Column field="Mobile2" header="Mobile 2" />
-        <Column field="Campaign_Name" header="Campaign Name" />
-        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
-        <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
-        <Column field="Productivity_Status" header="Productivity Status" style={{ minWidth: '10rem' }} />
-
-        <Column
-          field="Disposition"
-          header="Disposition"
+            <div className="mb-4">
+              <MultiSelect
+                value={selectedColumns}
+                options={columnOptions}
+                onChange={(e) => setSelectedColumns(e.value)}
+                optionLabel="label"
+                placeholder="Select Columns"
+                maxSelectedLabels={4}
+                className="border-2 border-cyan-300 w-fit md:w-20rem"
+              />
+            </div>
+      <DataTable resizableColumns stripedRows showGridlines tableStyle={{ minWidth: '50rem' }} 
+             selection={selectedProducts} columnResizeMode="expand"
+             onSelectionChange={e => setSelectedProducts(e.value)} value={rowDataState} rows={rowsPerPage}
+        first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="660px" filters={{ ...filters, ...filters1, ...filters2 }}
+        headerStyle={{ backgroundColor: '#006400', color: 'white' }} bodyStyle={{ backgroundColor: '#38B000', color: 'white' }}  >
+         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
+         {selectedColumns && selectedColumns.includes('sno') && (
+        <Column field="sno" header="S.No" body={sno} /> )}
+        {selectedColumns && selectedColumns.includes('Region') && (
+        <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} /> )}
+         {selectedColumns && selectedColumns.includes('Location') && (
+        <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />)}
+        {selectedColumns && selectedColumns.includes('Product') && (
+        <Column field="Product" header="Product" /> )}
+        {selectedColumns && selectedColumns.includes('Name') && (
+        <Column field="Name" header="Name" sortable style={{ width: '25%' }} />)}
+        {selectedColumns && selectedColumns.includes('Firm_Name') && (
+        <Column field="Firm_Name" header="Firm Name" /> )}
+         {selectedColumns && selectedColumns.includes('Mobile1') && (
+        <Column field="Mobile1" header="Mobile 1" /> )}
+         {selectedColumns && selectedColumns.includes('Mobile2') && (
+        <Column field="Mobile2" header="Mobile 2" />)}
+         {selectedColumns && selectedColumns.includes('Campaign_Name') && (
+        <Column field="Campaign_Name" header="Campaign Name" filter filterElement={campaignFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply2} filterClear={filterClear2} sortable style={{ width: '25%' }} />)}
+        {selectedColumns && selectedColumns.includes('selectedTeamLeader') && (
+        <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} /> )}
+        {selectedColumns && selectedColumns.includes('selectedTelecaller') && (
+        <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} /> )}
+        {selectedColumns && selectedColumns.includes('Productivity_Status') && (
+        <Column field="Productivity_Status" header="Productivity Status" style={{ minWidth: '10rem' }} /> )}
+        {selectedColumns && selectedColumns.includes('Disposition') && (
+        <Column field="Disposition" header="Disposition"
           body={(rowData, { rowIndex }) => (
-            <Dropdown
-              value={rowData.selectedDisposition}
-              options={dispositionOptions}
+            <Dropdown value={rowData.selectedDisposition} options={dispositionOptions}
               onChange={(e) => handleDispositionChange(rowIndex, e)}
               placeholder="Select Disposition"
               optionLabel={(option) => option}
-              optionStyle={(option) =>({
-                color: 'white',
-                backgroundColor: getDispositionColor(option)
-              })}
-              style={{
-                width: '150px',
-                backgroundColor: getDispositionColor(rowData.selectedDisposition)
-              }}
+              optionStyle={(option) =>({ color: 'white', backgroundColor: getDispositionColor(option) })}
+              style={{ width: '150px', backgroundColor: getDispositionColor(rowData.selectedDisposition) }}
             />
           )}
-          filter
-          filterElement={statusFilterTemplate}
           width="150px"
-        />
-        <Column
-          field="Sub_Disposition"
-          header="Sub Disposition"
+        /> )}
+        {selectedColumns && selectedColumns.includes('Sub_Disposition') && (
+        <Column field="Sub_Disposition" header="Sub Disposition"
           body={(rowData, { rowIndex }) => (
-            <Dropdown
-              value={rowData.selectedSubDisposition}
+            <Dropdown value={rowData.selectedSubDisposition}
               options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
               onChange={(e) => handleSubDispositionChange(rowIndex, e)}
               placeholder="Select Sub Disposition"
               optionLabel={(option) => option}
-              optionStyle={(option) => ({
-                color: 'white',
-                backgroundColor: getSubDispositionColor(option)
-              })}
-              style={{
-                width: '150px',
-                backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
-              }}
+              optionStyle={(option) => ({ color: 'white', backgroundColor: getSubDispositionColor(option)})}
+              style={{ width: '150px', backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)}}
             />
           )}
-          filter
-          filterElement={statusFilterTemplate}
           width="150px"
-        />
-        <Column
-          field="timestamp"
-          header="Date & Time"
+        /> )}
+         {selectedColumns && selectedColumns.includes('timestamp') && (
+        <Column field="timestamp" header="Date & Time"
           body={(rowData) => (
             <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
           )}
           style={{ minWidth: '10rem' }}
-        />
-        <Column
-          field="Remarks"
-          header="Remarks"
-          width="200px"
-          filter
-          filterElement={statusFilterTemplate}
+        /> )}
+        {selectedColumns && selectedColumns.includes('Remarks') && (
+        <Column field="Remarks" header="Remarks" width="200px"
           body={(rowData, { rowIndex }) => (
-            <InputTextarea
-              value={rowData.Remarks}
+            <InputTextarea value={rowData.Remarks}
               onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
               rows={3}
               className="w-full"
             />
           )}
-        />
+        /> )}
         <Column
           body={(rowData, { rowIndex }) => (
             <button
@@ -302,4 +289,3 @@ export const Tableview = (props) => {
     </div>
   );
 };
-

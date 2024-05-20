@@ -32,7 +32,7 @@ const useRegionFilter = (tabledata, cusfilter) => {
     );
 
     const regionFilterTemplate = () => {
-        const regions = [...new Set(tabledata.map((data) => data.Region))];
+        const regions = [...new Set(tabledata?.map((data) => data.Region))];
         const regionOptions = regions.map((Region) => ({ label: Region, value: Region }));
 
         return (

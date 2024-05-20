@@ -32,7 +32,7 @@ const useLocationFilter = (tabledata, cusfilter) => {
     );
 
     const LocationFilterTemplate = () => {
-        const Locations = [...new Set(tabledata.map((data) => data.Location))];
+        const Locations = [...new Set(tabledata?.map((data) => data.Location))];
         const LocationOptions = Locations.map((Location) => ({ label: Location, value: Location }));
 
         return (
