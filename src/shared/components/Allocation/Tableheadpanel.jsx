@@ -88,9 +88,9 @@ export default function Tableheadpanel(props) {
             <div>
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">Allocation</h2>
             </div>
-                <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
-                    <input type="input" placeholder="Search..." className="px-4 py-2  border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
-                    <div className="py-2">
+            <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
+                <input type="input" placeholder="Search..." className="px-4 py-2  border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
+                <div className="py-2">
                     {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
                         <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
                             <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
@@ -107,11 +107,39 @@ export default function Tableheadpanel(props) {
                             </button>
                         </>
                     )}
-                    </div>
                 </div>
+            </div>
             <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal className="p-4 bg-white rounded-lg w-[600px]">
                 <div className="p-fluid">
-                    {userdetails()?.Role === 'TeamLeader' ? (
+                    <div className="mb-4 p-field">
+                        <label htmlFor="allocationType" className="block mb-1">Allocate To</label>
+                        <select
+                            id="allocationType"
+                            value={allocationType}
+                            onChange={(e) => setAllocationType(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                        >
+                            <option value="teamLeader">Team Leader</option>
+                            <option value="telecaller">Telecaller</option>
+                        </select>
+                    </div>
+                    <div className="mb-4 p-field">
+                        <label htmlFor="selectedTeamLeader" className="block mb-1">Select Team Leader</label>
+                        <select
+                            id="selectedTeamLeader"
+                            value={selectedTeamLeader}
+                            onChange={(e) => setSelectedTeamLeader(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                        >
+                            <option value="">Select a Team Leader</option>
+                            {teamLeaders.map((user) => (
+                                <option key={user.UserName} value={user.UserName}>
+                                    {user.First_Name} ({user.UserName})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    {allocationType === 'telecaller' && (
                         <div className="mb-4 p-field">
                             <label htmlFor="selectedTelecaller" className="block mb-1">Select Telecaller</label>
                             <select
@@ -128,72 +156,7 @@ export default function Tableheadpanel(props) {
                                 ))}
                             </select>
                         </div>
-                    ) : (
-                        <>
-                            <div className="mb-4 p-field">
-                                <label htmlFor="allocationType" className="block mb-1">Allocate To</label>
-                                <select
-                                    id="allocationType"
-                                    value={allocationType}
-                                    onChange={(e) => setAllocationType(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
-                                >
-                                    <option value="teamLeader">Team Leader</option>
-                                    <option value="telecaller">Telecaller</option>
-                                </select>
-                            </div>
-                            {allocationType === 'teamLeader' ? (
-                                <div className="mb-4 p-field">
-                                    <label htmlFor="selectedTeamLeader" className="block mb-1">Select Team Leader</label>
-                                    <select
-                                        id="selectedTeamLeader"
-                                        value={selectedTeamLeader}
-                                        onChange={(e) => setSelectedTeamLeader(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
-                                    >
-                                        <option value="">Select a Team Leader</option>
-                                        {teamLeaders.map((user) => (
-                                            <option key={user.UserName} value={user.UserName}>
-                                                {user.First_Name} ({user.UserName})
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            ) : (
-                                <div className="mb-4 p-field">
-                                    <label htmlFor="selectedTelecaller" className="block mb-1">Select Telecaller</label>
-                                    <select
-                                        id="selectedTelecaller"
-                                        value={selectedTelecaller}
-                                        onChange={(e) => setSelectedTelecaller(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
-                                    >
-                                        <option value="">Select a Telecaller</option>
-                                        {telecallers.map((user) => (
-                                            <option key={user.UserName} value={user.UserName}>
-                                                {user.First_Name} ({user.UserName})
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            )}
-                        </>
                     )}
-                    {/* <div className="mb-4 p-field">
-                        <label htmlFor="productType" className="block mb-1">Product Type</label>
-                        <select
-                            id="productType"
-                            value={productType}
-                            onChange={(e) => setProductType(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
-                        >
-                            <option value="ALL">ALL ({productCounts.ALL || 0})</option>
-                            <option value="PL">PL ({productCounts.PL || 0})</option>
-                            <option value="DL">DL ({productCounts.DL || 0})</option>
-                            <option value="BL">BL ({productCounts.BL || 0})</option>
-                            <option value="STPL">STPL ({productCounts.STPL || 0})</option>
-                        </select>
-                    </div> */}
                     <div className="mb-4 p-field">
                         <label htmlFor="From" className="block mb-1">From</label>
                         <input
@@ -228,6 +191,8 @@ export default function Tableheadpanel(props) {
                     <Button label="Allocate" className="px-2 text-white bg-green-500 p-button-text hover:bg-green-600" onClick={handleAllocateConfirm} autoFocus />
                 </div>
             </Dialog>
+
+
         </div>
     );
 }

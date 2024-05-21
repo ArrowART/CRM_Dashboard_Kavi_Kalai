@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react";
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import * as XLSX from 'xlsx';
 import Tableview from "../../shared/components/Allocation/Tableview";
@@ -9,7 +9,6 @@ import { deleteAllAllocation, getallallocation, savebulkallocation } from "../..
 export default function AllocationPage(){
     const [totalRecords, setTotalRecords] = useState(0);
     const [first, setFirst] = useState(0);
-    const [page, setPage] = useState(1);
     const [rows, setRows] = useState(20);
     const [visible, setVisible] = useState(false);
     const [formdata, setFormdata]=useState({});
@@ -42,7 +41,8 @@ export default function AllocationPage(){
             getallallocations();
         }
         return(()=>isMounted = false);
-    },[first,rows,globalfilter,colfilter])
+    },[first,rows,globalfilter,colfilter]);
+
     const cusfilter = (field, value) => {
         setcolFilter({...colfilter,...{[field]:value}})
     };
@@ -50,58 +50,42 @@ export default function AllocationPage(){
     const updateTableData = async () => {
         await getallallocations();
     };
-    
 
     const newform=()=>{
         setFormdata({});
         setVisible(true)
-    }
+    };
 
     const Uploadform=()=>{
         setUploadVisible(true)
-    }
+    };
     
     const editfrom=(data)=>{
         setFormdata(data);
         setVisible(true)
-    }
-    const onPage = (page) => {
-        setPage(page)
-        setFirst(rows *(page -1));
-        setRows(rows);
-      };
+    };
 
-    // const handledelete = (id) => {
-    //     confirmDialog({
-    //         message: 'Do you want to delete this record?',
-    //         header: 'Delete Confirmation',
-    //         icon: 'pi pi-info-circle',
-    //         defaultFocus: 'reject',
-    //         acceptClassName: 'bg-red-500 ml-2 text-white p-2',
-    //         rejectClassName: 'p-2 outline-none border-0',
-    //         accept:async ()=>{
-    //          await deleteproducts(id)
-    //          toast.success("Sucessfully deleted")
-    //          getallproduct()
-    //         }
-    //     });
-    // };
+    const onPageChange = (event) => {
+        setFirst(event.first);
+        setRows(event.rows);
+    };
 
     const handleDeleteAll =()=>{
-    confirmDialog({
-        message: 'Do you want to delete all this record?',
-        header: 'Delete Confirmation',
-        icon: 'pi pi-info-circle',
-        defaultFocus: 'reject',
-        acceptClassName: 'bg-red-500 ml-2 text-white p-2',
-        rejectClassName: 'p-2 outline-none border-0',
-    accept: async () => {
-            await deleteAllAllocation();
-            getallallocations();
-            console.log("All data deleted successfully");
-          }
+        confirmDialog({
+            message: 'Do you want to delete all this record?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            defaultFocus: 'reject',
+            acceptClassName: 'bg-red-500 ml-2 text-white p-2',
+            rejectClassName: 'p-2 outline-none border-0',
+            accept: async () => {
+                await deleteAllAllocation();
+                getallallocations();
+                console.log("All data deleted successfully");
+            }
         });
-         };
+    };
+
     const handleupload = (e)=>{
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -114,30 +98,49 @@ export default function AllocationPage(){
             setFile(jsonData);
         };
         reader.readAsArrayBuffer(file);
-    }
+    };
 
     const uploadfile = async (e)=>{
-        e.preventDefault()
-        setUploadVisible(true)
-        setLoading(true)
+        e.preventDefault();
+        setUploadVisible(true);
+        setLoading(true);
         await savebulkallocation(File);
-        getallallocations()
-        setUploadVisible(false)
-        setLoading(false)
-    }
+        getallallocations();
+        setUploadVisible(false);
+        setLoading(false);
+    };
 
-    return(
+    return (
         <div>
             <div className="bg-white border rounded-3xl">
-                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform}
-                 handleDeleteAll={handleDeleteAll} tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData}/>
+                <Tableheadpanel 
+                    newform={newform} 
+                    setglobalfilter={setglobalfilter} 
+                    Uploadform={Uploadform}
+                    handleDeleteAll={handleDeleteAll} 
+                    tabledata={tabledata} 
+                    productCounts={productCounts} 
+                    updateTableData={updateTableData}
+                />
 
-                <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} editfrom={editfrom} 
-                    cusfilter={cusfilter} filtervalues={filtervalues} />     
-                <UploadForm uploadfile={uploadfile} handleupload={handleupload} UploadVisible={UploadVisible} setUploadVisible={setUploadVisible} />
-                <ConfirmDialog   />
+                <Tableview 
+                    tabledata={tabledata} 
+                    totalRecords={totalRecords} 
+                    first={first} 
+                    rows={rows} 
+                    onPageChange={onPageChange} 
+                    editfrom={editfrom} 
+                    cusfilter={cusfilter} 
+                    filtervalues={filtervalues} 
+                />     
+                <UploadForm 
+                    uploadfile={uploadfile} 
+                    handleupload={handleupload} 
+                    UploadVisible={UploadVisible} 
+                    setUploadVisible={setUploadVisible} 
+                />
+                <ConfirmDialog />
             </div>
-    
         </div>
-    )
+    );
 }

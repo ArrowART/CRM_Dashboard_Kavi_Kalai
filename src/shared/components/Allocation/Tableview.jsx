@@ -10,13 +10,14 @@ import useRegionFilter from './RegionFilters';
 import useLocationFilter from './LocationFilters';
 
 const Tableview = (props) => {
-    const { tabledata, filtervalues, handlefiltervalue, first, cusfilter } = props;
+    const { tabledata, filtervalues, handlefiltervalue, cusfilter } = props;
     const [activeButton, setActiveButton] = useState(null);
     const [rowDataState, setRowDataState] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [first, setFirst] = useState(0); // Added state for 'first'
     const [isLoading, setIsLoading] = useState(true);
-    const {filters, regionFilterTemplate, filterApply, filterClear} = useRegionFilter(tabledata, cusfilter);
-    const { filters1, LocationFilterTemplate,filterApply1,filterClear1 } = useLocationFilter(tabledata, cusfilter);
+    const { filters, regionFilterTemplate, filterApply, filterClear } = useRegionFilter(tabledata, cusfilter);
+    const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
 
     useEffect(() => {
         if (tabledata) {
@@ -48,8 +49,8 @@ const Tableview = (props) => {
     );
 
     const sno = (rowData, { rowIndex }) => (
-        <div>{first + rowIndex + 1}</div>
-    );
+        <div>{rowIndex + 1}</div>
+      );
 
     const filterByProduct = (role) => {
         setActiveButton(role);
@@ -166,72 +167,73 @@ const Tableview = (props) => {
                                 onChange={(e) => handleDispositionChange(rowIndex, e)}
                                 placeholder="Select Disposition"
                                 optionLabel={(option) => option}
-                                optionStyle={(option) => ({
-                                    color: 'white',
-                                    backgroundColor: getDispositionColor(option)
-                                })}
-                                style={{
-                                    width: '150px',
-                                    backgroundColor: getDispositionColor(rowData.selectedDisposition)
-                                }}
-                            />
-                        )}
-                        filter
-                        filterElement={statusFilterTemplate}
-                        width="150px"
-                    />
-                    <Column
-                        field="Sub_Disposition"
-                        header="Sub Disposition"
-                        body={(rowData) => (
-                            <Dropdown
-                                value={rowData.selectedSubDisposition}
-                                options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
-                                onChange={(e) => handleSubDispositionChange(rowData, e)}
-                                placeholder="Select Sub Disposition"
-                                optionLabel={(option) => option}
-                                optionStyle={(option) => ({
-                                    color: 'white',
-                                    backgroundColor: getSubDispositionColor(option)
-                                })}
-                                style={{
-                                    width: '150px',
-                                    backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
-                                }}
-                            />
-                        )}
-                        filter
-                        filterElement={statusFilterTemplate}
-                        width="150px"
-                    />
-                    <Column
-                        field="timestamp"
-                        header="Date & Time"
-                        body={(rowData) => (
-                            <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
-                        )}
-                        style={{ minWidth: '10rem' }}
-                    />
-                    <Column
-                        field="Remarks"
-                        header="Remarks"
-                        width="200px"
-                        filter
-                        filterElement={statusFilterTemplate}
-                        body={(rowData, { rowIndex }) => (
-                            <InputTextarea
-                                value={rowData.Remarks}
-                                onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-                                rows={3}
-                                className="w-full"
-                            />
-                        )}
-                    />
-                </DataTable>
-                </>
-            )}
-        </div>
-    );
+                                optionStyle={(option) => ({                                color: 'white',
+                                backgroundColor: getDispositionColor(option)
+                            })}
+                            style={{
+                                width: '150px',
+                                backgroundColor: getDispositionColor(rowData.selectedDisposition)
+                            }}
+                        />
+                    )}
+                    filter
+                    filterElement={statusFilterTemplate}
+                    width="150px"
+                />
+                <Column
+                    field="Sub_Disposition"
+                    header="Sub Disposition"
+                    body={(rowData) => (
+                        <Dropdown
+                            value={rowData.selectedSubDisposition}
+                            options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
+                            onChange={(e) => handleSubDispositionChange(rowData, e)}
+                            placeholder="Select Sub Disposition"
+                            optionLabel={(option) => option}
+                            optionStyle={(option) => ({
+                                color: 'white',
+                                backgroundColor: getSubDispositionColor(option)
+                            })}
+                            style={{
+                                width: '150px',
+                                backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
+                            }}
+                        />
+                    )}
+                    filter
+                    filterElement={statusFilterTemplate}
+                    width="150px"
+                />
+                <Column
+                    field="timestamp"
+                    header="Date & Time"
+                    body={(rowData) => (
+                        <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
+                    )}
+                    style={{ minWidth: '10rem' }}
+                />
+                <Column
+                    field="Remarks"
+                    header="Remarks"
+                    width="200px"
+                    filter
+                    filterElement={statusFilterTemplate}
+                    body={(rowData, { rowIndex }) => (
+                        <InputTextarea
+                            value={rowData.Remarks}
+                            onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+                            rows={3}
+                            className="w-full"
+                        />
+                    )}
+                />
+            </DataTable>
+            </>
+        )}
+    </div>
+);
 };
 
 export default Tableview;
+
+                                   
