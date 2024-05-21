@@ -108,7 +108,7 @@ export const Tableview = (props) => {
   };
 
   const sno = (rowData, { rowIndex }) => (
-    <div>{first + rowIndex + 1}</div>
+    <div>{rowIndex + 1}</div>
   );
 
   const dispositionOptions = [
@@ -211,7 +211,7 @@ export const Tableview = (props) => {
         onSelectionChange={e => setSelectedProducts(e.value)} value={rowDataState} rows={rowsPerPage}
         first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="660px" filters={{ ...filters, ...filters1, ...filters2 }}
        >
-        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
+        {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
         {selectedColumns.includes('sno') && (
           <Column field="sno" header="S.No" body={sno} />
         )}

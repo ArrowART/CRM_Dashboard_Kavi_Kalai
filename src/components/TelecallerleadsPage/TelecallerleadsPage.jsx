@@ -44,8 +44,8 @@ export const TelecallerleadsPage = () => {
     return (
         <div>
             <div>
-                <Tableheadpanel />
-                <Tableview
+                <Tableheadpanel setglobalfilter={setglobalfilter} />
+                <Tableview 
                     tabledata={tabledata}
                     filtervalues={filtervalues}
                     handlefiltervalue={cusfilter}
