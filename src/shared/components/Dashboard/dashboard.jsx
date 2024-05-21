@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Chart } from 'primereact/chart';
 import { getallusers } from '../../services/apiusers/apiusers';
-import { getallselectedteamleaderandtelecaller } from '../../services/apiallocation/apiallocation';
+import { getallallocation, getallselectedteamleaderandtelecaller } from '../../services/apiallocation/apiallocation';
 
 export default function Dashboard() {
   const [chartData, setChartData] = useState({});
@@ -10,7 +10,11 @@ export default function Dashboard() {
   const [barchartOptions, setBarChartOptions] = useState({});
   const [productivitybarchartData, setProductivityBarChartData] = useState({});
   const [productivitybarchartOptions, setProductivityBarChartOptions] = useState({});
+  const [procuctsbarchartData, setProductsBarChartData] = useState({});
+  const [productsbarchartOptions, setProductsBarChartOptions] = useState({});
 
+
+  
   useEffect(() => {
     const documentStyle = getComputedStyle(document.documentElement);
 
@@ -203,6 +207,70 @@ export default function Dashboard() {
     fetchProductivityData();
   }, []);
 
+ // Products Data Chart
+ useEffect(() => {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const fetchProducts = async () => {
+    try {
+      const backendResponse2 = await getallallocation();
+
+      if (Array.isArray(backendResponse2.resdata)) {
+        const productsCount = backendResponse2.resdata.reduce((acc, curr) => {
+          const productsStatus = curr.Product;
+          if (productsStatus === 'STPL') {
+            acc.Stplproducts++;
+          } else if (productsStatus === 'BL') {
+            acc.Blproducts++;
+          } else if (productsStatus === 'PL') {
+            acc.Plproducts++;
+          } else if (productsStatus === 'DL') {
+            acc.Dlproducts++;
+          } 
+          return acc;
+        }, { Stplproducts: 0, Blproducts: 0, Plproducts: 0, Dlproducts: 0 });
+
+        const data = {
+          labels: ['STPL', 'BL', 'PL', 'DL'],
+          datasets: [
+            {
+              label: 'Products Count',
+              backgroundColor: documentStyle.getPropertyValue('--orange-500'),
+              borderColor: documentStyle.getPropertyValue('--yellow-400'),
+              data: [
+                productsCount.Stplproducts,
+                productsCount.Blproducts,
+                productsCount.Plproducts,
+                productsCount.Dlproducts
+              ]
+            }
+          ]
+        };
+
+        const options = {
+          plugins: { legend: { display: true } },
+          scales: {
+            x: {
+              display: true,
+              title: { display: true, text: 'Products' }
+            },
+            y: {
+              display: true,
+              title: { display: true, text: 'Count' }
+            }
+          }
+        };
+        setProductsBarChartData(data);
+        setProductsBarChartOptions(options);
+      } else {
+        console.error('Backend data is not an array:', backendResponse2.resdata);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  fetchProducts();
+}, []);
+
   return (
     <div className="grid justify-center grid-cols-1 lg:grid-cols-2">
       <div className="p-5 lg:h-[200px] lg:w-[400px]">
@@ -216,6 +284,10 @@ export default function Dashboard() {
       <div className="p-5 lg:h-[300px] lg:w-[450px]">
         <h1 className="text-2xl font-semibold">Productivity Data</h1>
         <Chart type="doughnut" data={productivitybarchartData} options={productivitybarchartOptions} className="" />
+      </div>
+      <div className="p-5">
+        <h1 className="text-2xl font-semibold">Products Count</h1>
+        <Chart type="bar" data={procuctsbarchartData} options={productsbarchartOptions} className="" />
       </div>
     </div>
   );
