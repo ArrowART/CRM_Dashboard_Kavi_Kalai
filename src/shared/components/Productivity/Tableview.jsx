@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
@@ -54,7 +53,7 @@ export const Tableview = (props) => {
   }, [tabledata]);
 
   useEffect(() => {
-    const defaultSelectedColumns = ['timestamp', 'Remarks','sno'];
+    const defaultSelectedColumns = ['timestamp', 'Remarks', 'sno'];
     if (tabledata && tabledata.length > 0) {
       const allColumns = Object.keys(tabledata[0]);
       const validColumns = allColumns.filter(col => columnOptions.some(option => option.value === col));
@@ -116,14 +115,27 @@ export const Tableview = (props) => {
     'Future Followup', 'Lead Accepted', 'Lead Declined'
   ];
 
+  const productivityStatusOptions = [
+    'Logged', 'Accepted', 'Disbursed'
+  ];
+
   const subDispositionOptionsMap = {
     'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
     'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
     'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
     'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
     'Followup': ['Option M', 'Option N', 'Option O'],
-    'Future Followup': ['Option W', 'Option X', 'Option Y'],
-    'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected']
+    'Future Followup': ['Option W', 'Option X', 'Option Y']
+  };
+
+  const handleProductivityStatusChange = (rowDataIndex, e) => {
+    const updatedRowData = rowDataState.map((row, index) => {
+      if (index === rowDataIndex) {
+        return { ...row, Productivity_Status: e.value };
+      }
+      return row;
+    });
+    setRowDataState(updatedRowData);
   };
 
   const handleDispositionChange = (rowDataIndex, e) => {
@@ -155,6 +167,7 @@ export const Tableview = (props) => {
           selectedTeamLeader: row.selectedTeamLeader,
           selectedTelecaller: row.selectedTelecaller,
           Remarks: row.Remarks,
+          Productivity_Status: row.Productivity_Status,
         }],
       };
       const res = await allocateteamleader(requestBody);
@@ -165,10 +178,34 @@ export const Tableview = (props) => {
     }
   };
 
+  // const filterByProductivitystatus = (role) => {
+  //   setActiveButton(role);
+  //   if (role) {
+  //     const filteredData = tabledata.filter(item => item.Productivity_Status.trim() === role.trim());
+  //     setRowDataState(filteredData.map(row => ({
+  //       ...row,
+  //       selectedDisposition: parseDispositionValue(row.Disposition),
+  //       selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
+  //       timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
+  //     })));
+  //   } else {
+  //     setRowDataState(tabledata.map(row => ({
+  //       ...row,
+  //       selectedDisposition: parseDispositionValue(row.Disposition),
+  //       selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
+  //       timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
+  //     })));
+  //   }
+  // };
   const filterByProductivitystatus = (role) => {
     setActiveButton(role);
+    let filteredData = [];
     if (role) {
-      const filteredData = tabledata.filter(item => item.Productivity_Status.trim() === role.trim());
+      if (role === 'Lead Accepted') {
+        filteredData = tabledata.filter(item => ['Lead Accepted', 'Logged', 'Accepted', 'Disbursed', 'Lead Declined'].includes(item.Productivity_Status.trim()));
+      } else {
+        filteredData = tabledata.filter(item => item.Productivity_Status.trim() === role.trim());
+      }
       setRowDataState(filteredData.map(row => ({
         ...row,
         selectedDisposition: parseDispositionValue(row.Disposition),
@@ -184,7 +221,7 @@ export const Tableview = (props) => {
       })));
     }
   };
-
+  
   return (
     <div>
       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
@@ -209,9 +246,7 @@ export const Tableview = (props) => {
       <DataTable resizableColumns stripedRows showGridlines tableStyle={{ minWidth: '50rem' }}
         selection={selectedProducts} columnResizeMode="expand"
         onSelectionChange={e => setSelectedProducts(e.value)} value={rowDataState} rows={rowsPerPage}
-        first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="660px" filters={{ ...filters, ...filters1, ...filters2 }}
-       >
-        {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} /> */}
+        first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="660px" filters={{ ...filters, ...filters1, ...filters2 }}>
         {selectedColumns.includes('sno') && (
           <Column field="sno" header="S.No" body={sno} />
         )}
@@ -245,9 +280,30 @@ export const Tableview = (props) => {
         {selectedColumns.includes('selectedTelecaller') && (
           <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
         )}
-        {selectedColumns.includes('Productivity_Status') && (
-          <Column field="Productivity_Status" header="Productivity Status" style={{ minWidth: '10rem' }} />
-        )}
+       {selectedColumns.includes('Productivity_Status') && (
+  <Column
+    field="Productivity_Status"
+    header="Productivity Status"
+    style={{ minWidth: '10rem' }}
+    body={(rowData, { rowIndex }) => (
+      (rowData.Productivity_Status === 'Logged' || 
+       rowData.Productivity_Status === 'Accepted' || 
+       rowData.Productivity_Status === 'Disbursed' ||
+       rowData.Productivity_Status === 'Lead Accepted') ? (
+        <Dropdown
+          value={rowData.Productivity_Status}
+          options={productivityStatusOptions}
+          onChange={(e) => handleProductivityStatusChange(rowIndex, e)}
+          placeholder="Select Productivity Status"
+          optionLabel={(option) => option}
+        />
+      ) : (
+        <div>{rowData.Productivity_Status}</div>
+      )
+    )}
+  />
+)}
+
         {selectedColumns.includes('Disposition') && (
           <Column field="Disposition" header="Disposition"
             body={(rowData, { rowIndex }) => (
@@ -311,3 +367,4 @@ export const Tableview = (props) => {
     </div>
   );
 };
+
