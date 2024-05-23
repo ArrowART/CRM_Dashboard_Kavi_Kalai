@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import { Pagination } from '@nextui-org/react';
 import { useMemo } from 'react';
 
 export default function Tablepagination(props){
   
-    const {rows,page,onPage,totalRecords,first}=props;
+    const {rows,page,onPage,totalRecords}=props;
 
     const pages = useMemo(() => {
       return totalRecords ? Math.ceil(totalRecords / rows) : 0;
