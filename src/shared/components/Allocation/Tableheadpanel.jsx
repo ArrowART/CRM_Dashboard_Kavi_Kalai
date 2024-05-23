@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import useAuth from '../../services/store/useAuth';
@@ -17,6 +17,7 @@ export default function Tableheadpanel(props) {
     const { userdetails } = useAuth();
     const [allocationRange, setAllocationRange] = useState();
     const [allocationRange1, setAllocationRange1] = useState();
+    const isMounted = useRef(false);
 
     const toggleModal = () => {
         setShowModal(!showModal);
@@ -56,13 +57,19 @@ export default function Tableheadpanel(props) {
                 const telecallerAllocationData = await getalltelecallerallocation({});
                 const allTeamLeaders = telecallerAllocationData.resdata.map(item => item.teamleader[0]);
                 const allTelecallers = telecallerAllocationData.resdata.reduce((acc, curr) => acc.concat(curr.telecaller), []);
-                setTeamLeaders(allTeamLeaders);
-                setTelecallers(allTelecallers);
+                if (isMounted.current) {
+                    setTeamLeaders(allTeamLeaders);
+                    setTelecallers(allTelecallers);
+                }
             } catch (error) {
                 console.error("Error fetching telecaller allocation data:", error);
             }
         };
-        fetchData();
+
+        if (!isMounted.current) {
+            isMounted.current = true;
+            fetchData();
+        }
     }, []);
 
     useEffect(() => {
@@ -71,7 +78,7 @@ export default function Tableheadpanel(props) {
                 if (selectedTeamLeader) {
                     const telecallerAllocationData = await getalltelecallerallocation({});
                     const teamLeader = telecallerAllocationData.resdata.find(item => item.teamleader[0].UserName === selectedTeamLeader);
-                    if (teamLeader) {
+                    if (teamLeader && isMounted.current) {
                         const telecallersForSelectedTeamLeader = teamLeader.telecaller;
                         setTelecallers(telecallersForSelectedTeamLeader);
                     }
@@ -80,6 +87,7 @@ export default function Tableheadpanel(props) {
                 console.error("Error fetching telecallers:", error);
             }
         };
+
         fetchTelecallers();
     }, [selectedTeamLeader]);
 
@@ -89,7 +97,7 @@ export default function Tableheadpanel(props) {
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">Allocation</h2>
             </div>
             <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
-                <input type="input" placeholder="Search..." className="px-4 py-2  border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
+                <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
                 <div className="py-2">
                     {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
                         <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
@@ -191,8 +199,6 @@ export default function Tableheadpanel(props) {
                     <Button label="Allocate" className="px-2 text-white bg-green-500 p-button-text hover:bg-green-600" onClick={handleAllocateConfirm} autoFocus />
                 </div>
             </Dialog>
-
-
         </div>
     );
 }

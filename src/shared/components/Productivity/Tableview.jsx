@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
@@ -53,7 +54,7 @@ export const Tableview = (props) => {
   }, [tabledata]);
 
   useEffect(() => {
-    const defaultSelectedColumns = ['timestamp', 'Remarks', 'sno'];
+    const defaultSelectedColumns = ['timestamp', 'Remarks', 'sno', 'Productivity_Status'];
     if (tabledata && tabledata.length > 0) {
       const allColumns = Object.keys(tabledata[0]);
       const validColumns = allColumns.filter(col => columnOptions.some(option => option.value === col));

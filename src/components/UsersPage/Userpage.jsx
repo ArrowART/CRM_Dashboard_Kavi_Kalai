@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-import { ConfirmDialog } from "primereact/confirmdialog";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import toast from "react-hot-toast";
 import Tableheadpanel from "../../shared/components/Users/Tableheadpanel";
 import Addandeditform from "../../shared/components/Users/Addandeditform";
 import { Tableview } from "../../shared/components/Users/Tableview";
-import { getallusers, saveusers, updateusers } from "../../shared/services/apiusers/apiusers";
+import { deleteuser, getallusers, saveusers, updateusers } from "../../shared/services/apiusers/apiusers";
 import Tablepagination from "../../shared/components/others/Tablepagination";
 
 export default function Userspage(){
@@ -22,6 +22,7 @@ export default function Userspage(){
     const [filtervalues,setfiltervalues]=useState([]);
     const [teamLeaders, setTeamLeaders] = useState([]);
     const [teleCallers, setTeleCallers] = useState([]);
+    const isMounted = useRef(false);
 
     const fetchAllUsers = useCallback(async () => {
         try {
@@ -38,8 +39,11 @@ export default function Userspage(){
     }, [first, rows, globalfilter, colfilter]);
 
     useEffect(() => {
+        if (!isMounted.current) {
+            isMounted.current = true;
         fetchAllUsers();
-    }, [fetchAllUsers]);
+        }
+    }, []);
 
     const onPage = (page) => {
         setPage(page)
@@ -83,6 +87,21 @@ export default function Userspage(){
         setVisible(false);
         setLoading(false);
     }
+    const handledelete = (id) => {
+        confirmDialog({
+          message: 'Do you want to delete this record?',
+          header: 'Delete Confirmation',
+          icon: 'pi pi-info-circle',
+          defaultFocus: 'reject',
+          acceptClassName: 'bg-red-500 ml-2 text-white p-2',
+          rejectClassName: 'p-2 outline-none border-0',
+          accept: async () => {
+            await deleteuser(id)
+            toast.success("Successfully deleted")
+            fetchAllUsers();
+          }
+        });
+      };
     return(
         <div>
             <div className="bg-white border rounded-3xl">
@@ -90,7 +109,7 @@ export default function Userspage(){
                 teleCallers={teleCallers} />
 
                 <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} editfrom={editfrom} 
-                cusfilter={cusfilter} filtervalues={filtervalues} onPage={onPage} />
+                cusfilter={cusfilter} filtervalues={filtervalues} onPage={onPage} handledelete={handledelete} />
 
                 <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
 

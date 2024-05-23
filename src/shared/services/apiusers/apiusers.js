@@ -7,6 +7,11 @@ export const getallusers = async(params)=>{
    return res.data;
 }
 
+export const deleteuser = async(id)=>{
+   var res=await axios.delete(`${apiurl()}/users/apideleteuser`,{params:{_id:id}, headers: {"Authorization" : `Bearer ${gettoken()}`}});
+   return res.data;
+}
+
 export const saveusers = async(datas)=>{
    try {
       var data = datas.Category?{...datas, Category:datas.Category.split(',')}:datas

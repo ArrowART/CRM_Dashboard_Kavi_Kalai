@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { deletetelecallerallocation, getalltelecallerallocation } from '../../shared/services/apitelecalleralloaction/apitelecallerallocation';
 import Tablepagination from '../../shared/components/others/Tablepagination';
 import { Teamtable } from '../../shared/components/Teams/Teamtable';
@@ -19,6 +19,9 @@ export const TeamPage = () => {
   const [teleCallers, setTeleCallers] = useState([]);
   const [globalfilter, setglobalfilter] = useState('');
   const [colfilter, setcolFilter] = useState({});
+  const isMounted = useRef(false);
+  const isMounted1 = useRef(false);
+
 
   const fetchAllUsers = useCallback(async () => {
     try {
@@ -34,7 +37,10 @@ export const TeamPage = () => {
   }, [first, rows, globalfilter, colfilter]);
 
   useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
     fetchAllUsers();
+    }
   }, [fetchAllUsers]);
 
   useEffect(() => {
@@ -52,7 +58,10 @@ export const TeamPage = () => {
         console.error('Error fetching telecaller allocation data:', error);
       }
     };
+    if (!isMounted1.current) {
+      isMounted1.current = true;
     fetchData();
+    }
   }, [first, rows, globalfilter, colfilter]);
 
   const onPage = (page) => {

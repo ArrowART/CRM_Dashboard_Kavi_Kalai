@@ -6,7 +6,7 @@ import { useState } from "react";
 import { MultiSelect } from "primereact/multiselect";
 
 export const Tableview = (props) => {
-    const { tabledata, editfrom, cusfilter, first} = props;
+    const { tabledata, editfrom, cusfilter, first, handledelete} = props;
     const [selectedRoles, setSelectedRoles] = useState([]);
     const [activeButton, setActiveButton] = useState(null);
     const [filters, setFilters] = useState({
@@ -19,15 +19,22 @@ export const Tableview = (props) => {
     };
     const actionbotton = (rowData) => {
         return (
+            <div className="flex gap-4">
             <div className="flex gap-2">
                 <button onClick={() => editfrom(rowData)} className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 " >
           <i className="fi fi-rr-pen-circle"></i>
         </button>
             </div>
+            <div className="flex gap-2">
+            <button onClick={() => handledelete(rowData?._id)} className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
+            <i className="fi fi-rr-trash"></i>
+    </button>
+        </div>
+        </div>
         )
     }
 
-    const statusFilterTemplate = (options) => {
+    const statusFilterTemplate = () => {
         const roles = [...new Set(tabledata.map((data) => data.Role))];
         const roleOptions = roles.map((role) => ({ label: role, value: role }));
 
@@ -103,7 +110,7 @@ export const Tableview = (props) => {
             filters={filters} stateStorage="session" stateKey="dt-state-demo-local"  resizableColumns 
             stripedRows
             showGridlines tableStyle={{ minWidth: '50rem' }}>
-                <Column className="flex justify-center" header="S.No" style={{ minWidth: '40px' }} body={sno} />
+                <Column className="flex justify-center" header="S.No" style={{ minWidth: '30px' }} body={sno} />
                 <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
                 {columns.map((col, i) => (
                         <Column key={i} field={col.field} filterApply={() => filterapply(col.field)} showFilterMatchModes={false} showFilterMenuOptions={false}

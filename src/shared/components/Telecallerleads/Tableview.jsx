@@ -34,7 +34,7 @@ export const Tableview = (props) => {
   }, [tabledata, activeButton]);
 
   useEffect(() => {
-    const defaultSelectedColumns = ['timestamp', 'Remarks','sno'];
+    const defaultSelectedColumns = ['timestamp', 'Remarks','sno','Productivity_Status'];
     if (tabledata && tabledata.length > 0) {
       const allColumns = Object.keys(tabledata[0]);
       const validColumns = allColumns.filter(col => columnOptions.some(option => option.value === col));
@@ -103,8 +103,6 @@ export const Tableview = (props) => {
   const onPage = (event) => {
     setFirst(event.first);
   };
-
-
 
   const sno = (rowData, { rowIndex }) => (
     <div>{rowIndex + 1}</div>
