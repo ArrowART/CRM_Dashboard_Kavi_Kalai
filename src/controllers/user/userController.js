@@ -65,15 +65,41 @@ export const saveUser = async (req, res, next) => {
       res.status(500).send({ error: 'Internal server error' });
   }
 };
+  // export const updateUser = async (req, res, next) => {
+  //   try {
+  //     const { _id } = req.query
+  //     const resdata = await User.findOneAndUpdate({ _id }, req.body, { new: true })
+  //     res.send(resdata)
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // }
+
   export const updateUser = async (req, res, next) => {
     try {
-      const { _id } = req.query
-      const resdata = await User.findOneAndUpdate({ _id }, req.body, { new: true })
-      res.send(resdata)
+        const { _id } = req.query;
+        const { Role } = req.body;
+        const user = await User.findById(_id);
+        if (!user) {return res.status(404).send({ error: 'User not found' });
+        }
+        let newUserName;
+        if (Role === 'TeamLeader') {
+            newUserName = user.UserName.replace(/^TC/, 'TL');
+        } else if (Role === 'Telecaller') { newUserName = user.UserName.replace(/^TL/, 'TC');
+        } else { newUserName = user.UserName;
+        }
+        if (newUserName !== user.UserName) { req.body.UserName = newUserName;
+        }
+        const updatedUser = await User.findByIdAndUpdate(_id, req.body, { new: true });
+        res.send(updatedUser);
     } catch (err) {
-      console.error(err)
+        console.error(err);
+        res.status(500).send({ error: 'Internal server error' });
     }
-  }
+};
+
+  
+  
   export const deleteUser = async (req, res, next) => {
     try {
       const { _id } = req.query

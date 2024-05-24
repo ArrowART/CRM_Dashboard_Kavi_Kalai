@@ -87,12 +87,59 @@ export const getFollowupAndFutureFollowupData = async (req, res, next) => {
 };
 
 
+// export const allocateTeamLeader = async (req, res) => {
+//   try {
+//     const { data, selectedTeamLeader, selectedTelecaller } = req.body;
+//     const result = await Promise.all(
+//       (Array.isArray(data) ? data : [data]).map(async (item) => {
+//         const productivityStatus = {"Submit Lead": "Worked Leads","Not Int": "Reached","Followup": "Reached","Future Followup": "Reached","Call Back": "Not Reached","Lead Accepted": "Lead Accepted",}[item.selectedDisposition] || "Not Updated";
+//         const updatedFields = {
+//           selectedTeamLeader: selectedTeamLeader || item.selectedTeamLeader,
+//           selectedTelecaller: selectedTelecaller || undefined,
+//           Remarks: item.Remarks,
+//           Productivity_Status: productivityStatus,
+//         };
+//         const currentTimestamp = new Date().toISOString();
+//         if (item.selectedDisposition) {updatedFields.Disposition = `${item.selectedDisposition} (${currentTimestamp})`;
+//         } else { updatedFields.Disposition = `unchanged (${currentTimestamp})`; }
+//         if (item.selectedSubDisposition) {updatedFields.Sub_Disposition = `${item.selectedSubDisposition} (${currentTimestamp})`;
+//         } else {updatedFields.Sub_Disposition = `unchanged (${currentTimestamp})`; }
+//         const allocation = await Allocation.findByIdAndUpdate(item._id,updatedFields,{ new: true });
+//         if (selectedTeamLeader) {allocation.Status = "Allocate";  await allocation.save();}
+//         return allocation;
+//       })
+//     );
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Team leader, telecaller, and remarks saved successfully",
+//       data: result,
+//     });
+//   } catch (error) {
+//     console.error("Error in allocating team leader and telecaller:", error);
+//     return res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
+
 export const allocateTeamLeader = async (req, res) => {
   try {
     const { data, selectedTeamLeader, selectedTelecaller } = req.body;
     const result = await Promise.all(
       (Array.isArray(data) ? data : [data]).map(async (item) => {
-        const productivityStatus = {"Submit Lead": "Worked Leads","Not Int": "Reached","Followup": "Reached","Future Followup": "Reached","Call Back": "Not Reached","Lead Accepted": "Lead Accepted",}[item.selectedDisposition] || "Not Updated";
+        let productivityStatus;
+        if (item.selectedDisposition === "Lead Accepted") {
+          if (["Logged", "Accepted", "Disbursed"].includes(item.Productivity_Status)) {productivityStatus = item.Productivity_Status;
+            } else { productivityStatus = "Lead Accepted";
+          }
+        } else {
+          productivityStatus = {
+            "Submit Lead": "Worked Leads",
+            "Not Int": "Reached",
+            "Followup": "Reached",
+            "Future Followup": "Reached",
+            "Call Back": "Not Reached",
+          }[item.selectedDisposition] || "Not Updated";
+        }
         const updatedFields = {
           selectedTeamLeader: selectedTeamLeader || item.selectedTeamLeader,
           selectedTelecaller: selectedTelecaller || undefined,
@@ -101,15 +148,16 @@ export const allocateTeamLeader = async (req, res) => {
         };
         const currentTimestamp = new Date().toISOString();
         if (item.selectedDisposition) {updatedFields.Disposition = `${item.selectedDisposition} (${currentTimestamp})`;
-        } else { updatedFields.Disposition = `unchanged (${currentTimestamp})`; }
+        } else {updatedFields.Disposition = `unchanged (${currentTimestamp})`;
+        }
         if (item.selectedSubDisposition) {updatedFields.Sub_Disposition = `${item.selectedSubDisposition} (${currentTimestamp})`;
-        } else {updatedFields.Sub_Disposition = `unchanged (${currentTimestamp})`; }
-        const allocation = await Allocation.findByIdAndUpdate(item._id,updatedFields,{ new: true });
-        if (selectedTeamLeader) {allocation.Status = "Allocate";  await allocation.save();}
+        } else {updatedFields.Sub_Disposition = `unchanged (${currentTimestamp})`;
+        }
+        const allocation = await Allocation.findByIdAndUpdate(item._id, updatedFields, { new: true });
+        if (selectedTeamLeader) {allocation.Status = "Allocate"; await allocation.save(); }
         return allocation;
       })
     );
-
     return res.status(200).json({
       success: true,
       message: "Team leader, telecaller, and remarks saved successfully",
@@ -120,6 +168,8 @@ export const allocateTeamLeader = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+
 
 // export const allocateTeamLeader = async (req, res) => {
 //   try {
