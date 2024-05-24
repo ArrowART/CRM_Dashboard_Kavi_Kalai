@@ -126,7 +126,9 @@ export const Tableview = (props) => {
     'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
     'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
     'Followup': ['Option M', 'Option N', 'Option O'],
-    'Future Followup': ['Option W', 'Option X', 'Option Y']
+    'Future Followup': ['Option W', 'Option X', 'Option Y'],
+    'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
+    'Lead Declined': ['Customer Cancelled']
   };
 
   const handleProductivityStatusChange = (rowDataIndex, e) => {

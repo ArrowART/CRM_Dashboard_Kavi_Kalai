@@ -60,6 +60,8 @@ export const getSubDispositionColor = (option) => {
         case 'Fully Declined':
         case 'Docs to be collected':
             return '#9688C0';
+            case 'Customer Cancelled':
+            return '#9687C0';
         default:
             return null;
     }
