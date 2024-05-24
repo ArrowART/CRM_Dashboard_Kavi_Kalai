@@ -40,7 +40,7 @@ export const Teamtable = (props) => {
         stripedRows
         showGridlines tableStyle={{ minWidth: '50rem' }}
         globalFilter={globalfilter}
-        className="mb-4 overflow-hidden border-b border-gray-200 shadow sm:rounded-lg"
+        className="!text-sm overflow-hidden"
       >
         <Column className="flex justify-center" header="S.No" style={{ minWidth: '40px' }} body={sno} />
         {(userdetails()?.Role === 'SuperAdmin') && (

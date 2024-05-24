@@ -235,7 +235,7 @@ export const Tableview = (props) => {
         <button onClick={() => filterByProductivitystatus('Lead Accepted')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Accepted' ? 'blue' : 'green'}-500 rounded-t-lg`}>Lead Accepted Leads</button>
         <button onClick={() => filterByProductivitystatus('Not Updated')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Updated' ? 'blue' : 'green'}-500 rounded-t-lg`}>Not Updated Leads</button>
       </div>
-      <div className="mb-4">
+      <div className="mx-4 mb-4">
         <MultiSelect
           value={selectedColumns}
           options={columnOptions}

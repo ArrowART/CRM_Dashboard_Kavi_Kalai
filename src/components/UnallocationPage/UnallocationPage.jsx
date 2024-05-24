@@ -112,7 +112,7 @@ export default function UnallocationPage(){
 
     return (
         <div>
-            <div className="bg-white border rounded-3xl">
+            <div className="bg-white border rounded-2xl">
                 <Tableheadpanel 
                     newform={newform} 
                     setglobalfilter={setglobalfilter} 

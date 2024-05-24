@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
 export default function Tableheadpanel (props  ) {
     const {setglobalfilter} = props;
     return (
-        <div className="items-center justify-between px-6 py-1 space-y-3 lg:space-y-0 lg:flex">
+        <div className="items-center justify-between px-6 py-1 mt-4 space-y-3 lg:space-y-0 lg:flex">
             <div>
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">
                     Telecaller Leads

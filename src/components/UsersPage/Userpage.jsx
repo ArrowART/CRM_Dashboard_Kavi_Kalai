@@ -22,29 +22,25 @@ export default function Userspage(){
     const [filtervalues,setfiltervalues]=useState([]);
     const [teamLeaders, setTeamLeaders] = useState([]);
     const [teleCallers, setTeleCallers] = useState([]);
-    const isMounted = useRef(false);
 
+    let isMounted = true;
     const fetchAllUsers = useCallback(async () => {
+        console.log({ first, rows, ...colfilter });
         try {
-            const res = await getallusers({first, rows, globalfilter, ...colfilter});
+            const res = await getallusers({ first, rows, globalfilter, ...colfilter });
             setTabledata(res?.resdata);
             setTotalRecords(res?.totallength);
-            const teamLeaders = res?.resdata.filter(user => user.Role === "Team Leader");
-            const teleCallers = res?.resdata.filter(user => user.Role === "Telecaller");
-            setTeamLeaders(teamLeaders);
-            setTeleCallers(teleCallers);
         } catch (error) {
-            console.error("Error fetching users:", error);
+            console.error(error);
         }
     }, [first, rows, globalfilter, colfilter]);
-
+    
     useEffect(() => {
-        if (!isMounted.current) {
-            isMounted.current = true;
-        fetchAllUsers();
+        if (isMounted) {
+            fetchAllUsers();
         }
-    }, []);
-
+        return (() => isMounted = false);
+    }, [first, rows, globalfilter, colfilter]);
     const onPage = (page) => {
         setPage(page)
         setFirst(rows *(page -1));
@@ -104,7 +100,7 @@ export default function Userspage(){
       };
     return(
         <div>
-            <div className="bg-white border rounded-3xl">
+            <div className="bg-white border rounded-2xl">
                 <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} teamLeaders={teamLeaders} 
                 teleCallers={teleCallers} />
 

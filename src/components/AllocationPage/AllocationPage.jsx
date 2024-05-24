@@ -112,7 +112,7 @@ export default function AllocationPage(){
 
     return (
         <div>
-            <div className="bg-white border rounded-3xl">
+            <div className="bg-white border rounded-2xl">
                 <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform} handleDeleteAll={handleDeleteAll} 
                     tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData} />
 

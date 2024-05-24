@@ -225,7 +225,7 @@ export const Tableview = (props) => {
           Lead Submitted
         </button>
       </div>
-      <div className="mb-4">
+      <div className="mx-4 mb-4">
         <MultiSelect
           value={selectedColumns}
           options={columnOptions}

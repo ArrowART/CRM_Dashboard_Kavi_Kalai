@@ -98,7 +98,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
     }, [teleCallers, telecallerData]);
 
     return (
-        <div className="flex justify-between px-6 py-4 space-y-3 lg:space-y-0 lg:flex">
+        <div className="items-center justify-between px-6 py-4 space-y-3 lg:space-y-0 lg:flex">
             <div>
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">
                     Team Allocation
@@ -109,7 +109,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                     <input
                         type="text"
                         placeholder="Search..."
-                        className="px-4 py-2 border outline-none rounded-xl"
+                        className="px-4 py-2 border outline-none rounded-xl w-[200px] lg:w-[250px]"
                         onChange={handleFilterChange}
                     />
                     {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
@@ -117,7 +117,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                         onClick={handleAllocate}
                         className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none"
                     >
-                        <span>Allocate</span>
+                        <span className="">Allocate</span>
                     </button>
                      )}
                 </div>

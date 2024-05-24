@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 export const TeamPage = () => {
   const [telecallerData, setTelecallerData] = useState([]);
   const [page, setPage] = useState(1);
-  const [rows, setRows] = useState(10);
+  const [rows, setRows] = useState(20);
   const [visible, setVisible] = useState(false);
   const [formdata, setFormdata] = useState({});
   const [totalRecords, setTotalRecords] = useState(0);
@@ -97,6 +97,7 @@ export const TeamPage = () => {
 
   return (
     <>
+    <div className='bg-white border rounded-2xl'>
       <Tableheadpanel
         setglobalfilter={setglobalfilter}
         teamLeaders={teamLeaders}
@@ -118,6 +119,7 @@ export const TeamPage = () => {
       />
       <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
       <ConfirmDialog />
+      </div>
     </>
   );
 };

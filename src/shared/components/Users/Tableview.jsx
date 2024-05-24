@@ -106,7 +106,7 @@ export const Tableview = (props) => {
                 <button onClick={() => handleButtonClick('TeamLeader')} className={`flex-shrink-0 px-3 text-sm text-white ${activeButton === 'TeamLeader' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Team Leaders</button>
                 <button onClick={() => handleButtonClick('Telecaller')} className={`flex-shrink-0 px-3 text-sm text-white ${activeButton === 'Telecaller' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Telecallers</button>
             </div>
-            <DataTable value={tabledata} scrollable scrollHeight="400px" className='!text-sm shadow-lg rounded-lg overflow-hidden' 
+            <DataTable value={tabledata} scrollable scrollHeight="600px" className='!text-sm overflow-hidden' 
             filters={filters} stateStorage="session" stateKey="dt-state-demo-local"  resizableColumns 
             stripedRows
             showGridlines tableStyle={{ minWidth: '50rem' }}>

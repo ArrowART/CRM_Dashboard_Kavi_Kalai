@@ -66,10 +66,6 @@ export default function Tableheadpanel ( props ) {
                     <button onClick={newform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
                     <i className="fi fi-rr-add"></i> <span className="hidden md:block">Add New</span>
                     </button>
-{/*                   
-                    <button onClick={handleAllocate} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                        <span>Allocate</span>
-                    </button> */}
                 </div>
             </div>
             {/* Modal for allocation */}

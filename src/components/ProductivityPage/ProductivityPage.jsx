@@ -38,8 +38,7 @@ export const ProductivityPage = () => {
         setRows(rows);
     };
     return (
-        <div>
-            <div>
+            <div className="bg-white border rounded-2xl">
                 <Tableheadpanel setglobalfilter={setglobalfilter} />
                 <Tableview
                     tabledata={tabledata}
@@ -50,6 +49,5 @@ export const ProductivityPage = () => {
                 />
                  <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
             </div>
-        </div>
     );
 };
