@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getallselectedteamleaderandtelecaller } from "../../shared/services/apiallocation/apiallocation";
+import { getallselectedteamleaderandtelecaller } from "../../shared/services/apiunallocation/apiunallocation";
 import Tablepagination from "../../shared/components/others/Tablepagination";
 import Tableheadpanel from "../../shared/components/Productivity/Tableheadpanel";
 import { Tableview } from "../../shared/components/Productivity/Tableview";

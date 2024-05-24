@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import * as XLSX from 'xlsx';
-import { deleteAllAllocation, getallallocation, savebulkallocation } from "../../shared/services/apiunallocation/apiunallocation";
-import UploadForm from "../../shared/components/Allocation/Upload";
-import Tableview from "../../shared/components/Allocation/Tableview";
-import Tableheadpanel from "../../shared/components/Allocation/Tableheadpanel";
+import Tableview from "../../shared/components/Unallocation/Tableview";
+import Tableheadpanel from "../../shared/components/Unallocation/Tableheadpanel";
+import UploadForm from "../../shared/components/Unallocation/Upload";
+import { deleteAllAllocation, getallunallocation, savebulkallocation } from "../../shared/services/apiunallocation/apiunallocation";
 
-export default function AllocationPage(){
+export default function UnallocationPage(){
     const [totalRecords, setTotalRecords] = useState(0);
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(20);
@@ -22,7 +22,7 @@ export default function AllocationPage(){
     const [productCounts, setProductCounts] = useState({});
     let isMounted = true;
     const getallallocations = useCallback(async ()=>{
-        const res= await getallallocation({first,rows,globalfilter,...colfilter});
+        const res= await getallunallocation({first,rows,globalfilter,...colfilter});
         setTabledata(res?.resdata);
         setTotalRecords(res?.totallength);
         const counts = res?.resdata.reduce((acc, item) => {
@@ -113,13 +113,32 @@ export default function AllocationPage(){
     return (
         <div>
             <div className="bg-white border rounded-3xl">
-                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform} handleDeleteAll={handleDeleteAll} 
-                    tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData} />
-
-                <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} rows={rows} 
-                    onPageChange={onPageChange} editfrom={editfrom} cusfilter={cusfilter} filtervalues={filtervalues} />     
-                <UploadForm uploadfile={uploadfile} handleupload={handleupload} UploadVisible={UploadVisible} setUploadVisible={setUploadVisible} 
+                <Tableheadpanel 
+                    newform={newform} 
+                    setglobalfilter={setglobalfilter} 
+                    Uploadform={Uploadform}
+                    handleDeleteAll={handleDeleteAll} 
+                    tabledata={tabledata} 
+                    productCounts={productCounts} 
+                    updateTableData={updateTableData}
                 />
+
+                <Tableview 
+                    tabledata={tabledata} 
+                    totalRecords={totalRecords} 
+                    first={first} 
+                    rows={rows} 
+                    onPageChange={onPageChange} 
+                    editfrom={editfrom} 
+                    cusfilter={cusfilter} 
+                    filtervalues={filtervalues} 
+                />     
+                {/* <UploadForm 
+                    uploadfile={uploadfile} 
+                    handleupload={handleupload} 
+                    UploadVisible={UploadVisible} 
+                    setUploadVisible={setUploadVisible} 
+                /> */}
                 <ConfirmDialog />
             </div>
         </div>

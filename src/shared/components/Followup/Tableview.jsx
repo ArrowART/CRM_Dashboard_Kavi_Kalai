@@ -3,9 +3,9 @@ import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { allocateteamleader } from "../../services/apiallocation/apiallocation";
+import { allocateteamleader } from "../../services/apiunallocation/apiunallocation";
 import { InputTextarea } from "primereact/inputtextarea";
-import { getDispositionColor, getSubDispositionColor } from "../Allocation/optionColors";
+import { getDispositionColor, getSubDispositionColor } from "../Unallocation/optionColors";
 
 export const Tableview = (props) => {
   const { tabledata, filtervalues, handlefiltervalue, first, setFirst } = props;

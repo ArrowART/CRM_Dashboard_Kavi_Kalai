@@ -186,7 +186,9 @@ const Tableview = (props) => {
                     filterElement={statusFilterTemplate}
                     width="150px"
                 />
-                <Column field="Sub_Disposition" header="Sub Disposition"
+                <Column
+                    field="Sub_Disposition"
+                    header="Sub Disposition"
                     body={(rowData) => (
                         <Dropdown
                             value={rowData.selectedSubDisposition}
@@ -205,10 +207,15 @@ const Tableview = (props) => {
                         />
                     )}
                     filter
-                    // header="Date & Time"
-                    // body={(rowData) => (
-                    //     <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
-                    // )}
+                    filterElement={statusFilterTemplate}
+                    width="150px"
+                />
+                <Column
+                    field="timestamp"
+                    header="Date & Time"
+                    body={(rowData) => (
+                        <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
+                    )}
                     style={{ minWidth: '10rem' }}
                 />
                 <Column
@@ -217,14 +224,14 @@ const Tableview = (props) => {
                     width="200px"
                     filter
                     filterElement={statusFilterTemplate}
-                    // body={(rowData, { rowIndex }) => (
-                    //     <InputTextarea
-                    //         value={rowData.Remarks}
-                    //         onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-                    //         rows={3}
-                    //         className="w-full"
-                    //     />
-                    // )}
+                    body={(rowData, { rowIndex }) => (
+                        <InputTextarea
+                            value={rowData.Remarks}
+                            onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+                            rows={3}
+                            className="w-full"
+                        />
+                    )}
                 />
             </DataTable>
             </>

@@ -5,13 +5,12 @@ import { Dashboardpage } from "../components/DashboardPage/Dashboardpage";
 import LeadsandWipPage from "../components/LeadsandWipPage/LeadsandWipPage";
 import Userpage from "../components/UsersPage/Userpage";
 import { TeamPage } from "../components/TeamPage/TeamPage";
-import AllocationPage from "../components/AllocationPage/AllocationPage";
+import UnallocationPage from "../components/UnallocationPage/UnallocationPage";
 import ProtectedRoute from "../shared/services/token/ProtectedRoute";
 import { TelecallerleadsPage } from "../components/TelecallerleadsPage/TelecallerleadsPage";
 import { FollowupPage } from "../components/Followup/FollowupPage";
 import { ProductivityPage } from "../components/ProductivityPage/ProductivityPage";
-
-
+import AllocationPage from "../components/AllocationPage/AllocationPage";
 
 const AppRouter = () => {
   return (
@@ -20,9 +19,10 @@ const AppRouter = () => {
         <Route path="/" element={<SigninPage />} />
         <Route element={<Main />}>
           <Route path="/dashboard" element={<ProtectedRoute> <Dashboardpage /> </ProtectedRoute>} />
-          <Route path="/productivity" element={<ProtectedRoute>  <ProductivityPage /></ProtectedRoute>}/>
+          <Route path="/productivity" element={<ProtectedRoute> <ProductivityPage /></ProtectedRoute>}/>
           <Route path="/leadsandwip" element={ <ProtectedRoute> <LeadsandWipPage /> </ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute> <Userpage /></ProtectedRoute>} />
+          <Route path="/unallocation" element={<ProtectedRoute><UnallocationPage /></ProtectedRoute>} />
           <Route path="/allocation" element={<ProtectedRoute><AllocationPage /></ProtectedRoute>} />
           <Route path="/teams" element={<ProtectedRoute><TeamPage /></ProtectedRoute>} />
           <Route path="/telecallerleads" element={<ProtectedRoute><TelecallerleadsPage /></ProtectedRoute>} />

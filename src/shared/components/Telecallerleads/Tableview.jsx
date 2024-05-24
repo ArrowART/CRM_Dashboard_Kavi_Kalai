@@ -4,15 +4,15 @@ import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { allocateteamleader } from "../../services/apiallocation/apiallocation";
+import { allocateteamleader } from "../../services/apiunallocation/apiunallocation";
 import { InputTextarea } from "primereact/inputtextarea";
-import { getDispositionColor, getSubDispositionColor } from "../Allocation/optionColors";
+import { getDispositionColor, getSubDispositionColor } from "../Unallocation/optionColors";
 import { Skeleton } from "primereact/skeleton";
-import useRegionFilter from "../Allocation/RegionFilters";
-import useLocationFilter from "../Allocation/LocationFilters";
+import useRegionFilter from "../Unallocation/RegionFilters";
+import useLocationFilter from "../Unallocation/LocationFilters";
 import useAuth from "../../services/store/useAuth";
 import { MultiSelect } from "primereact/multiselect";
-import useCampanignFilter from "../Allocation/CampaingnFilters";
+import useCampanignFilter from "../Unallocation/CampaingnFilters";
 
 export const Tableview = (props) => {
   const { tabledata, first, setFirst, updateData, cusfilter } = props;
