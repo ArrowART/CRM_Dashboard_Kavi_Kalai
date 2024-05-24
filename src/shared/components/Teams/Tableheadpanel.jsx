@@ -5,12 +5,13 @@ import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 import { savetelecallerallocation, updatetelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation'; 
 import toast from 'react-hot-toast';
+import useAuth from '../../services/store/useAuth';
 
 export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setTelecallerData, telecallerData, visible, setVisible, formdata, setFormdata }) => {
     const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
     const [selectedTelecallers, setSelectedTelecallers] = useState([]);
     const [telecallerFilter, setTelecallerFilter] = useState('');
-
+    const { userdetails } = useAuth();
     useEffect(() => {
         if (visible) {
             if (formdata.teamleader) {
@@ -111,13 +112,16 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                         className="px-4 py-2 border outline-none rounded-xl"
                         onChange={handleFilterChange}
                     />
+                    {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
                     <button
                         onClick={handleAllocate}
                         className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none"
                     >
                         <span>Allocate</span>
                     </button>
+                     )}
                 </div>
+                
             </div>
             <Dialog
                 header="Allocate Team Members"

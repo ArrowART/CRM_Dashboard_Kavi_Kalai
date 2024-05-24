@@ -94,7 +94,7 @@ export default function Tableheadpanel(props) {
     return (
         <div className="flex items-center justify-between px-6 py-4 lg:space-y-0">
             <div>
-                <h2 className="mx-1 text-xl font-semibold text-gray-800">Allocation</h2>
+                <h2 className="mx-1 text-xl font-semibold text-gray-800">Allocation Data</h2>
             </div>
             <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
                 <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />

@@ -104,14 +104,14 @@ const Tableview = (props) => {
 
     return (
         <div>
-            <div className='max-w-[70rem] mx-auto       flex justify-between'>
-                <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
+            <div className='max-w-[70rem] mx-auto       flex justify-end'>
+                {/* <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
                     <button onClick={() => filterByProduct(null)} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>ALL</button>
                     <button onClick={() => filterByProduct('STPL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'STPL' ? 'blue' : 'green'}-500 rounded-t-lg`}>STPL Products</button>
                     <button onClick={() => filterByProduct('BL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'BL' ? 'blue' : 'green'}-500 rounded-t-lg`}>BL Products</button>
                     <button onClick={() => filterByProduct('PL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'PL' ? 'blue' : 'green'}-500 rounded-t-lg`}>PL Products</button>
                     <button onClick={() => filterByProduct('DL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'DL' ? 'blue' : 'green'}-500 rounded-t-lg`}>DL Products</button>
-                </div>
+                </div> */}
                 <div>
                      <h1 className='justify-end py-4 font-semibold '>Total Records : {totalRecords}</h1>
                 </div>

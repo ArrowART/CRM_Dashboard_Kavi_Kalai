@@ -160,37 +160,54 @@ export default function Sidebar() {
                 <i className="fi fi-ss-team-check"></i> Teams
               </NavLink>
             </li>
-            {(userdetails()?.Role === "SuperAdmin" ||
-              userdetails()?.Role === "TeamLeader") && (
-              <li>
-                <NavLink
-                  to={"/unallocation"}
-                  onClick={() => handleMenuItemClick("Unallocation")}
-                  className={({ isActive }) =>
-                    `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                      isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
-                    } text-sm text-slate-700 hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
-                  }
+            {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+            <li className="relative group">
+              <div className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg cursor-pointer hover:bg-white hover:text-black">
+                <i className="fi fi-rr-layers"></i> Allocation
+                <svg
+                  className="w-4 h-4 ml-auto transition-transform duration-300 transform group-hover:rotate-180"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
                 >
-                  <i className="fi fi-sr-cloud-upload-alt"></i> Unallocation
-                </NavLink>
-              </li>
-            )}
-            {(userdetails()?.Role === "SuperAdmin" ||
-              userdetails()?.Role === "TeamLeader") && (
-              <li>
-                <NavLink
-                  to={"/allocation"}
-                  onClick={() => handleMenuItemClick("Allocation")}
-                  className={({ isActive }) =>
-                    `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                      isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
-                    } text-sm text-slate-700 hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
-                  }
-                >
-                  <i className="fi fi-sr-cloud-upload-alt"></i> Allocation
-                </NavLink>
-              </li>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <ul className="hidden px-2 mt-1 space-y-1 group-hover:block">
+                {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+                  <li>
+                    <NavLink
+                      to="/unallocation"
+                      onClick={() => handleMenuItemClick("Unallocation")}
+                      className={({ isActive }) =>
+                        `flex items-center gap-x-3.5 py-2 px-2.5 ${
+                          isActive ? "bg-white text-black shadow" : "text-slate-700"
+                        } text-sm rounded-lg hover:bg-white hover:text-black`
+                      }
+                    >
+                      <i className="fi fi-sr-cloud-upload-alt"></i> Unallocated
+                    </NavLink>
+                  </li>
+                )}
+                {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+                  <li>
+                    <NavLink
+                      to="/allocation"
+                      onClick={() => handleMenuItemClick("Allocation")}
+                      className={({ isActive }) =>
+                        `flex items-center gap-x-3.5 py-2 px-2.5 ${
+                          isActive ? "bg-white text-black shadow" : "text-slate-700"
+                        } text-sm rounded-lg hover:bg-white hover:text-black`
+                      }
+                    >
+                      <i className="fi fi-sr-cloud-upload-alt"></i> Allocated
+                    </NavLink>
+                  </li>
+                )}
+              </ul>
+            </li>
             )}
             <li>
               <NavLink
@@ -221,9 +238,6 @@ export default function Sidebar() {
                 </NavLink>
               </li>
             )}
-
-
-
           </ul>
         </nav>
       </div>

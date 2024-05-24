@@ -22,7 +22,6 @@ export const TeamPage = () => {
   const isMounted = useRef(false);
   const isMounted1 = useRef(false);
 
-
   const fetchAllUsers = useCallback(async () => {
     try {
       const res = await getallusers({ first, rows, globalfilter, ...colfilter });
@@ -36,42 +35,43 @@ export const TeamPage = () => {
     }
   }, [first, rows, globalfilter, colfilter]);
 
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await getalltelecallerallocation({ first, rows, globalfilter, ...colfilter });
+      console.log('Response:', response);
+      if (Array.isArray(response.resdata)) {
+        setTelecallerData(response.resdata);
+        setTotalRecords(response.totallength);
+      } else {
+        console.error('resdata is not an array:', response.resdata);
+      }
+    } catch (error) {
+      console.error('Error fetching telecaller allocation data:', error);
+    }
+  }, [first, rows, globalfilter, colfilter]);
+
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true;
-    fetchAllUsers();
+      fetchAllUsers();
     }
   }, [fetchAllUsers]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getalltelecallerallocation({ first, rows, globalfilter, ...colfilter });
-        console.log('Response:', response);
-        if (Array.isArray(response.resdata)) {
-          setTelecallerData(response.resdata);
-          setTotalRecords(response.totallength);
-        } else {
-          console.error('resdata is not an array:', response.resdata);
-        }
-      } catch (error) {
-        console.error('Error fetching telecaller allocation data:', error);
-      }
-    };
     if (!isMounted1.current) {
       isMounted1.current = true;
-    fetchData();
+      fetchData();
     }
-  }, [first, rows, globalfilter, colfilter]);
+  }, [fetchData]);
 
   const onPage = (page) => {
-    setPage(page)
+    setPage(page);
     setFirst(rows * (page - 1));
     setRows(rows);
   };
 
   const cusfilter = (field, value) => {
-    setcolFilter({ ...colfilter, ...{ [field]: value } })
+    setcolFilter({ ...colfilter, [field]: value });
   };
 
   const editfrom = (data) => {
@@ -88,10 +88,10 @@ export const TeamPage = () => {
       acceptClassName: 'bg-red-500 ml-2 text-white p-2',
       rejectClassName: 'p-2 outline-none border-0',
       accept: async () => {
-        await deletetelecallerallocation(id)
-        toast.success("Successfully deleted")
-        getalltelecallerallocation();
-      }
+        await deletetelecallerallocation(id);
+        toast.success('Successfully deleted');
+        fetchData();
+      },
     });
   };
 

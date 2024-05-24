@@ -133,12 +133,12 @@ export default function UnallocationPage(){
                     cusfilter={cusfilter} 
                     filtervalues={filtervalues} 
                 />     
-                {/* <UploadForm 
+                <UploadForm 
                     uploadfile={uploadfile} 
                     handleupload={handleupload} 
                     UploadVisible={UploadVisible} 
                     setUploadVisible={setUploadVisible} 
-                /> */}
+                />
                 <ConfirmDialog />
             </div>
         </div>
