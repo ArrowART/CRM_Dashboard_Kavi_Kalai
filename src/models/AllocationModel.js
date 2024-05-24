@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { conn } from "../config/db/db.js";
 const Allocationschema = new mongoose.Schema({
-      Region:String,
+    Region:String,
     Location: String,
     Product: String,
     Name: String,
