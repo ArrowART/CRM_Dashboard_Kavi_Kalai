@@ -1,7 +1,7 @@
 import Dashboard from '../../shared/components/Dashboard/dashboard'
 import { useState, useEffect, useRef } from 'react';
 import { getallusers } from '../../shared/services/apiusers/apiusers';
-import { getallallocation, getallselectedteamleaderandtelecaller } from '../../shared/services/apiallocation/apiallocation';
+import { getallallocation, getallselectedteamleaderandtelecaller } from '../../shared/services/apiunallocation/apiunallocation';
 
 export const Dashboardpage = () => {
 

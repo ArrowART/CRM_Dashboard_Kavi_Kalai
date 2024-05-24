@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getallfollowup } from "../../shared/services/apiallocation/apiallocation";
+import { getallfollowup } from "../../shared/services/apiunallocation/apiunallocation";
 import Tablepagination from "../../shared/components/others/Tablepagination";
 import { Tableview } from "../../shared/components/Followup/Tableview";
 import Tableheadpanel from "../../shared/components/Followup/Tableheadpanel";

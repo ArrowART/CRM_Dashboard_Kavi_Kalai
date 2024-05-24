@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Tableheadpanel from '../../shared/components/Telecallerleads/Tableheadpanel';
 import { Tableview } from '../../shared/components/Telecallerleads/Tableview';
-import { getallselectedteamleaderandtelecaller } from "../../shared/services/apiallocation/apiallocation";
+import { getallselectedteamleaderandtelecaller } from "../../shared/services/apiunallocation/apiunallocation";
 import Tablepagination from "../../shared/components/others/Tablepagination";
 
 export const TelecallerleadsPage = () => {
