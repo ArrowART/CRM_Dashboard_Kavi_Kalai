@@ -26,7 +26,7 @@ export default function Userspage(){
 
     const fetchAllUsers = useCallback(async () => {
         try {
-            const res = await getallusers({first, rows, globalfilter, ...colfilter});s
+            const res = await getallusers({first, rows, globalfilter, ...colfilter});
             setTabledata(res?.resdata);
             setTotalRecords(res?.totallength);
             const teamLeaders = res?.resdata.filter(user => user.Role === "Team Leader");
