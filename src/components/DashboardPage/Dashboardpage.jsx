@@ -1,12 +1,14 @@
 import Dashboard from '../../shared/components/Dashboard/dashboard'
 import { useState, useEffect, useRef } from 'react';
 import { getallusers } from '../../shared/services/apiusers/apiusers';
-import { getallallocation, getallselectedteamleaderandtelecaller } from '../../shared/services/apiunallocation/apiunallocation';
+import { getallallocation, getallselectedteamleaderandtelecaller, getallunallocation } from '../../shared/services/apiunallocation/apiunallocation';
 
 export const Dashboardpage = () => {
 
   const [chartData, setChartData] = useState({});
   const [barchartData, setBarChartData] = useState({});
+  const [allocationchartData, setAllocationChartData] = useState({});
+ const [allocationchartOptions, setAllocationChartOptions] = useState({});
   const [chartOptions, setChartOptions] = useState({});
   const [barchartOptions, setBarChartOptions] = useState({});
   const [productivitybarchartData, setProductivityBarChartData] = useState({});
@@ -17,6 +19,8 @@ export const Dashboardpage = () => {
   const isMounted1 = useRef(false);
   const isMounted2 = useRef(false);
   const isMounted3 = useRef(false);
+  const isMounted4 = useRef(false);
+
 
   useEffect(() => {
     const documentStyle = getComputedStyle(document.documentElement);
@@ -93,11 +97,11 @@ export const Dashboardpage = () => {
             acc.AllocatedLeads++;
           } else if (Disposition === 'Call Back') {
             acc.WorkableLeads++;
-          } else if (Disposition === 'Not Int') {
+          } else if (Disposition === 'Not Int' || Disposition === 'DNE') {
             acc.NonWorkableLeads++;
-          } else if (Disposition === 'Followup') {
+          } else if (Disposition === 'Followup' || Disposition === 'Future Followup') {
             acc.Followups++;
-          } else if (Disposition === 'Submit Lead') {
+          } else if (Disposition === 'Submit Lead' || Disposition === 'Lead Accepted') {
             acc.LeadSubmitted++;
           }
           return acc;
@@ -281,11 +285,90 @@ export const Dashboardpage = () => {
   fetchProducts();
   }
 }, []);
+
+// Allocation and Unallocation
+
+useEffect(() => {
+  const documentStyle = getComputedStyle(document.documentElement);
+
+  const fetchallocationData = async () => {
+    try {
+      console.log('Fetching allocation and unallocation data');
+
+      const [allocateResponse, unallocateResponse] = await Promise.all([
+        getallallocation(),
+        getallunallocation()
+      ]);
+
+      console.log('Allocate response:', allocateResponse);
+      console.log('Unallocate response:', unallocateResponse);
+
+      const combinedData = [...(allocateResponse.resdata || []), ...(unallocateResponse.resdata || [])];
+
+      if (Array.isArray(combinedData)) {
+        const statusCount = combinedData.reduce((acc, curr) => {
+          const status = curr.Status;
+          if (status === 'Allocate') {
+            acc.Allocate++;
+          } else if (status === 'Un Allocate') {
+            acc.UnAllocate++;
+          }
+          return acc;
+        }, { Allocate: 0, UnAllocate: 0 });
+
+        console.log('Status count:', statusCount);
+
+        const data = {
+          labels: ['Allocate', 'Un Allocate'],
+          datasets: [
+            {
+              data: [statusCount.Allocate, statusCount.UnAllocate],
+              backgroundColor: [
+                documentStyle.getPropertyValue('--green-500'),
+                documentStyle.getPropertyValue('--orange-500'),
+              ],
+              hoverBackgroundColor: [
+                documentStyle.getPropertyValue('--green-400'),
+                documentStyle.getPropertyValue('--orange-400'),
+              ]
+            }
+          ]
+        };
+
+        const options = {
+          plugins: {
+            legend: {
+              labels: {
+                usePointStyle: true
+              }
+            }
+          }
+        };
+
+        setAllocationChartData(data);
+        setAllocationChartOptions(options);
+      } else {
+        console.error('Combined data is not an array:', combinedData);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  if (!isMounted4.current) {
+    isMounted4.current = true;
+    fetchallocationData();
+  }
+}, []);
+
   return (
     <div>
         <Dashboard chartData={chartData} chartOptions={chartOptions} barchartData={barchartData} 
         barchartOptions={barchartOptions} procuctsbarchartData={procuctsbarchartData} productsbarchartOptions={productsbarchartOptions}
-    productivitybarchartData={productivitybarchartData} productivitybarchartOptions={productivitybarchartOptions} />
-    </div>
+        productivitybarchartData={productivitybarchartData} productivitybarchartOptions={productivitybarchartOptions} 
+        allocationchartData={allocationchartData} 
+        allocationchartOptions={allocationchartOptions} 
+        />
+    </div> 
   )
 }

@@ -5,6 +5,8 @@ import Tableview from "../../shared/components/Unallocation/Tableview";
 import Tableheadpanel from "../../shared/components/Unallocation/Tableheadpanel";
 import UploadForm from "../../shared/components/Unallocation/Upload";
 import { deleteAllAllocation, getallunallocation, savebulkallocation } from "../../shared/services/apiunallocation/apiunallocation";
+import toast from "react-hot-toast";
+import { deleteSingleAllocation } from "../../shared/services/apiallocation/apiallocation";
 
 export default function UnallocationPage(){
     const [totalRecords, setTotalRecords] = useState(0);
@@ -110,6 +112,22 @@ export default function UnallocationPage(){
         setLoading(false);
     };
 
+    const handledelete = (id) => {
+        confirmDialog({
+          message: 'Do you want to delete this record?',
+          header: 'Delete Confirmation',
+          icon: 'pi pi-info-circle',
+          defaultFocus: 'reject',
+          acceptClassName: 'bg-red-500 ml-2 text-white p-2',
+          rejectClassName: 'p-2 outline-none border-0',
+          accept: async () => {
+            await deleteSingleAllocation(id)
+            toast.success("Successfully deleted")
+            getallallocations();
+          }
+        });
+      };
+
     return (
         <div>
             <div className="bg-white border rounded-2xl">
@@ -132,6 +150,7 @@ export default function UnallocationPage(){
                     editfrom={editfrom} 
                     cusfilter={cusfilter} 
                     filtervalues={filtervalues} 
+                    handledelete={handledelete}
                 />     
                 <UploadForm 
                     uploadfile={uploadfile} 

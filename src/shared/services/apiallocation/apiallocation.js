@@ -53,3 +53,9 @@ export const getallallProductivity = async(params)=>{
    }
 };
 
+export const deleteSingleAllocation = async (id) => {
+       var res = await axios.delete(`${apiurl()}/allocation/apideletesingleallocation`, {params:{_id:id}, headers: {"Authorization" : `Bearer ${gettoken()}`}});
+       return res.data;
+
+};
+

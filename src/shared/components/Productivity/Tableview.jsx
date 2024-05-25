@@ -249,7 +249,7 @@ export const Tableview = (props) => {
       <DataTable resizableColumns stripedRows showGridlines tableStyle={{ minWidth: '50rem' }}
         selection={selectedProducts} columnResizeMode="expand"
         onSelectionChange={e => setSelectedProducts(e.value)} value={rowDataState} rows={rowsPerPage}
-        first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="660px" filters={{ ...filters, ...filters1, ...filters2 }}>
+        first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="550px" filters={{ ...filters, ...filters1, ...filters2 }}>
         {selectedColumns.includes('sno') && (
           <Column field="sno" header="S.No" body={sno} />
         )}

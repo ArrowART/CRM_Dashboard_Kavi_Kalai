@@ -10,7 +10,7 @@ import useRegionFilter from './RegionFilters';
 import useLocationFilter from './LocationFilters';
 
 const Tableview = (props) => {
-    const { tabledata, filtervalues, handlefiltervalue, cusfilter,totalRecords } = props;
+    const { tabledata, filtervalues, handlefiltervalue, cusfilter,totalRecords,handledelete } = props;
     const [activeButton, setActiveButton] = useState(null);
     const [rowDataState, setRowDataState] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -29,7 +29,15 @@ const Tableview = (props) => {
     const handleRowsPerPageChange = (event) => {
         setRowsPerPage(event.target.value);
     };
-
+    const actionbotton = (rowData) => {
+        return (
+            <div className="flex gap-2">
+                <button onClick={() => handledelete(rowData?._id)} className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
+                    <i className="fi fi-rr-trash"></i>
+                </button>
+            </div>
+        )
+    }
     const onPage = (event) => {
         setFirst(event.first);
     };
@@ -152,6 +160,7 @@ const Tableview = (props) => {
                     filters={{ ...filters, ...filters1 }}
                     filterDisplay="menu"
                 >
+                     <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
                     <Column field="sno" header="S.No" body={sno} />
                     <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} />
                     <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />

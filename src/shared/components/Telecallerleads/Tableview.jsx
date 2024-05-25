@@ -254,7 +254,7 @@ export const Tableview = (props) => {
           onPage={onPage}
           className="text-sm"
           scrollable
-          scrollHeight="660px"
+          scrollHeight="550px"
           filters={{ ...filters, ...filters1, ...filters2 }}
         >
            {selectedColumns.includes('sno') && (
