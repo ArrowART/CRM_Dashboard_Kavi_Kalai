@@ -160,7 +160,7 @@ const Tableview = (props) => {
                     filters={{ ...filters, ...filters1 }}
                     filterDisplay="menu"
                 >
-                     <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
+                     {/* <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} /> */}
                     <Column field="sno" header="S.No" body={sno} />
                     <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} />
                     <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />

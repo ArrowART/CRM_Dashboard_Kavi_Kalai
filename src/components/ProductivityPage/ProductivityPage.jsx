@@ -32,6 +32,10 @@ export const ProductivityPage = () => {
         setcolFilter({ ...colfilter, ...{ [field]: value } });
     };
 
+    const updateData = async () => {
+        await getallteamleaderandtelecaller();
+    };
+
     const onPage = (page) => {
         setPage(page)
         setFirst(rows *(page -1));
@@ -46,6 +50,7 @@ export const ProductivityPage = () => {
                     first={first}
                     cusfilter={cusfilter}
                     filtervalues={filtervalues}
+                    updateData={updateData}
                 />
                  <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
             </div>

@@ -13,6 +13,8 @@ export const getDispositionColor = (option) => {
             return '#A9DEF9';
         case 'Future Followup':
             return '#E4C1F9';
+            case 'Lead Submitted':
+            return '#22F038';
             case 'Lead Accepted':
             return '#C8B6FF';
         case 'Lead Declined':

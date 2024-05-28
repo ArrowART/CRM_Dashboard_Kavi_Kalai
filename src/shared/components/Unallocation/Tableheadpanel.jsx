@@ -50,7 +50,7 @@ export default function Tableheadpanel(props) {
         }
         setShowModal(false);
     };
-
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -60,12 +60,18 @@ export default function Tableheadpanel(props) {
                 if (isMounted.current) {
                     setTeamLeaders(allTeamLeaders);
                     setTelecallers(allTelecallers);
+    
+                    // Set the selectedTeamLeader value based on the user's role
+                    if (userdetails()?.Role === 'TeamLeader') {
+                        const currentUser = allTeamLeaders.find(user => user.UserName === userdetails().UserName);
+                        setSelectedTeamLeader(currentUser?.UserName || '');
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching telecaller allocation data:", error);
             }
         };
-
+    
         if (!isMounted.current) {
             isMounted.current = true;
             fetchData();
@@ -104,17 +110,20 @@ export default function Tableheadpanel(props) {
                             <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
                         </button>
                     )}
-                    {userdetails()?.Role === 'SuperAdmin' && (
-                        <>
-                            <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                                <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
-                            </button>
+                {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
+    <>
+        <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
+            <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
+        </button>
 
-                            <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
-                                <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
-                            </button>
-                        </>
-                    )}
+        {userdetails()?.Role === 'SuperAdmin' && (
+            <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
+                <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
+            </button>
+        )}
+    </>
+)}
+
                 </div>
             </div>
             <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal className="p-4 bg-white rounded-lg w-[600px]">

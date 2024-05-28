@@ -46,12 +46,16 @@ export const Tableview = (props) => {
   }, [tabledata]);
   const parseDispositionValue = (dispositionValue) => {
     if (dispositionValue) {
-      const [value] = dispositionValue.split(' (');
+      let [value] = dispositionValue.split(' (');
+      // Replace "Lead Accepted" or "Lead Declined" with "Lead Submitted"
+      if (value === 'Lead Accepted' || value === 'Lead Declined') {
+        value = 'Lead Submitted';
+      }
       return value;
     }
     return null;
   };
-
+  
   const formatMobileNumber = (mobileNumber, userDetails) => {
     const userRole = userDetails?.Role;
 
@@ -108,7 +112,7 @@ export const Tableview = (props) => {
     <div>{rowIndex + 1}</div>
   );
 
-  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup', 'Lead Accepted', 'Lead Declined'];
+  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup', 'Lead Submitted',];
   const subDispositionOptionsMap = {
     'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
     'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
@@ -116,8 +120,7 @@ export const Tableview = (props) => {
     'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
     'Followup': ['Option M', 'Option N', 'Option O'],
     'Future Followup': ['Option W', 'Option X', 'Option Y'],
-    'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
-    'Lead Declined': ['Customer Cancelled']
+    'Lead Submitted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
   };
 
   const handleDispositionChange = (rowDataIndex, e) => {
@@ -167,7 +170,7 @@ export const Tableview = (props) => {
 
       if (filter === null) {
         // Show all data except dispositions that have a specific section (Allocated Leads)
-        return !['Followup', 'Future Followup', 'Call Back', 'DNE', 'Not Int', 'Submit Lead', 'Lead Accepted'].includes(disposition);
+        return !['Followup', 'Future Followup', 'Call Back', 'DNE', 'Not Int', 'Submit Lead', 'Lead Submitted'].includes(disposition);
       } else if (filter === 'Followups') {
         return disposition === 'Followup' || disposition === 'Future Followup';
       } else if (filter === 'Workableleads') {
@@ -175,7 +178,7 @@ export const Tableview = (props) => {
       } else if (filter === 'Nonworkableleads') {
         return disposition === 'DNE' || disposition === 'Not Int';
       } else if (filter === 'Lead Submitted') {
-        return disposition === 'Submit Lead' || disposition === 'Lead Accepted';
+        return disposition === 'Submit Lead' || disposition === 'Lead Submitted';
       }
       return false;
     }).map(row => ({
@@ -222,7 +225,7 @@ export const Tableview = (props) => {
           Followups
         </button>
         <button onClick={() => handleButtonClick('Lead Submitted')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Submitted' ? 'blue' : 'green'}-500 rounded-t-lg`}>
-          Lead Submitted
+          Lead Submitted Leads
         </button>
       </div>
       <div className="mx-4 mb-4">

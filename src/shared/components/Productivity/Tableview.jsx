@@ -4,7 +4,7 @@ import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { allocateteamleader } from "../../services/apiunallocation/apiunallocation";
+import { allocateteamleader, getallselectedteamleaderandtelecaller } from "../../services/apiunallocation/apiunallocation";
 import { InputTextarea } from "primereact/inputtextarea";
 import { getDispositionColor, getSubDispositionColor } from "./ProductivityoptionColors";
 import useRegionFilter from "../Unallocation/RegionFilters";
@@ -13,7 +13,7 @@ import useCampanignFilter from "../Unallocation/CampaingnFilters";
 import { MultiSelect } from 'primereact/multiselect';
 
 export const Tableview = (props) => {
-  const { tabledata, first, setFirst, cusfilter } = props;
+  const { tabledata, first, setFirst, cusfilter,updateData } = props;
   const [rowDataState, setRowDataState] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [activeButton, setActiveButton] = useState(null);
@@ -113,7 +113,7 @@ export const Tableview = (props) => {
 
   const dispositionOptions = [
     'Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup',
-    'Future Followup', 'Lead Accepted', 'Lead Declined'
+    'Future Followup','Lead Submitted', 'Lead Accepted', 'Lead Declined'
   ];
 
   const productivityStatusOptions = [
@@ -127,6 +127,7 @@ export const Tableview = (props) => {
     'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
     'Followup': ['Option M', 'Option N', 'Option O'],
     'Future Followup': ['Option W', 'Option X', 'Option Y'],
+    'Lead Submitted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
     'Lead Accepted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
     'Lead Declined': ['Customer Cancelled']
   };
@@ -175,6 +176,7 @@ export const Tableview = (props) => {
       };
       const res = await allocateteamleader(requestBody);
       toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
+      await updateData()
     } catch (err) {
       toast.error("Error in saving data");
       console.log(err);

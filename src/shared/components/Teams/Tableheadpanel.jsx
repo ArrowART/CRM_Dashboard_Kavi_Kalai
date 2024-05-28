@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState, useMemo, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
@@ -12,16 +11,21 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
     const [selectedTelecallers, setSelectedTelecallers] = useState([]);
     const [telecallerFilter, setTelecallerFilter] = useState('');
     const { userdetails } = useAuth();
+    const user = userdetails();
+
     useEffect(() => {
-        if (visible) {
-            if (formdata.teamleader) {
-                setSelectedTeamLeader(formdata.teamleader[0].UserName);
+        if (visible && formdata) {
+            setSelectedTeamLeader('');
+            setSelectedTelecallers([]);
+            if (formdata.teamleader && formdata.teamleader.length > 0) {
+                setSelectedTeamLeader(formdata.teamleader[0]?.UserName || '');
             }
-            if (formdata.telecaller) {
-                setSelectedTelecallers(formdata.telecaller.map(caller => caller.UserName));
+            if (formdata.telecaller && formdata.telecaller.length > 0) {
+                setSelectedTelecallers(formdata.telecaller.map(caller => caller.UserName) || []);
             }
         }
     }, [visible, formdata]);
+    
 
     const handleAllocate = () => {
         setFormdata({});
@@ -70,7 +74,6 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
         }
     };
     
-
     const handleAllocateCancel = () => {
         setSelectedTeamLeader('');
         setSelectedTelecallers([]);
@@ -82,20 +85,28 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
     };
 
     const filteredTeamLeaders = useMemo(() => {
+        if (user.Role === 'TeamLeader') {
+            return teamLeaders.filter(leader => leader.UserName === user.UserName);
+        }
         return teamLeaders.filter((leader) => {
             if (telecallerData && telecallerData.length > 0) {
-                return !telecallerData?.some((data) => data.teamleader && data.teamleader.length > 0 && data.teamleader[0].UserName === leader.UserName);
+                return !telecallerData.some((data) => data.teamleader && data.teamleader.length > 0 && data.teamleader[0].UserName === leader.UserName);
             }
             return true;
         });
-    }, [teamLeaders, telecallerData]);
-    
+    }, [teamLeaders, telecallerData, user]);
 
     const filteredTeleCallers = useMemo(() => {
+        if (user.Role === 'TeamLeader') {
+            return teleCallers.filter((telecaller) => {
+                return !telecallerData.some((data) => data.telecaller?.some((caller) => caller.UserName === telecaller.UserName)) &&
+                       telecaller.TeamLeaderUserName === user.UserName;
+            });
+        }
         return teleCallers.filter((telecaller) => {
             return !telecallerData.some((data) => data.telecaller?.some((caller) => caller.UserName === telecaller.UserName));
         });
-    }, [teleCallers, telecallerData]);
+    }, [teleCallers, telecallerData, user]);
 
     return (
         <div className="items-center justify-between px-6 py-4 space-y-3 lg:space-y-0 lg:flex">
@@ -112,7 +123,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                         className="px-4 py-2 border outline-none rounded-xl w-[200px] lg:w-[250px]"
                         onChange={handleFilterChange}
                     />
-                    {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
+                    {(user.Role === 'SuperAdmin' || user.Role === '') && (
                     <button
                         onClick={handleAllocate}
                         className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none"
