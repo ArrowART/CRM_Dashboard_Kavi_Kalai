@@ -1,246 +1,164 @@
-import { useState } from "react";
+/* eslint-disable react/prop-types */
+import { Sidebar } from "primereact/sidebar"
+import { useMediaQuery } from 'react-responsive';
 import { NavLink } from "react-router-dom";
 import useAuth from "../../shared/services/store/useAuth";
 
-export default function Sidebar() {
+
+const CrmSidebar = (props) => {
+
+  const { visible, setvisible } = props;
   const { userdetails } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedMenuItem, setSelectedMenuItem] = useState("Dashboard");
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const isMobile = useMediaQuery({ query: '(max-width: 971px)' });
+  const handleLinkClick = () => {
 
-  const closeSidebar = () => {
-    setIsSidebarOpen(false);
-  };
-
-  const handleMenuItemClick = (menuItem) => {
-    setSelectedMenuItem(menuItem);
-    closeSidebar(); // Close sidebar when a menu item is clicked
+    if (isMobile) {
+      setvisible(false);
+    }
   };
 
   return (
     <>
-      <div className="sticky inset-x-0 top-0 z-20 px-4 bg-white border-y sm:px-6 md:px-8 lg:hidden">
-        <div className="flex items-center py-4">
-          <button
-            type="button"
-            className="text-gray-500 hover:text-gray-600"
-            onClick={toggleSidebar}
-            aria-controls="application-sidebar"
-            aria-label="Toggle navigation"
-          >
-            <span className="sr-only">Toggle Navigation</span>
-            <svg
-              className="flex-shrink-0 size-4"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="3" x2="21" y1="6" y2="6" />
-              <line x1="3" x2="21" y1="12" y2="12" />
-              <line x1="3" x2="21" y1="18" y2="18" />
-            </svg>
-          </button>
+      <Sidebar visible={visible} onHide={() => setvisible(false)} showCloseIcon={false} dismissable={false} modal={false} className=''>
+        <div className="overflow-x-hidden fixed top-0 start-0 bottom-0 z-[60] w-80 bg-cyan-400 border-gray-200 pt-7 pb-10 overflow-y-auto  ">
+          <div className="flex flex-row">
 
-          <ol
-            className="flex items-center ms-3 whitespace-nowrap"
-            aria-label="Breadcrumb"
-          >
-            <li className="flex items-center text-sm text-gray-800">
-              Cashflow Prime
-              <svg
-                className="flex-shrink-0 mx-3 overflow-visible size-2.5 text-gray-400"
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5 1L10.6869 7.16086C10.8637 7.35239 10.8637 7.64761 10.6869 7.83914L5 14"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </li>
-            <li
-              className="text-sm font-semibold text-gray-800 truncate"
-              aria-current="page"
-            >
-              {selectedMenuItem}
-            </li>
-          </ol>
-        </div>
-      </div>
-      <div
-        id="application-sidebar"
-        className={`hs-overlay fixed top-0 left-0 bottom-0 z-[60] w-64 bg-gradient-to-b rounded-xl from-green-500 to-green-400 border pt-7 pb-10 overflow-y-auto transition-transform duration-300 transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 lg:left-auto lg:bottom-0 lg:w-64`}
-      >
-        <div className="flex items-center justify-between px-6">
-          <a className="flex text-xl font-semibold" href="#" aria-label="Brand">
-            <img src="/images/logo.svg" alt="" className="object-cover h-20 w-44" />
-          </a>
-          <button
-            type="button"
-            className="text-white hover:text-gray-200 lg:hidden"
-            onClick={closeSidebar}
-          >
-            <span className="sr-only">Close Sidebar</span>
-            <svg
-              className="w-6 h-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-        <nav
-          className="flex flex-col flex-wrap w-full p-6 hs-accordion-group"
-          data-hs-accordion-always-open
-        >
-          <ul className="space-y-1.5">
-            <li>
-              <NavLink
-                to={"/dashboard"}
-                onClick={() => handleMenuItemClick("Dashboard")}
-                className={({ isActive }) =>
-                  `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                    isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
-                  } text-sm text-slate-700 hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
-                }
-              >
-                <i className="fi fi-rr-phone-call"></i>
-                Dashboard
-              </NavLink>
-            </li>
-            {userdetails()?.Role === "SuperAdmin" && (
+            <a className="flex mx-8 text-xl font-semibold" href="#" aria-label="Brand">
+              <img src="/images/logo.svg" alt="" className="object-cover h-20 w-44" />
+            </a>
+            <img className='cursor-pointer ' src="/images/filter.svg" onClick={() => setvisible(false)} />
+
+          </div>
+
+          <nav className="flex flex-col flex-wrap w-full p-6 hs-accordion-group" data-hs-accordion-always-open>
+            <ul className="space-y-1.5">
               <li>
                 <NavLink
-                  to={"/users"}
-                  onClick={() => handleMenuItemClick("Users")}
+                  to={"/dashboard"}
+                  onClick={handleLinkClick}
                   className={({ isActive }) =>
-                    `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                      isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
-                    } text-sm text-slate-700 hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
+                    `flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
+                    } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                   }
                 >
-                  <i className="fi fi-sr-users-alt"></i> Users
+                <img src="/images/dashboard.png" alt="" className="w-7 h-7" />
+                  Dashboard
                 </NavLink>
               </li>
-            )}
-            <li>
-              <NavLink
-                to={"/teams"}
-                onClick={() => handleMenuItemClick("Teams")}
-                className={({ isActive }) =>
-                  `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                    isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
-                  } text-sm text-slate-700 hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
-                }
-              >
-                <i className="fi fi-ss-team-check"></i> Teams
-              </NavLink>
-            </li>
-            {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
-            <li className="relative group">
-              <div className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-slate-700 rounded-lg cursor-pointer hover:bg-white hover:text-black">
-                <i className="fi fi-rr-layers"></i> Allocation
-                <svg
-                  className="w-4 h-4 ml-auto transition-transform duration-300 transform group-hover:rotate-180"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+
+              {userdetails()?.Role === "SuperAdmin" && (
+                <li>
+                  <NavLink
+                    to={"/users"}
+                    onClick={handleLinkClick}
+                    className={({ isActive }) =>
+                      `flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
+                      } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
+                    }
+                  >
+                    <img src="/images/profile.png" alt="" className="w-7 h-7" />  Users
+                  </NavLink>
+                </li>
+              )}
+
+              <li>
+                <NavLink
+                  to={"/teams"}
+                  onClick={handleLinkClick}
+                  className={({ isActive }) =>
+                    `flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
+                    } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
+                  }
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-              <ul className="hidden px-2 mt-1 space-y-1 group-hover:block">
-                {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+                 <img src="/images/partners.png" alt="" className="w-7 h-7" /> Teams
+                </NavLink>
+              </li>
+
+              {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+                <li className="relative group">
+                  <div className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-black rounded-lg cursor-pointer hover:bg-white hover:text-black">
+                  <img src="/images/human-resources.png" alt="" className="w-7 h-7" /> Allocation
+                    <svg
+                      className="w-4 h-4 ml-auto transition-transform duration-300 transform group-hover:rotate-180"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <ul className="hidden px-2 mt-1 space-y-1 group-hover:block">
+                    {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+                      <li>
+                        <NavLink
+                          to="/unallocation"
+                          onClick={handleLinkClick}
+                          className={({ isActive }) =>
+                            `flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-white text-black shadow" : "text-black"
+                            } text-sm rounded-lg hover:bg-white hover:text-black`
+                          }
+                        >
+                           <img src="/images/unallocation.png" alt="" className="w-7 h-7" />Unallocated
+                        </NavLink>
+                      </li>
+                    )}
+                    {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+                      <li>
+                        <NavLink
+                          to="/allocation"
+                          onClick={handleLinkClick}
+                          className={({ isActive }) =>
+                            `flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-white text-black shadow" : "text-black"
+                            } text-sm rounded-lg hover:bg-white hover:text-black`
+                          }
+                        >
+                          <img src="/images/selection.png" alt="" className="w-7 h-7" /> Allocated
+                        </NavLink>
+                      </li>
+                    )}
+                  </ul>
+                </li>
+              )}
+
+
+              <li>
+                <NavLink
+                  to={"/telecallerleads"}
+                  onClick={handleLinkClick}
+                  className={({ isActive }) =>
+                    `flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
+                    } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
+                  }
+                >
+                 <img src="/images/svg.png" alt="" className="w-7 h-7" /> Telecaller Leads
+                </NavLink>
+              </li>
+
+              {(userdetails()?.Role === "SuperAdmin" ||
+                userdetails()?.Role === "TeamLeader") && (
                   <li>
                     <NavLink
-                      to="/unallocation"
-                      onClick={() => handleMenuItemClick("Unallocation")}
+                      to={"/productivity"}
+                      onClick={handleLinkClick}
                       className={({ isActive }) =>
-                        `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                          isActive ? "bg-white text-black shadow" : "text-slate-700"
-                        } text-sm rounded-lg hover:bg-white hover:text-black`
+                        `flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
+                        } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                       }
                     >
-                      <i className="fi fi-sr-cloud-upload-alt"></i> Unallocated
+                      <img src="/images/productivity.png" alt="" className="w-7 h-7" /> Productivity
                     </NavLink>
                   </li>
                 )}
-                {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
-                  <li>
-                    <NavLink
-                      to="/allocation"
-                      onClick={() => handleMenuItemClick("Allocation")}
-                      className={({ isActive }) =>
-                        `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                          isActive ? "bg-white text-black shadow" : "text-slate-700"
-                        } text-sm rounded-lg hover:bg-white hover:text-black`
-                      }
-                    >
-                      <i className="fi fi-sr-cloud-upload-alt"></i> Allocated
-                    </NavLink>
-                  </li>
-                )}
-              </ul>
-            </li>
-            )}
-            <li>
-              <NavLink
-                to={"/telecallerleads"}
-                onClick={() => handleMenuItemClick("Telecaller Leads")}
-                className={({ isActive }) =>
-                  `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                    isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
-                  } text-sm text-slate-700 hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
-                }
-              >
-                <i className="fi fi-rr-megaphone"></i> Telecaller Leads
-              </NavLink>
-            </li>
-            {(userdetails()?.Role === "SuperAdmin" ||
-              userdetails()?.Role === "TeamLeader") && (
-              <li>
-                <NavLink
-                  to={"/productivity"}
-                  onClick={() => handleMenuItemClick("Productivity")}
-                  className={({ isActive }) =>
-                    `flex items-center gap-x-3.5 py-2 px-2.5 ${
-                      isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
-                    } text-sm text-slate-700 hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
-                  }
-                >
-                <i className="fi fi-rr-layers"></i> Productivity
-                </NavLink>
-              </li>
-            )}
-          </ul>
-        </nav>
-      </div>
+
+            </ul>
+          </nav>
+        </div>
+      </Sidebar>
     </>
   );
-}
+};
+
+export default CrmSidebar;
