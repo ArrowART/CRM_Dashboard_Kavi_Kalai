@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useMemo, useEffect } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
@@ -26,7 +27,6 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
         }
     }, [visible, formdata]);
     
-
     const handleAllocate = () => {
         setFormdata({});
         setSelectedTeamLeader('');
@@ -85,16 +85,27 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
     };
 
     const filteredTeamLeaders = useMemo(() => {
-        if (user.Role === 'TeamLeader') {
-            return teamLeaders.filter(leader => leader.UserName === user.UserName);
-        }
-        return teamLeaders.filter((leader) => {
-            if (telecallerData && telecallerData.length > 0) {
-                return !telecallerData.some((data) => data.teamleader && data.teamleader.length > 0 && data.teamleader[0].UserName === leader.UserName);
+        const leaderList = user.Role === 'TeamLeader'
+            ? teamLeaders.filter(leader => leader.UserName === user.UserName)
+            : teamLeaders.filter(leader => {
+                if (telecallerData && telecallerData.length > 0) {
+                    return !telecallerData.some(data => 
+                        data.teamleader && data.teamleader.length > 0 && data.teamleader[0].UserName === leader.UserName
+                    );
+                }
+                return true;
+            });
+
+        // Ensure the selected team leader from formdata is included
+        if (formdata && formdata.teamleader && formdata.teamleader.length > 0) {
+            const currentLeader = formdata.teamleader[0];
+            if (!leaderList.some(leader => leader.UserName === currentLeader.UserName)) {
+                leaderList.push(currentLeader);
             }
-            return true;
-        });
-    }, [teamLeaders, telecallerData, user]);
+        }
+
+        return leaderList;
+    }, [teamLeaders, telecallerData, user, formdata]);
 
     const filteredTeleCallers = useMemo(() => {
         if (user.Role === 'TeamLeader') {

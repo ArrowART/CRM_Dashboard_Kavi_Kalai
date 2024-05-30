@@ -102,9 +102,9 @@ export const Tableview = (props) => {
     return (
         <div>
             <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
-                <button onClick={() => handleButtonClick(null)} className={`flex-shrink-0 px-3 p-2 text-sm text-white ${activeButton === null ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>All Users</button>
-                <button onClick={() => handleButtonClick('TeamLeader')} className={`flex-shrink-0 px-3 text-sm text-white ${activeButton === 'TeamLeader' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Team Leaders</button>
-                <button onClick={() => handleButtonClick('Telecaller')} className={`flex-shrink-0 px-3 text-sm text-white ${activeButton === 'Telecaller' ? 'bg-blue-500' : 'bg-green-500 hover:bg-green-400'} rounded-t-lg`}>Telecallers</button>
+                <button onClick={() => handleButtonClick(null)} className={`flex-shrink-0 px-3 p-2 text-sm text-white ${activeButton === null ? 'bg-blue-600' : 'bg-cyan-500 hover:bg-cyan-400'} rounded-t-lg`}>All Users</button>
+                <button onClick={() => handleButtonClick('TeamLeader')} className={`flex-shrink-0 px-3 text-sm text-white ${activeButton === 'TeamLeader' ? 'bg-blue-600' : 'bg-cyan-500 hover:bg-cyan-400'} rounded-t-lg`}>Team Leaders</button>
+                <button onClick={() => handleButtonClick('Telecaller')} className={`flex-shrink-0 px-3 text-sm text-white ${activeButton === 'Telecaller' ? 'bg-blue-600' : 'bg-cyan-500 hover:bg-cyan-400'} rounded-t-lg`}>Telecallers</button>
             </div>
             <DataTable value={tabledata} scrollable scrollHeight="600px" className='!text-sm overflow-hidden' 
             filters={filters} stateStorage="session" stateKey="dt-state-demo-local"  resizableColumns 

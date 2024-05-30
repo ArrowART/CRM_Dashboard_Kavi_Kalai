@@ -230,12 +230,12 @@ export const Tableview = (props) => {
   return (
     <div>
       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
-        <button onClick={() => filterByProductivitystatus(null)} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'green'}-500 rounded-t-lg`}>All Leads</button>
-        <button onClick={() => filterByProductivitystatus('Worked Leads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Worked Leads' ? 'blue' : 'green'}-500 rounded-t-lg`}>Worked Leads</button>
-        <button onClick={() => filterByProductivitystatus('Reached')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Reached' ? 'blue' : 'green'}-500 rounded-t-lg`}>Reached Leads</button>
-        <button onClick={() => filterByProductivitystatus('Not Reached')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Reached' ? 'blue' : 'green'}-500 rounded-t-lg`}>Not Reached Leads</button>
-        <button onClick={() => filterByProductivitystatus('Lead Accepted')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Accepted' ? 'blue' : 'green'}-500 rounded-t-lg`}>Lead Accepted Leads</button>
-        <button onClick={() => filterByProductivitystatus('Not Updated')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Updated' ? 'blue' : 'green'}-500 rounded-t-lg`}>Not Updated Leads</button>
+        <button onClick={() => filterByProductivitystatus(null)} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'cyan'}-500 rounded-t-lg`}>All Leads</button>
+        <button onClick={() => filterByProductivitystatus('Worked Leads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Worked Leads' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Worked Leads</button>
+        <button onClick={() => filterByProductivitystatus('Reached')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Reached' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Reached Leads</button>
+        <button onClick={() => filterByProductivitystatus('Not Reached')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Reached' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Not Reached Leads</button>
+        <button onClick={() => filterByProductivitystatus('Lead Accepted')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Accepted' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Lead Accepted Leads</button>
+        <button onClick={() => filterByProductivitystatus('Not Updated')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Updated' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Not Updated Leads</button>
       </div>
       <div className="mx-4 mb-4">
         <MultiSelect

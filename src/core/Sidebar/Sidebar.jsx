@@ -4,7 +4,6 @@ import { useMediaQuery } from 'react-responsive';
 import { NavLink } from "react-router-dom";
 import useAuth from "../../shared/services/store/useAuth";
 
-
 const CrmSidebar = (props) => {
 
   const { visible, setvisible } = props;
@@ -38,11 +37,12 @@ const CrmSidebar = (props) => {
                   to={"/dashboard"}
                   onClick={handleLinkClick}
                   className={({ isActive }) =>
-                    `flex items-center gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
+                    `flex items-center gap-x-3.5 py-2 px-2.5 w-80 ${isActive ? "bg-gradient-to-tr from-[#fffffffd] to-[#fff] text-black shadow" : ""
                     } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                   }
                 >
-                <img src="/images/dashboard.png" alt="" className="w-7 h-7" />
+                   <div className="p-2 bg-white rounded-lg">
+                <img src="/images/dashboard.png" alt="" className="w-7 h-7" /></div>
                   Dashboard
                 </NavLink>
               </li>
@@ -57,7 +57,10 @@ const CrmSidebar = (props) => {
                       } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                     }
                   >
-                    <img src="/images/profile.png" alt="" className="w-7 h-7" />  Users
+                    <div className="p-2 bg-white rounded-lg">
+                    <img src="/images/profile.png" alt="" className=" w-7 h-7" /> 
+                    </div>
+                     Users
                   </NavLink>
                 </li>
               )}
@@ -71,14 +74,18 @@ const CrmSidebar = (props) => {
                     } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                   }
                 >
-                 <img src="/images/partners.png" alt="" className="w-7 h-7" /> Teams
+                   <div className="p-2 bg-white rounded-lg">
+                 <img src="/images/partners.png" alt="" className="w-7 h-7" /> </div>
+                 Teams
                 </NavLink>
               </li>
 
               {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
                 <li className="relative group">
                   <div className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-black rounded-lg cursor-pointer hover:bg-white hover:text-black">
-                  <img src="/images/human-resources.png" alt="" className="w-7 h-7" /> Allocation
+                  <div className="p-2 bg-white rounded-lg">
+                  <img src="/images/human-resources.png" alt="" className="w-7 h-7" /> </div>
+                  Allocation
                     <svg
                       className="w-4 h-4 ml-auto transition-transform duration-300 transform group-hover:rotate-180"
                       xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +108,9 @@ const CrmSidebar = (props) => {
                             } text-sm rounded-lg hover:bg-white hover:text-black`
                           }
                         >
-                           <img src="/images/unallocation.png" alt="" className="w-7 h-7" />Unallocated
+                           <div className="p-2 bg-white rounded-lg">
+                           <img src="/images/unallocation.png" alt="" className="w-7 h-7" /></div>
+                           Unallocated
                         </NavLink>
                       </li>
                     )}
@@ -115,7 +124,9 @@ const CrmSidebar = (props) => {
                             } text-sm rounded-lg hover:bg-white hover:text-black`
                           }
                         >
-                          <img src="/images/selection.png" alt="" className="w-7 h-7" /> Allocated
+                           <div className="p-2 bg-white rounded-lg">
+                          <img src="/images/selection.png" alt="" className="w-7 h-7" /> </div>
+                          Allocated
                         </NavLink>
                       </li>
                     )}
@@ -133,7 +144,9 @@ const CrmSidebar = (props) => {
                     } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                   }
                 >
-                 <img src="/images/svg.png" alt="" className="w-7 h-7" /> Telecaller Leads
+                   <div className="p-2 bg-white rounded-lg">
+                 <img src="/images/svg.png" alt="" className="w-7 h-7" /> </div>
+                 Telecaller Leads
                 </NavLink>
               </li>
 
@@ -148,7 +161,9 @@ const CrmSidebar = (props) => {
                         } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                       }
                     >
-                      <img src="/images/productivity.png" alt="" className="w-7 h-7" /> Productivity
+                       <div className="p-2 bg-white rounded-lg">
+                      <img src="/images/productivity.png" alt="" className="w-7 h-7" /> </div>
+                      Productivity
                     </NavLink>
                   </li>
                 )}

@@ -23,7 +23,7 @@ export const Dashboardpage = () => {
 
 
   useEffect(() => {
-    const documentStyle = getComputedStyle(document.documentElement);
+ 
 
     const fetchData = async () => {
       try {
@@ -46,16 +46,17 @@ export const Dashboardpage = () => {
               {
                 data: [roleCount.TeamLeader, roleCount.Telecaller],
                 backgroundColor: [
-                  documentStyle.getPropertyValue('--blue-500'),
-                  documentStyle.getPropertyValue('--yellow-500'),
+                  '#4CC9F0', 
+                  '#4361EE', 
                 ],
                 hoverBackgroundColor: [
-                  documentStyle.getPropertyValue('--blue-400'),
-                  documentStyle.getPropertyValue('--yellow-400'),
+                  '#4CC9F1', 
+                  '#4361EE', 
                 ]
               }
             ]
           };
+          
 
           const options = {
             plugins: {
@@ -289,8 +290,6 @@ export const Dashboardpage = () => {
 // Allocation and Unallocation
 
 useEffect(() => {
-  const documentStyle = getComputedStyle(document.documentElement);
-
   const fetchallocationData = async () => {
     try {
       console.log('Fetching allocation and unallocation data');
@@ -324,12 +323,12 @@ useEffect(() => {
             {
               data: [statusCount.Allocate, statusCount.UnAllocate],
               backgroundColor: [
-                documentStyle.getPropertyValue('--green-500'),
-                documentStyle.getPropertyValue('--orange-500'),
+                '#b388eb',
+                '#8093f1',
               ],
               hoverBackgroundColor: [
-                documentStyle.getPropertyValue('--green-400'),
-                documentStyle.getPropertyValue('--orange-400'),
+                '#b388eb',
+                '#8093f1',
               ]
             }
           ]
