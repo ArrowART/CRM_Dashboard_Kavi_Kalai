@@ -1,6 +1,6 @@
 import express from 'express'
 import authMiddleware from '../middlewares/authMiddleware.js'
-import { allocateTeamLeader, deleteallallocation, getFollowupAndFutureFollowupData, getProductivityStatus, getSelectedTeamLeaderAndTelecallerData, getallunallocation, savebulkunallocation } from '../controllers/Unallocation/unallocationController.js'
+import { allocateTeamLeader, deleteallallocation, deleteallocation, getFollowupAndFutureFollowupData, getProductivityStatus, getSelectedTeamLeaderAndTelecallerData, getallunallocation, savebulkunallocation } from '../controllers/Unallocation/unallocationController.js'
 
 const unallocationRouter = express.Router()
 unallocationRouter.get('/apigetallallocation', authMiddleware(['SuperAdmin','TeamLeader','Telecaller']), getallunallocation)
@@ -10,4 +10,5 @@ unallocationRouter.get('/apigetallproductivitydata', authMiddleware(['SuperAdmin
 unallocationRouter.post('/apisavebulkallocation', authMiddleware(['SuperAdmin','TeamLeader']), savebulkunallocation)
 unallocationRouter.post('/apiallocateteamleader', authMiddleware(['SuperAdmin','TeamLeader',,'Telecaller']), allocateTeamLeader)
 unallocationRouter.delete('/apideleteallocation', authMiddleware(['SuperAdmin','TeamLeader']),deleteallallocation )
+unallocationRouter.delete('/apideletesingleallocation', authMiddleware(['SuperAdmin','TeamLeader']),deleteallocation )
 export default unallocationRouter

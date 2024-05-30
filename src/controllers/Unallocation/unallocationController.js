@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 export const getallunallocation = async (req, res, next) => {
   try {
     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
-    const filter = Role === 'SuperAdmin' ? {Status:{$ne: "Allocate"}} : Role === 'TeamLeader' ? { selectedTeamLeader: UserName,selectedTelecaller:{$exists:false} } : Role === 'Telecaller' ? { selectedTelecaller: UserName } : {};
+    const filter = Role === 'SuperAdmin' ? {Status:{$ne: "Allocate"}} : Role === 'TeamLeader' ?{Status:{$ne: "Allocate"}}|| { selectedTeamLeader: UserName,selectedTelecaller:{$exists:false} } : Role === 'Telecaller' ? { selectedTelecaller: UserName } : {};
     const { globalfilter } = req.query;
     let filterQuery = Allocation.find(filter);
     if (globalfilter) {
@@ -138,6 +138,8 @@ export const allocateTeamLeader = async (req, res) => {
             "Followup": "Reached",
             "Future Followup": "Reached",
             "Call Back": "Not Reached",
+            "Lead Submitted": "Submit Leads",
+            "Lead Declined": "Declined",
           }[item.selectedDisposition] || "Not Updated";
         }
         const updatedFields = {
@@ -225,3 +227,14 @@ export const deleteallallocation = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+  
+export const deleteallocation = async (req, res, next) => {
+  try {
+    const { _id } = req.query
+    const resdata = await Allocation.deleteOne({ _id })
+    res.send(resdata)
+  } catch (err) {
+    console.error(err)
+  }
+}

@@ -77,27 +77,43 @@ export const saveUser = async (req, res, next) => {
 
   export const updateUser = async (req, res, next) => {
     try {
-        const { _id } = req.query;
-        const { Role } = req.body;
-        const user = await User.findById(_id);
-        if (!user) {return res.status(404).send({ error: 'User not found' });
-        }
-        let newUserName;
+      const { _id } = req.query;
+      const { Role } = req.body;
+      const user = await User.findById(_id);
+      if (!user) {
+        return res.status(404).send({ error: 'User not found' });
+      }
+  
+      let newUserName;
+      let userNameChanged = false;
+  
+      if (Role !== user.Role) {
         if (Role === 'TeamLeader') {
-            newUserName = user.UserName.replace(/^TC/, 'TL');
-        } else if (Role === 'Telecaller') { newUserName = user.UserName.replace(/^TL/, 'TC');
-        } else { newUserName = user.UserName;
+          newUserName = user.UserName.replace(/^TC/, 'TL');
+        } else if (Role === 'Telecaller') {
+          newUserName = user.UserName.replace(/^TL/, 'TC');
         }
-        if (newUserName !== user.UserName) { req.body.UserName = newUserName;
+  
+        // Check if the new username already exists
+        const existingUser = await User.findOne({ UserName: newUserName });
+        if (existingUser) {
+          // Generate a new unique username
+          const lastUsers = await User.find().sort({ createdAt: -1 }).limit(1);
+          newUserName = await generateUniqueUserName(Role, lastUsers);
         }
-        const updatedUser = await User.findByIdAndUpdate(_id, req.body, { new: true });
-        res.send(updatedUser);
+  
+        req.body.UserName = newUserName;
+        userNameChanged = true;
+      }
+  
+      const updatedUser = await User.findByIdAndUpdate(_id, req.body, { new: true });
+      res.send(updatedUser);
     } catch (err) {
-        console.error(err);
-        res.status(500).send({ error: 'Internal server error' });
+      console.error(err);
+      res.status(500).send({ error: 'Internal server error' });
     }
-};
-
+  };
+  
   
   
   export const deleteUser = async (req, res, next) => {

@@ -9,7 +9,7 @@ export const Login = async (req, res, next) => {
     const superAdmin = await SuperAdmin.findOne({ UserName, Status: 'Active', Password });
     if (superAdmin) {
       console.log('SuperAdmin login successful');
-      const token = Createtoken({ _id: superAdmin._id, UserName: superAdmin.UserName, Role: superAdmin.Role });
+      const token = Createtoken({ _id: superAdmin._id, UserName: superAdmin.UserName, Role: superAdmin.Role,First_Name: superAdmin.First_Name,Last_Name: superAdmin.Last_Name });
       return res.send({ status: 'Success', token, Role: superAdmin.Role });
     }
     const user = await User.findOne({ UserName, User_Status: 'Active', Password });

@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 export const getallallocation = async (req, res, next) => {
   try {
     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
-    const filter = Role === 'SuperAdmin' ? {Status: "Allocate"} : Role === 'TeamLeader' ? { selectedTeamLeader: UserName,selectedTelecaller:{$exists:true} } : Role === 'Telecaller' ? { selectedTelecaller: UserName } : {};
+    const filter = Role === 'SuperAdmin' ? {Status: "Allocate"} : Role === 'TeamLeader' ? {Status: "Allocate"}||{ selectedTeamLeader: UserName,selectedTelecaller:{$exists:true} } : Role === 'Telecaller' ? { selectedTelecaller: UserName } : {};
     const { globalfilter } = req.query;
     let filterQuery = Allocation.find(filter);
     if (globalfilter) {
