@@ -22,17 +22,17 @@ export default function Dashboard(props) {
 
     return (
       <>
-<div className='grid justify-center grid-cols-1 mb-5'>
+<div className='grid justify-center grid-cols-1 mb-5 shadow-xl'>
   <div className='bg-white rounded-xl'>
     <div className='grid grid-cols-1 lg:grid-cols-2'>
       <div className='flex items-center justify-center p-2'>
-        <p className='text-2xl font-medium lg:text-5xl text-slate-600'>{getGreeting()}  {userdetails()?.Role},</p>
+        <p className='text-2xl font-medium lg:text-4xl text-slate-600'>{getGreeting()}  {userdetails()?.Role},</p>
       </div>
       <div className='flex items-center justify-center p-2'>
         <img 
           src="/images/call-center.png" 
           alt="" 
-          className='object-cover w-full max-w-[430px] h-auto max-h-[340px] -my-6' 
+          className='object-cover w-full max-w-[200px] h-auto max-h-[340px] -my-9' 
         />
       </div>
     </div>
@@ -41,27 +41,27 @@ export default function Dashboard(props) {
     {(userdetails()?.Role === "Telecaller") && (
       <div className='bg-white rounded-xl '>
         <div className="p-5">
-          <h1 className="p-1 text-xl font-semibold text-white bg-purple-400 rounded-lg w-fit">Telecaller Leads</h1>
+          <h1 className="p-1 text-xl font-semibold rounded-lg text--black w-fit">Telecaller Leads</h1>
           <Chart type="bar" data={barchartData} options={barchartOptions} className="" />
         </div>
         </div>
     )}
-    <div className="grid justify-center lg:h-[430px] grid-cols-1 gap-5 lg:grid-cols-3">
+    <div className="grid justify-center lg:h-[430px] grid-cols-1 gap-8 lg:grid-cols-3">
     {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
-      <div className='bg-white rounded-xl '>
-      <div className="flex justify-center rounded-xl">
-      <div className="p-5 lg:h-[100px] lg:w-[360px]">
-        <h1 className="p-1 text-xl font-semibold text-white bg-purple-400 rounded-lg w-fit">Total Users</h1>
+      <div className='bg-white rounded-xl shadow-small'>
+      <div className="flex justify-center ">
+      <div className="p-5 lg:h-[90px] lg:w-[350px]">
+        <h1 className="p-1 text-xl font-semibold rounded-lg text--black w-fit">Total Users</h1>
         <Chart type="pie" data={chartData} options={chartOptions} className="" />
       </div>
       </div>
       </div>
     )}
    {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
-      <div className='bg-white rounded-xl '>
+      <div className='bg-white rounded-xl shadow-small'>
       <div className="flex justify-center rounded-xl">
-      <div className="p-5 lg:h-[230px] lg:w-[380px]">
-        <h1 className="p-1 text-xl font-semibold text-white bg-purple-400 rounded-lg w-fit">Productivity Data</h1>
+      <div className="p-5 lg:h-[220px] lg:w-[370px]">
+        <h1 className="p-1 text-xl font-semibold rounded-lg text--black w-fit">Productivity Data</h1>
         <Chart type="doughnut" data={productivitybarchartData} options={productivitybarchartOptions} className="" />
       </div>
       </div>
@@ -69,10 +69,10 @@ export default function Dashboard(props) {
    )}
   
   {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
-      <div className='bg-white rounded-xl '>
-      <div className="flex justify-center rounded-xl ">
-      <div className="p-5 lg:h-[100px] lg:w-[360px]">
-        <h1 className="p-1 text-xl font-semibold text-white bg-purple-400 rounded-lg w-fit">Allocated and Unallocated</h1>
+      <div className='bg-white rounded-xl shadow-small'>
+      <div className="flex justify-center">
+      <div className="p-5 lg:h-[90px] lg:w-[350px]">
+        <h1 className="p-1 text-xl font-semibold rounded-lg text--black w-fit">Allocated and Unallocated</h1>
         <Chart type="pie" data={allocationchartData} options={allocationchartOptions} className="" />
       </div>
       </div>
@@ -80,20 +80,20 @@ export default function Dashboard(props) {
   )}
       </div>
 
-      <div className="grid justify-center grid-cols-1 gap-3 mt-5 lg:grid-cols-2">
+      <div className="grid justify-center grid-cols-1 gap-8 mt-5 lg:grid-cols-2">
       {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
-      <div className='bg-white rounded-xl '>
+      <div className='bg-white rounded-xl shadow-small'>
       <div className="p-5">
-        <h1 className="p-1 text-xl font-semibold text-white bg-purple-400 rounded-lg w-fit">Telecaller Leads</h1>
+        <h1 className="p-1 text-xl font-semibold rounded-lg text--black w-fit">Telecaller Leads</h1>
         <Chart type="bar" data={barchartData} options={barchartOptions} className="" />
       </div>
       </div>
       )}
 
       {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
-      <div className='bg-white rounded-xl '>
+      <div className='bg-white rounded-xl shadow-small'>
       <div className="p-5">
-        <h1 className="p-1 text-xl font-semibold text-white bg-purple-400 rounded-lg w-fit">Products Count</h1>
+        <h1 className="p-1 text-xl font-semibold rounded-lg text--black w-fit">Products Count</h1>
         <Chart type="bar" data={procuctsbarchartData} options={productsbarchartOptions} className="" />
       </div>
       </div>

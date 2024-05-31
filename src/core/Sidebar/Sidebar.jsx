@@ -1,33 +1,45 @@
 /* eslint-disable react/prop-types */
-import { Sidebar } from "primereact/sidebar"
+import { Sidebar } from "primereact/sidebar";
 import { useMediaQuery } from 'react-responsive';
 import { NavLink } from "react-router-dom";
 import useAuth from "../../shared/services/store/useAuth";
+import { Tooltip } from "@nextui-org/react";
+import { useEffect } from "react";
 
 const CrmSidebar = (props) => {
-
   const { visible, setvisible } = props;
   const { userdetails } = useAuth();
-
   const isMobile = useMediaQuery({ query: '(max-width: 971px)' });
-  const handleLinkClick = () => {
 
+  const handleLinkClick = () => {
     if (isMobile) {
       setvisible(false);
     }
   };
+  useEffect(() => {
+    setvisible(isMobile ? false : true);
+  }, [isMobile]);
 
   return (
     <>
-      <Sidebar visible={visible} onHide={() => setvisible(false)} showCloseIcon={false} dismissable={false} modal={false} className=''>
-        <div className="overflow-x-hidden fixed top-0 start-0 bottom-0 z-[60] w-80 bg-cyan-400 border-gray-200 pt-7 pb-10 overflow-y-auto  ">
+      <Sidebar
+        visible={visible}
+        onHide={() => setvisible(false)}
+        showCloseIcon={false}
+        dismissable={false}
+        modal={false}
+        className='rounded-r-2xl'
+      >
+        <div className="overflow-x-hidden fixed top-0 start-0 bottom-0 z-[60] w-80 bg-cyan-400 border-gray-200 pt-7 pb-10 overflow-y-auto rounded-r-2xl">
           <div className="flex flex-row">
-
             <a className="flex mx-8 text-xl font-semibold" href="#" aria-label="Brand">
               <img src="/images/logo.svg" alt="" className="object-cover h-20 w-44" />
             </a>
-            <img className='cursor-pointer ' src="/images/filter.svg" onClick={() => setvisible(false)} />
-
+            <img
+              className='cursor-pointer'
+              src="/images/filter.svg"
+              onClick={() => setvisible(false)}
+            />
           </div>
 
           <nav className="flex flex-col flex-wrap w-full p-6 hs-accordion-group" data-hs-accordion-always-open>
@@ -41,8 +53,9 @@ const CrmSidebar = (props) => {
                     } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                   }
                 >
-                   <div className="p-2 bg-white rounded-lg">
-                <img src="/images/dashboard.png" alt="" className="w-7 h-7" /></div>
+                  <div className="p-2 bg-white rounded-lg">
+                    <img src="/images/dashboard.png" alt="" className="w-7 h-7" />
+                  </div>
                   Dashboard
                 </NavLink>
               </li>
@@ -58,9 +71,9 @@ const CrmSidebar = (props) => {
                     }
                   >
                     <div className="p-2 bg-white rounded-lg">
-                    <img src="/images/profile.png" alt="" className=" w-7 h-7" /> 
+                      <img src="/images/profile.png" alt="" className="w-7 h-7" />
                     </div>
-                     Users
+                    Users
                   </NavLink>
                 </li>
               )}
@@ -74,20 +87,22 @@ const CrmSidebar = (props) => {
                     } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                   }
                 >
-                   <div className="p-2 bg-white rounded-lg">
-                 <img src="/images/partners.png" alt="" className="w-7 h-7" /> </div>
-                 Teams
+                  <div className="p-2 bg-white rounded-lg">
+                    <img src="/images/partners.png" alt="" className="w-7 h-7" />
+                  </div>
+                  Teams
                 </NavLink>
               </li>
 
               {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
                 <li className="relative group">
                   <div className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-black rounded-lg cursor-pointer hover:bg-white hover:text-black">
-                  <div className="p-2 bg-white rounded-lg">
-                  <img src="/images/human-resources.png" alt="" className="w-7 h-7" /> </div>
-                  Allocation
+                    <div className="p-2 bg-white rounded-lg">
+                      <img src="/images/human-resources.png" alt="" className="w-7 h-7" />
+                    </div>
+                    Allocation
                     <svg
-                      className="w-4 h-4 ml-auto transition-transform duration-300 transform group-hover:rotate-180"
+                      className="w-4 h-4 ml-20 transition-transform duration-300 transform group-hover:rotate-180"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -108,9 +123,10 @@ const CrmSidebar = (props) => {
                             } text-sm rounded-lg hover:bg-white hover:text-black`
                           }
                         >
-                           <div className="p-2 bg-white rounded-lg">
-                           <img src="/images/unallocation.png" alt="" className="w-7 h-7" /></div>
-                           Unallocated
+                          <div className="p-2 bg-white rounded-lg">
+                            <img src="/images/unallocation.png" alt="" className="w-7 h-7" />
+                          </div>
+                          Unallocated
                         </NavLink>
                       </li>
                     )}
@@ -124,8 +140,9 @@ const CrmSidebar = (props) => {
                             } text-sm rounded-lg hover:bg-white hover:text-black`
                           }
                         >
-                           <div className="p-2 bg-white rounded-lg">
-                          <img src="/images/selection.png" alt="" className="w-7 h-7" /> </div>
+                          <div className="p-2 bg-white rounded-lg">
+                            <img src="/images/selection.png" alt="" className="w-7 h-7" />
+                          </div>
                           Allocated
                         </NavLink>
                       </li>
@@ -133,7 +150,6 @@ const CrmSidebar = (props) => {
                   </ul>
                 </li>
               )}
-
 
               <li>
                 <NavLink
@@ -144,9 +160,10 @@ const CrmSidebar = (props) => {
                     } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                   }
                 >
-                   <div className="p-2 bg-white rounded-lg">
-                 <img src="/images/svg.png" alt="" className="w-7 h-7" /> </div>
-                 Telecaller Leads
+                  <div className="p-2 bg-white rounded-lg">
+                    <img src="/images/svg.png" alt="" className="w-7 h-7" />
+                  </div>
+                  Telecaller Leads
                 </NavLink>
               </li>
 
@@ -161,17 +178,107 @@ const CrmSidebar = (props) => {
                         } text-sm text-black hover:text-black rounded-lg hover:bg-gradient-to-tr hover:from-[#fffffffd] hover:to-[#fffffffd] hover:shadow`
                       }
                     >
-                       <div className="p-2 bg-white rounded-lg">
-                      <img src="/images/productivity.png" alt="" className="w-7 h-7" /> </div>
+                      <div className="p-2 bg-white rounded-lg">
+                        <img src="/images/productivity.png" alt="" className="w-7 h-7" />
+                      </div>
                       Productivity
                     </NavLink>
                   </li>
                 )}
-
             </ul>
           </nav>
         </div>
       </Sidebar>
+
+      {!visible && !isMobile && (
+        <div className="fixed top-0 start-0 bottom-0 z-[60] w-24 bg-cyan-400 border-gray-200 pt-7 pb-10">
+
+          <div className="mb-5">
+            <img src="/images/cashflowimage.png" alt="" className="w-20 h-20 " />
+          </div>
+      
+          <nav className="flex flex-col items-center space-y-4">
+            <Tooltip content="Dashboard" placement="top-end">
+            <NavLink
+              to={"/dashboard"}
+              onClick={handleLinkClick}
+              className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-blue-500" : "bg-white"}`}
+            >
+              <img src="/images/dashboard.png" alt="" className="w-7 h-7" />
+            </NavLink>
+            </Tooltip>
+
+            <Tooltip content="Users List" placement="top-end">
+            {userdetails()?.Role === "SuperAdmin" && (
+              <NavLink
+                to={"/users"}
+                onClick={handleLinkClick}
+                className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-blue-500" : "bg-white"}`}
+              >
+                <img src="/images/profile.png" alt="" className="w-7 h-7" />
+              </NavLink>
+            )}
+            </Tooltip>
+
+            <Tooltip content="Teams Data" placement="top-end">
+            <NavLink
+              to={"/teams"}
+              onClick={handleLinkClick}
+              className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-blue-500" : "bg-white"}`}
+            >
+              <img src="/images/partners.png" alt="" className="w-7 h-7" />
+            </NavLink>
+            </Tooltip>
+
+            <Tooltip content="Unallocation Data" placement="top-end">
+            {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+              <NavLink
+                to={"/unallocation"}
+                onClick={handleLinkClick}
+                className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-blue-500" : "bg-white"}`}
+              >
+                <img src="/images/unallocation.png" alt="" className="w-7 h-7" />
+              </NavLink>
+            )}
+            </Tooltip>
+            
+            <Tooltip content="Allocation Data" placement="top-end">
+            {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+              <NavLink
+                to={"/allocation"}
+                onClick={handleLinkClick}
+                className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-blue-500" : "bg-white"}`}
+              >
+                <img src="/images/human-resources.png" alt="" className="w-7 h-7" />
+              </NavLink>
+            )}
+            </Tooltip>
+        
+            
+            <Tooltip content="TelecallerLeads" placement="top-end">
+            <NavLink
+              to={"/telecallerleads"}
+              onClick={handleLinkClick}
+              className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-blue-500" : "bg-white"}`}
+            >
+              <img src="/images/svg.png" alt="" className="w-7 h-7" />
+            </NavLink>
+            </Tooltip>
+
+            <Tooltip content="Productivity" placement="top-end">
+            {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
+              <NavLink
+                to={"/productivity"}
+                onClick={handleLinkClick}
+                className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-blue-500" : "bg-white"}`}
+              >
+                <img src="/images/productivity.png" alt="" className="w-7 h-7" />
+              </NavLink>
+            )}
+            </Tooltip>
+          </nav>
+        </div>
+      )}
     </>
   );
 };

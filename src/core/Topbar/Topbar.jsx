@@ -43,10 +43,10 @@ export default function Topbar(props) {
     navigate('/'); 
   };
   return (
-    <header className="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-gradient-to-b from-cyan-400 to-cyan-200 border-b text-sm py-2.5 sm:py-4 lg:ps-4">
+    <header className="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-gradient-to-b from-cyan-400 to-cyan-200 border-b text-sm py-2.5 sm:py-4 lg:ps-4 rounded-b-xl">
       <nav className="flex items-center w-full px-4 mx-auto basis-full sm:px-6 md:px-8" aria-label="Global">
       <div className="me-5 lg:me-0">
-            <a className="flex flex-row text-2xl font-bold lg:flex-row-reverse dark:text-white" href="#" aria-label="">
+            <a className="flex flex-row text-2xl font-bold ml-7 lg:flex-row-reverse dark:text-white" href="#" aria-label="">
               {isMobile ? (
                 <>
                  <button type="button" className={`text-gray-500 hover:text-gray-600 lg:px-6`} data-hs-overlay="#application-sidebar"aria-controls="application-sidebar"aria-label="Toggle navigation"onClick={handleToggleClick}>
