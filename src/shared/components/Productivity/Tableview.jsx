@@ -44,8 +44,9 @@ export const Tableview = (props) => {
 
   useEffect(() => {
     if (tabledata) {
-      setRowDataState(tabledata.map(row => ({
+      setRowDataState(tabledata.map((row, index) => ({
         ...row,
+        id: index, // Add a unique identifier 'id'
         selectedDisposition: parseDispositionValue(row.Disposition),
         selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
         timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
@@ -89,9 +90,9 @@ export const Tableview = (props) => {
     return null;
   };
 
-  const handleRemarksChange = (rowIndex, value) => {
-    const updatedRowData = rowDataState.map((row, index) => {
-      if (index === rowIndex) {
+  const handleRemarksChange = (rowData, value) => {
+    const updatedRowData = rowDataState.map(row => {
+      if (row === rowData) {
         return { ...row, Remarks: value };
       }
       return row;
@@ -132,9 +133,9 @@ export const Tableview = (props) => {
     'Lead Declined': ['Customer Cancelled']
   };
 
-  const handleProductivityStatusChange = (rowDataIndex, e) => {
-    const updatedRowData = rowDataState.map((row, index) => {
-      if (index === rowDataIndex) {
+  const handleProductivityStatusChange = (rowData, e) => {
+    const updatedRowData = rowDataState.map(row => {
+      if (row === rowData) {
         return { ...row, Productivity_Status: e.value };
       }
       return row;
@@ -142,47 +143,45 @@ export const Tableview = (props) => {
     setRowDataState(updatedRowData);
   };
 
-  const handleDispositionChange = (rowDataIndex, e) => {
-    const updatedRowData = rowDataState.map((row, index) => {
-      if (index === rowDataIndex) {
+  const handleDispositionChange = (rowData, e) => {
+    const updatedRowData = rowDataState.map(row => {
+      if (row === rowData) {
         return { ...row, selectedDisposition: e.value, selectedSubDisposition: null };
       }
       return row;
     });
     setRowDataState(updatedRowData);
   };
-
-  const handleSubDispositionChange = (rowDataIndex, e) => {
-    const updatedRowData = rowDataState.map((row, index) => {
-      if (index === rowDataIndex) {
+  const handleSubDispositionChange = (rowData, e) => {
+    const updatedRowData = rowDataState.map(row => {
+      if (row === rowData) {
         return { ...row, selectedSubDisposition: e.value };
       }
       return row;
     });
     setRowDataState(updatedRowData);
   };
-
-  const saveData = async (rowIndex) => {
+  const saveData = async (rowData) => {
     try {
-      const row = rowDataState[rowIndex];
       const requestBody = {
-        data: [{
-          ...row,
-          selectedTeamLeader: row.selectedTeamLeader,
-          selectedTelecaller: row.selectedTelecaller,
-          Remarks: row.Remarks,
-          Productivity_Status: row.Productivity_Status,
-        }],
+        data: [
+          {
+            ...rowData,
+            Disposition: rowData.selectedDisposition,
+            Sub_Disposition: rowData.selectedSubDisposition,
+            Remarks: rowData.Remarks,
+            Productivity_Status: rowData.Productivity_Status,
+          },
+        ],
       };
       const res = await allocateteamleader(requestBody);
       toast.success("Disposition, Sub-Disposition, and Remarks saved successfully");
-      await updateData()
+      await updateData();
     } catch (err) {
       toast.error("Error in saving data");
       console.log(err);
     }
   };
-
   // const filterByProductivitystatus = (role) => {
   //   setActiveButton(role);
   //   if (role) {
@@ -285,20 +284,20 @@ export const Tableview = (props) => {
         {selectedColumns.includes('selectedTelecaller') && (
           <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
         )}
-       {selectedColumns.includes('Productivity_Status') && (
+      {selectedColumns.includes('Productivity_Status') && (
   <Column
     field="Productivity_Status"
     header="Productivity Status"
     style={{ minWidth: '10rem' }}
-    body={(rowData, { rowIndex }) => (
-      (rowData.Productivity_Status === 'Logged' || 
-       rowData.Productivity_Status === 'Accepted' || 
+    body={(rowData) => (
+      (rowData.Productivity_Status === 'Logged' ||
+       rowData.Productivity_Status === 'Accepted' ||
        rowData.Productivity_Status === 'Disbursed' ||
        rowData.Productivity_Status === 'Lead Accepted') ? (
         <Dropdown
           value={rowData.Productivity_Status}
           options={productivityStatusOptions}
-          onChange={(e) => handleProductivityStatusChange(rowIndex, e)}
+          onChange={(e) => handleProductivityStatusChange(rowData, e)}
           placeholder="Select Productivity Status"
           optionLabel={(option) => option}
         />
@@ -309,35 +308,35 @@ export const Tableview = (props) => {
   />
 )}
 
-        {selectedColumns.includes('Disposition') && (
-          <Column field="Disposition" header="Disposition"
-            body={(rowData, { rowIndex }) => (
-              <Dropdown value={rowData.selectedDisposition} options={dispositionOptions}
-                onChange={(e) => handleDispositionChange(rowIndex, e)}
-                placeholder="Select Disposition"
-                optionLabel={(option) => option}
-                optionStyle={(option) => ({ color: 'white', backgroundColor: getDispositionColor(option) })}
-                style={{ width: '150px', backgroundColor: getDispositionColor(rowData.selectedDisposition) }}
-              />
-            )}
-            width="150px"
-          />
-        )}
+{selectedColumns.includes('Disposition') && (
+  <Column field="Disposition" header="Disposition"
+    body={(rowData) => (
+      <Dropdown value={rowData.selectedDisposition} options={dispositionOptions}
+        onChange={(e) => handleDispositionChange(rowData, e)}
+        placeholder="Select Disposition"
+        optionLabel={(option) => option}
+        optionStyle={(option) => ({ color: 'white', backgroundColor: getDispositionColor(option) })}
+        style={{ width: '150px', backgroundColor: getDispositionColor(rowData.selectedDisposition) }}
+      />
+    )}
+    width="150px"
+  />
+)}
         {selectedColumns.includes('Sub_Disposition') && (
-          <Column field="Sub_Disposition" header="Sub Disposition"
-            body={(rowData, { rowIndex }) => (
-              <Dropdown value={rowData.selectedSubDisposition}
-                options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
-                onChange={(e) => handleSubDispositionChange(rowIndex, e)}
-                placeholder="Select Sub Disposition"
-                optionLabel={(option) => option}
-                optionStyle={(option) => ({ color: 'white', backgroundColor: getSubDispositionColor(option) })}
-                style={{ width: '150px', backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition) }}
-              />
-            )}
-            width="150px"
-          />
-        )}
+  <Column field="Sub_Disposition" header="Sub Disposition"
+    body={(rowData) => (
+      <Dropdown value={rowData.selectedSubDisposition}
+        options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
+        onChange={(e) => handleSubDispositionChange(rowData, e)}
+        placeholder="Select Sub Disposition"
+        optionLabel={(option) => option}
+        optionStyle={(option) => ({ color: 'white', backgroundColor: getSubDispositionColor(option) })}
+        style={{ width: '150px', backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition) }}
+      />
+    )}
+    width="150px"
+  />
+)}
         {selectedColumns.includes('timestamp') && (
           <Column field="timestamp" header="Date & Time"
             body={(rowData) => (
@@ -347,27 +346,32 @@ export const Tableview = (props) => {
           />
         )}
         {selectedColumns.includes('Remarks') && (
-          <Column field="Remarks" header="Remarks" width="200px"
-            body={(rowData, { rowIndex }) => (
-              <InputTextarea value={rowData.Remarks}
-                onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-                rows={3}
-                className="w-full"
-              />
-            )}
-          />
-        )}
+  <Column field="Remarks" header="Remarks" width="200px"
+    body={(rowData) => (
+      <InputTextarea value={rowData.Remarks}
+        onChange={(e) => handleRemarksChange(rowData, e.target.value)}
+        rows={3}
+        className="w-full"
+      />
+    )}
+  />
+)}
         <Column
-          body={(rowData, { rowIndex }) => (
-            <button
-              onClick={() => saveData(rowIndex)}
-              disabled={!rowData.selectedDisposition || !rowData.selectedSubDisposition}
-              className={`p-2 px-4 text-white rounded-lg ${rowData.selectedDisposition && rowData.selectedSubDisposition ? 'bg-blue-500' : 'bg-gray-400 cursor-not-allowed'}`}>
-              Submit
-            </button>
-          )}
-          style={{ minWidth: '10rem' }}
-        />
+  body={(rowData) => (
+    <button
+      onClick={() => saveData(rowData)}
+      disabled={!rowData.selectedDisposition || !rowData.selectedSubDisposition}
+      className={`p-2 px-4 text-white rounded-lg ${
+        rowData.selectedDisposition && rowData.selectedSubDisposition
+          ? 'bg-blue-500'
+          : 'bg-gray-400 cursor-not-allowed'
+      }`}
+    >
+      Submit
+    </button>
+  )}
+  style={{ minWidth: '10rem' }}
+/>
       </DataTable>
     </div>
   );
