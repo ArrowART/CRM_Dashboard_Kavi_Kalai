@@ -10,12 +10,11 @@ import useRegionFilter from './RegionFilters';
 import useLocationFilter from './LocationFilters';
 
 const Tableview = (props) => {
-    const { tabledata, filtervalues, handlefiltervalue, cusfilter,totalRecords,handledelete } = props;
+    const { tabledata, filtervalues, handlefiltervalue, cusfilter,totalRecords,handledelete,isLoading } = props;
     const [activeButton, setActiveButton] = useState(null);
     const [rowDataState, setRowDataState] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(20);
     const [first, setFirst] = useState(0); // Added state for 'first'
-    const [isLoading, setIsLoading] = useState(true);
     const { filters, regionFilterTemplate, filterApply, filterClear } = useRegionFilter(tabledata, cusfilter);
     const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
 
@@ -23,7 +22,6 @@ const Tableview = (props) => {
         if (tabledata) {
             setRowDataState(tabledata.map(row => ({ ...row, selectedDisposition: null, selectedSubDisposition: null })));
         }
-        setIsLoading(false);
     }, [tabledata]);
 
     const handleRowsPerPageChange = (event) => {

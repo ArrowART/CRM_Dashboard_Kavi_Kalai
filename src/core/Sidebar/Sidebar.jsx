@@ -54,7 +54,7 @@ const CrmSidebar = (props) => {
                   }
                 >
                   <div className="p-2 bg-white rounded-lg">
-                    <img src="/images/dashboard.png" alt="" className="w-7 h-7" />
+                    <img src="/images/dashboard-growth.png" alt="" className="w-7 h-7" />
                   </div>
                   Dashboard
                 </NavLink>
@@ -94,9 +94,9 @@ const CrmSidebar = (props) => {
                 </NavLink>
               </li>
 
-              {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
-                <li className="relative group">
-                  <div className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-black rounded-lg cursor-pointer hover:bg-white hover:text-black">
+              {/* {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && ( */}
+                {/*  <li className="relative group"> */}
+                  {/* <div className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-black rounded-lg cursor-pointer hover:bg-white hover:text-black">
                     <div className="p-2 bg-white rounded-lg">
                       <img src="/images/human-resources.png" alt="" className="w-7 h-7" />
                     </div>
@@ -111,8 +111,8 @@ const CrmSidebar = (props) => {
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
-                  </div>
-                  <ul className="hidden px-2 mt-1 space-y-1 group-hover:block">
+                  </div> */}
+                  {/* <ul className="hidden px-2 mt-1 space-y-1 group-hover:block"> */}
                     {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader") && (
                       <li>
                         <NavLink
@@ -147,9 +147,9 @@ const CrmSidebar = (props) => {
                         </NavLink>
                       </li>
                     )}
-                  </ul>
-                </li>
-              )}
+                  {/* </ul> */}
+                {/* </li>
+               )} */}
 
               <li>
                 <NavLink
@@ -204,7 +204,7 @@ const CrmSidebar = (props) => {
               onClick={handleLinkClick}
               className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-blue-500" : "bg-white"}`}
             >
-              <img src="/images/dashboard.png" alt="" className="w-7 h-7" />
+              <img src="/images/dashboard-growth.png" alt="" className="w-7 h-7" />
             </NavLink>
             </Tooltip>
 

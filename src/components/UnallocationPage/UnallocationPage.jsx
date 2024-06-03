@@ -13,18 +13,20 @@ export default function UnallocationPage(){
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(20);
     const [visible, setVisible] = useState(false);
-    const [formdata, setFormdata]=useState({});
+    const [formdata, setFormdata] = useState({});
     const [loading, setLoading] = useState(false);
-    const [tabledata, setTabledata]=useState([]);
+    const [tabledata, setTabledata] = useState([]);
     const [colfilter, setcolFilter] = useState({});
-    const [globalfilter, setglobalfilter]=useState('');
-    const [filtervalues, setfiltervalues]=useState([]);
-    const [UploadVisible,setUploadVisible]=useState(false);
+    const [globalfilter, setglobalfilter] = useState('');
+    const [filtervalues, setfiltervalues] = useState([]);
+    const [UploadVisible, setUploadVisible] = useState(false);
     const [File, setFile] = useState([]);
     const [productCounts, setProductCounts] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
     let isMounted = true;
     const getallallocations = useCallback(async ()=>{
-        const res= await getallunallocation({first,rows,globalfilter,...colfilter});
+        const res = await getallunallocation({first, rows, globalfilter, ...colfilter});
+        setIsLoading(false);
         setTabledata(res?.resdata);
         setTotalRecords(res?.totallength);
         const counts = res?.resdata.reduce((acc, item) => {
@@ -36,35 +38,35 @@ export default function UnallocationPage(){
             return acc;
         }, {});
         setProductCounts(counts);
-    },[first,rows,globalfilter,colfilter]);
+    }, [first, rows, globalfilter, colfilter]);
 
-    useEffect(()=>{
-        if(isMounted){
+    useEffect(() => {
+        if (isMounted) {
             getallallocations();
         }
-        return(()=>isMounted = false);
-    },[first,rows,globalfilter,colfilter]);
+        return (() => isMounted = false);
+    }, [first, rows, globalfilter, colfilter]);
 
     const cusfilter = (field, value) => {
-        setcolFilter({...colfilter,...{[field]:value}})
+        setcolFilter({...colfilter, ...{[field]:value}});
     };
 
     const updateTableData = async () => {
         await getallallocations();
     };
 
-    const newform=()=>{
+    const newform = () => {
         setFormdata({});
-        setVisible(true)
+        setVisible(true);
     };
 
-    const Uploadform=()=>{
-        setUploadVisible(true)
+    const Uploadform = () => {
+        setUploadVisible(true);
     };
-    
-    const editfrom=(data)=>{
+
+    const editfrom = (data) => {
         setFormdata(data);
-        setVisible(true)
+        setVisible(true);
     };
 
     const onPageChange = (event) => {
@@ -72,7 +74,7 @@ export default function UnallocationPage(){
         setRows(event.rows);
     };
 
-    const handleDeleteAll =()=>{
+    const handleDeleteAll = () => {
         confirmDialog({
             message: 'Do you want to delete all this record?',
             header: 'Delete Confirmation',
@@ -88,7 +90,7 @@ export default function UnallocationPage(){
         });
     };
 
-    const handleupload = (e)=>{
+    const handleupload = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -102,31 +104,36 @@ export default function UnallocationPage(){
         reader.readAsArrayBuffer(file);
     };
 
-    const uploadfile = async (e)=>{
+    const uploadfile = async (e) => {
         e.preventDefault();
-        setUploadVisible(true);
         setLoading(true);
-        await savebulkallocation(File);
-        getallallocations();
-        setUploadVisible(false);
-        setLoading(false);
+        try {
+            await savebulkallocation(File);
+            getallallocations();
+            toast.success("File uploaded successfully!");
+        } catch (error) {
+            toast.error("Failed to upload file. Please try again.");
+        } finally {
+            setLoading(false);
+            setUploadVisible(false);
+        }
     };
 
     const handledelete = (id) => {
         confirmDialog({
-          message: 'Do you want to delete this record?',
-          header: 'Delete Confirmation',
-          icon: 'pi pi-info-circle',
-          defaultFocus: 'reject',
-          acceptClassName: 'bg-red-500 ml-2 text-white p-2',
-          rejectClassName: 'p-2 outline-none border-0',
-          accept: async () => {
-            await deleteSingleAllocation(id)
-            toast.success("Successfully deleted")
-            getallallocations();
-          }
+            message: 'Do you want to delete this record?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            defaultFocus: 'reject',
+            acceptClassName: 'bg-red-500 ml-2 text-white p-2',
+            rejectClassName: 'p-2 outline-none border-0',
+            accept: async () => {
+                await deleteSingleAllocation(id);
+                toast.success("Successfully deleted");
+                getallallocations();
+            }
         });
-      };
+    };
 
     return (
         <div>
@@ -139,8 +146,9 @@ export default function UnallocationPage(){
                     tabledata={tabledata} 
                     productCounts={productCounts} 
                     updateTableData={updateTableData}
+                    loading={loading}
+                    setLoading={setLoading}
                 />
-
                 <Tableview 
                     tabledata={tabledata} 
                     totalRecords={totalRecords} 
@@ -151,12 +159,14 @@ export default function UnallocationPage(){
                     cusfilter={cusfilter} 
                     filtervalues={filtervalues} 
                     handledelete={handledelete}
+                    isLoading={isLoading}
                 />     
                 <UploadForm 
                     uploadfile={uploadfile} 
                     handleupload={handleupload} 
                     UploadVisible={UploadVisible} 
-                    setUploadVisible={setUploadVisible} 
+                    setUploadVisible={setUploadVisible}
+                    loading={loading}
                 />
                 <ConfirmDialog />
             </div>

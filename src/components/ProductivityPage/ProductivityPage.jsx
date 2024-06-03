@@ -13,10 +13,13 @@ export const ProductivityPage = () => {
     const [colfilter, setcolFilter] = useState({});
     const [globalfilter, setglobalfilter] = useState('');
     const [filtervalues, setfiltervalues] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     let isMounted = true;
 
     const getallteamleaderandtelecaller= useCallback(async () => {
         const res = await getallselectedteamleaderandtelecaller({ first, rows, globalfilter, ...colfilter });
+        setIsLoading(false);
         setTabledata(res?.resdata);
         setTotalRecords(res?.totallength);
     }, [first, rows, globalfilter, colfilter]);
@@ -51,6 +54,7 @@ export const ProductivityPage = () => {
                     cusfilter={cusfilter}
                     filtervalues={filtervalues}
                     updateData={updateData}
+                    isLoading={isLoading}
                 />
                  <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
             </div>

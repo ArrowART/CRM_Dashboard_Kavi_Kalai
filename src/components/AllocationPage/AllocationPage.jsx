@@ -20,10 +20,12 @@ export default function AllocationPage(){
     const [UploadVisible,setUploadVisible]=useState(false);
     const [File, setFile] = useState([]);
     const [productCounts, setProductCounts] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
     let isMounted = true;
     const getallallocations = useCallback(async ()=>{
         const res= await getallallocation({first,rows,globalfilter,...colfilter});
         setTabledata(res?.resdata);
+        setIsLoading(false);
         setTotalRecords(res?.totallength);
         const counts = res?.resdata.reduce((acc, item) => {
             const product = item.Product;
@@ -117,7 +119,7 @@ export default function AllocationPage(){
                     tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData} />
 
                 <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} rows={rows} 
-                    onPageChange={onPageChange} editfrom={editfrom} cusfilter={cusfilter} filtervalues={filtervalues} />     
+                    onPageChange={onPageChange} editfrom={editfrom} cusfilter={cusfilter} filtervalues={filtervalues}  isLoading={isLoading} />     
                 <UploadForm uploadfile={uploadfile} handleupload={handleupload} UploadVisible={UploadVisible} setUploadVisible={setUploadVisible} 
                 />
                 <ConfirmDialog />
