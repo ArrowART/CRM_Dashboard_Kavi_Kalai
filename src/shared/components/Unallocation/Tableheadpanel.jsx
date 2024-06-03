@@ -5,9 +5,10 @@ import { Button } from 'primereact/button';
 import useAuth from '../../services/store/useAuth';
 import { getalltelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation';
 import { allocateteamleader } from '../../services/apiunallocation/apiunallocation';
+import toast from 'react-hot-toast';
 
 export default function Tableheadpanel(props) {
-    const { handleDeleteAll, Uploadform, setglobalfilter, tabledata, updateTableData } = props;
+    const { handleDeleteAll, Uploadform, setglobalfilter, tabledata, updateTableData,loading,setLoading } = props;
     const [showModal, setShowModal] = useState(false);
     const [allocationType, setAllocationType] = useState('teamLeader');
     const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
@@ -28,14 +29,17 @@ export default function Tableheadpanel(props) {
     };
 
     const handleAllocateConfirm = async () => {
+        setLoading(true);
         try {
             if (!tabledata || tabledata.length === 0) {
                 console.error("Table data is not available.");
+                setLoading(false);
                 return;
             }
             const allocatedData = tabledata.slice(allocationRange - 1, allocationRange1);
             if (!allocatedData || allocatedData.length === 0) {
                 console.error("No data to allocate.");
+                setLoading(false);
                 return;
             }
             await allocateteamleader({
@@ -45,11 +49,16 @@ export default function Tableheadpanel(props) {
             });
             console.log('Bulk allocation saved successfully.');
             updateTableData();
+            toast.success("Allocation completed successfully!", {
+                duration: 4000, 
+              });
         } catch (error) {
             console.error('Error saving bulk allocation:', error);
+            toast.error("Failed to complete allocation. Please try again.");
         }
+        setLoading(false);
         setShowModal(false);
-    };
+    };  
     
     useEffect(() => {
         const fetchData = async () => {
@@ -112,6 +121,7 @@ export default function Tableheadpanel(props) {
                     )}
                 {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
     <>
+    {loading && <span className="inline-block w-4 h-4 mr-2 text-blue-500 border-2 border-current rounded-full animate-spin border-t-transparent" aria-label="loading"></span>}
         <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
             <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
         </button>
@@ -239,9 +249,11 @@ export default function Tableheadpanel(props) {
         </div>
     </div>
     <div className="flex justify-end mt-4">
-        <Button label="Cancel" className="px-2 mr-2 text-white bg-red-500 p-button-text hover:bg-red-600" onClick={handleAllocateCancel} />
-        <Button label="Allocate" className="px-2 text-white bg-green-500 p-button-text hover:bg-green-600" onClick={handleAllocateConfirm} autoFocus />
-    </div>
+    <Button label="Cancel" className="px-2 mr-2 text-white bg-red-500 p-button-text hover:bg-red-600" onClick={handleAllocateCancel} />
+    {loading && <span className="inline-block w-4 h-4 mr-2 text-blue-500 border-2 border-current rounded-full animate-spin border-t-transparent" aria-label="loading"></span>}
+    <Button label="Allocate" className="px-2 text-white bg-green-500 p-button-text hover:bg-green-600" onClick={handleAllocateConfirm} autoFocus disabled={loading} />
+</div>
+
 </Dialog>
 
 

@@ -11,9 +11,10 @@ import useRegionFilter from "../Unallocation/RegionFilters";
 import useLocationFilter from "../Unallocation/LocationFilters";
 import useCampanignFilter from "../Unallocation/CampaingnFilters";
 import { MultiSelect } from 'primereact/multiselect';
+import { Skeleton } from "primereact/skeleton";
 
 export const Tableview = (props) => {
-  const { tabledata, first, setFirst, cusfilter,updateData } = props;
+  const { tabledata, first, setFirst, cusfilter,updateData,isLoading } = props;
   const [rowDataState, setRowDataState] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [activeButton, setActiveButton] = useState(null);
@@ -247,6 +248,13 @@ export const Tableview = (props) => {
           className="border-2 border-cyan-300 w-fit md:w-20rem"
         />
       </div>
+      {isLoading ? (
+                <div className="p-4">
+                    <Skeleton height="3rem" className="mb-2"></Skeleton>
+                    <Skeleton height="3rem" className="mb-2"></Skeleton>
+                    <Skeleton height="3rem" width="100%"></Skeleton>
+                </div>
+            ) : (
       <DataTable resizableColumns stripedRows showGridlines tableStyle={{ minWidth: '50rem' }}
         selection={selectedProducts} columnResizeMode="expand"
         onSelectionChange={e => setSelectedProducts(e.value)} value={rowDataState} rows={rowsPerPage}
@@ -373,7 +381,9 @@ export const Tableview = (props) => {
   style={{ minWidth: '10rem' }}
 />
       </DataTable>
+      )}
     </div>
+
   );
 };
 

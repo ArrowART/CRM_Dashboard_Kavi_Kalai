@@ -15,12 +15,11 @@ import { MultiSelect } from "primereact/multiselect";
 import useCampanignFilter from "../Unallocation/CampaingnFilters";
 
 export const Tableview = (props) => {
-  const { tabledata, first, setFirst, updateData, cusfilter } = props;
+  const { tabledata, first, setFirst, updateData, cusfilter,isLoading } = props;
   const [rowDataState, setRowDataState] = useState([]);
   const { userdetails } = useAuth();
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [activeButton, setActiveButton] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedColumns, setSelectedColumns] = useState([]);
   const { filters, regionFilterTemplate, filterApply, filterClear } = useRegionFilter(tabledata, cusfilter);
   const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
@@ -29,7 +28,6 @@ export const Tableview = (props) => {
     if (tabledata) {
       console.log("Received tabledata:", tabledata);
       filterData(activeButton);
-      setIsLoading(false)
     }
   }, [tabledata, activeButton]);
 
