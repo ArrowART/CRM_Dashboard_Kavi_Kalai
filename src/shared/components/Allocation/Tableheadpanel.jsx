@@ -99,106 +99,130 @@ export default function Tableheadpanel(props) {
             <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
                 <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
                 <div className="py-2">
-                    {/* {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
+                    {(userdetails()?.Role === '' || userdetails()?.Role === 'TeamLeader') && (
                         <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
                             <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
                         </button>
                     )}
-                    {userdetails()?.Role === 'SuperAdmin' && (
-                        <>
-                            <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                                <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
-                            </button>
-
-                            <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
-                                <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
-                            </button>
-                        </>
-                    )} */}
                 </div>
             </div>
             <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal className="p-4 bg-white rounded-lg w-[600px]">
-                <div className="p-fluid">
+            <div className="p-fluid">
+        {(userdetails()?.Role === 'SuperAdmin' ) && (
+            <>
+                <div className="mb-4 p-field">
+                    <label htmlFor="allocationType" className="block mb-1">Allocate To</label>
+                    <select
+                        id="allocationType"
+                        value={allocationType}
+                        onChange={(e) => setAllocationType(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                    >
+                        <option value="teamLeader">Team Leader</option>
+                        <option value="telecaller">Telecaller</option>
+                    </select>
+                </div>
+                <div className="mb-4 p-field">
+                    <label htmlFor="selectedTeamLeader" className="block mb-1">Select Team Leader</label>
+                    <select
+                        id="selectedTeamLeader"
+                        value={selectedTeamLeader}
+                        onChange={(e) => setSelectedTeamLeader(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                    >
+                        <option value="">Select a Team Leader</option>
+                        {teamLeaders.map((user) => (
+                            <option key={user.UserName} value={user.UserName}>
+                                {user.First_Name} ({user.UserName})
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                {allocationType === 'telecaller' && (
                     <div className="mb-4 p-field">
-                        <label htmlFor="allocationType" className="block mb-1">Allocate To</label>
+                        <label htmlFor="selectedTelecaller" className="block mb-1">Select Telecaller</label>
                         <select
-                            id="allocationType"
-                            value={allocationType}
-                            onChange={(e) => setAllocationType(e.target.value)}
+                            id="selectedTelecaller"
+                            value={selectedTelecaller}
+                            onChange={(e) => setSelectedTelecaller(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
                         >
-                            <option value="teamLeader">Team Leader</option>
-                            <option value="telecaller">Telecaller</option>
-                        </select>
-                    </div>
-                    <div className="mb-4 p-field">
-                        <label htmlFor="selectedTeamLeader" className="block mb-1">Select Team Leader</label>
-                        <select
-                            id="selectedTeamLeader"
-                            value={selectedTeamLeader}
-                            onChange={(e) => setSelectedTeamLeader(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
-                        >
-                            <option value="">Select a Team Leader</option>
-                            {teamLeaders.map((user) => (
+                            <option value="">Select a Telecaller</option>
+                            {telecallers.map((user) => (
                                 <option key={user.UserName} value={user.UserName}>
                                     {user.First_Name} ({user.UserName})
                                 </option>
                             ))}
                         </select>
                     </div>
-                    {allocationType === 'telecaller' && (
-                        <div className="mb-4 p-field">
-                            <label htmlFor="selectedTelecaller" className="block mb-1">Select Telecaller</label>
-                            <select
-                                id="selectedTelecaller"
-                                value={selectedTelecaller}
-                                onChange={(e) => setSelectedTelecaller(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
-                            >
-                                <option value="">Select a Telecaller</option>
-                                {telecallers.map((user) => (
-                                    <option key={user.UserName} value={user.UserName}>
-                                        {user.First_Name} ({user.UserName})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
-                    <div className="mb-4 p-field">
-                        <label htmlFor="From" className="block mb-1">From</label>
-                        <input
-                            type="number"
-                            id="allocationRange"
-                            value={allocationRange}
-                            onChange={(e) => {
-                                console.log('Allocation Range changed:', e.target.value);
-                                setAllocationRange(e.target.value);
-                            }}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
-                            min="1"
-                        />
-                    </div>
-                    <div className="mb-4 p-field">
-                        <label htmlFor="To" className="block mb-1">To</label>
-                        <input
-                            type="number"
-                            id="allocationRange1"
-                            value={allocationRange1}
-                            onChange={(e) => {
-                                console.log('Allocation Range 1 changed:', e.target.value);
-                                setAllocationRange1(e.target.value);
-                            }}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
-                            min="0"
-                        />
-                    </div>
+                )}
+            </>
+        )}
+        {(userdetails()?.Role === 'TeamLeader') && (
+            <>
+                <div className="mb-4 p-field">
+                    <label htmlFor="allocationType" className="block mb-1">Allocate To</label>
+                    <select
+                        id="allocationType"
+                        value={allocationType}
+                        onChange={(e) => setAllocationType(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                    >
+                        <option value="telecaller">Telecaller</option>
+                    </select>
                 </div>
-                <div className="flex justify-end mt-4">
-                    <Button label="Cancel" className="px-2 mr-2 text-white bg-red-500 p-button-text hover:bg-red-600" onClick={handleAllocateCancel} />
-                    <Button label="Allocate" className="px-2 text-white bg-green-500 p-button-text hover:bg-green-600" onClick={handleAllocateConfirm} autoFocus />
+                <div className="mb-4 p-field">
+                    <label htmlFor="selectedTelecaller" className="block mb-1">Select Telecaller</label>
+                    <select
+                        id="selectedTelecaller"
+                        value={selectedTelecaller}
+                        onChange={(e) => setSelectedTelecaller(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                    >
+                        <option value="">Select a Telecaller</option>
+                        {telecallers.map((user) => (
+                            <option key={user.UserName} value={user.UserName}>
+                                {user.First_Name} ({user.UserName})
+                            </option>
+                        ))}
+                    </select>
                 </div>
-            </Dialog>
+            </>
+        )}
+        <div className="mb-4 p-field">
+            <label htmlFor="From" className="block mb-1">From</label>
+            <input
+                type="number"
+                id="allocationRange"
+                value={allocationRange}
+                onChange={(e) => {
+                    console.log('Allocation Range changed:', e.target.value);
+                    setAllocationRange(e.target.value);
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                min="1"
+            />
+        </div>
+        <div className="mb-4 p-field">
+            <label htmlFor="To" className="block mb-1">To</label>
+            <input
+                type="number"
+                id="allocationRange1"
+                value={allocationRange1}
+                onChange={(e) => {
+                    console.log('Allocation Range 1 changed:', e.target.value);
+                    setAllocationRange1(e.target.value);
+                }}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md p-inputtext p-component"
+                min="0"
+            />
+        </div>
+    </div>
+    <div className="flex justify-end mt-4">
+        <Button label="Cancel" className="px-2 mr-2 text-white bg-red-500 p-button-text hover:bg-red-600" onClick={handleAllocateCancel} />
+        <Button label="Allocate" className="px-2 text-white bg-green-500 p-button-text hover:bg-green-600" onClick={handleAllocateConfirm} autoFocus />
+    </div>
+</Dialog>
         </div>
     );
 }
