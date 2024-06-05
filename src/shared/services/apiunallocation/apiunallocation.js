@@ -12,10 +12,16 @@ export const getallunallocation = async(params)=>{
    return res.data;
 }
 
- export const getallselectedteamleaderandtelecaller = async(params)=>{
-   var res=await axios.get(`${apiurl()}/unallocation/apigetselectedteamleaderandtelecallerdata`,{params:params, headers: {"Authorization" : `Bearer ${gettoken()}`}});
+//  export const getallselectedteamleaderandtelecaller = async(params)=>{
+//    var res=await axios.get(`${apiurl()}/unallocation/apigetselectedteamleaderandtelecallerdata`,{params:params, headers: {"Authorization" : `Bearer ${gettoken()}`}});
+//    return res.data;
+// }
+export const getallselectedteamleaderandtelecaller = async (params) => {
+   const res = await axios.get(`${apiurl()}/unallocation/apigetselectedteamleaderandtelecallerdata`, { params: params, headers: { "Authorization": `Bearer ${gettoken()}` } });
    return res.data;
-}
+ };
+ 
+
  export const savebulkallocation=async(datas)=>{
     try {
        var res=await axios.post(`${apiurl()}/unallocation/apisavebulkallocation`,datas,{ headers: {"Authorization" : `Bearer ${gettoken()}`}});

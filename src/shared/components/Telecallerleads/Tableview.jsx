@@ -15,24 +15,43 @@ import { MultiSelect } from "primereact/multiselect";
 import useCampanignFilter from "../Unallocation/CampaingnFilters";
 
 export const Tableview = (props) => {
-  const { tabledata, first, setFirst, updateData, cusfilter,isLoading } = props;
+  const { tabledata, first, setFirst, updateData, cusfilter, isLoading, handleButtonClick, activeButton } = props;
   const [rowDataState, setRowDataState] = useState([]);
   const { userdetails } = useAuth();
   const [rowsPerPage, setRowsPerPage] = useState(20);
-  const [activeButton, setActiveButton] = useState(null);
   const [selectedColumns, setSelectedColumns] = useState([]);
   const { filters, regionFilterTemplate, filterApply, filterClear } = useRegionFilter(tabledata, cusfilter);
   const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
   const { filters2, campaignFilterTemplate, filterApply2, filterClear2 } = useCampanignFilter(tabledata, cusfilter);
+
   useEffect(() => {
-    if (tabledata) {
-      console.log("Received tabledata:", tabledata);
-      filterData(activeButton);
-    }
+    setFirst(0); // Reset pagination when changing the active button
+  }, [activeButton]);
+  useEffect(() => {
+    const filteredData = tabledata.filter(row => {
+      if (activeButton === 'Allocated Leads') {
+        return parseDispositionValue(row.Disposition) === 'Allocated Leads';
+      } else if (activeButton === 'Call Back') {
+        return parseDispositionValue(row.Disposition) === 'Call Back';
+      } else if (activeButton === 'Non Workable Leads') {
+        return ['DNE', 'Not Int'].includes(parseDispositionValue(row.Disposition));
+      } else if (activeButton === 'Followups') {
+        return ['Followup', 'Future Followup'].includes(parseDispositionValue(row.Disposition));
+      } else if (activeButton === 'Lead Submitted') {
+        return ['Submit Lead', 'Lead Submitted'].includes(parseDispositionValue(row.Disposition));
+      }
+      return true;
+    });
+    setRowDataState(filteredData.map(row => ({
+      ...row,
+      selectedDisposition: parseDispositionValue(row.Disposition),
+      selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
+      timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
+    })));
   }, [tabledata, activeButton]);
 
   useEffect(() => {
-    const defaultSelectedColumns = ['timestamp', 'Remarks','sno','Productivity_Status'];
+    const defaultSelectedColumns = ['timestamp', 'Remarks', 'sno', 'Productivity_Status'];
     if (tabledata && tabledata.length > 0) {
       const allColumns = Object.keys(tabledata[0]);
       const validColumns = allColumns.filter(col => columnOptions.some(option => option.value === col));
@@ -42,10 +61,10 @@ export const Tableview = (props) => {
       setSelectedColumns(defaultSelectedColumns);
     }
   }, [tabledata]);
+
   const parseDispositionValue = (dispositionValue) => {
     if (dispositionValue) {
       let [value] = dispositionValue.split(' (');
-      // Replace "Lead Accepted" or "Lead Declined" with "Lead Submitted"
       if (value === 'Lead Accepted' || value === 'Lead Declined') {
         value = 'Lead Submitted';
       }
@@ -53,17 +72,15 @@ export const Tableview = (props) => {
     }
     return null;
   };
-  
+
   const formatMobileNumber = (mobileNumber, userDetails) => {
     const userRole = userDetails?.Role;
-
     if (userRole === 'SuperAdmin' || userRole === 'TeamLeader') {
       return mobileNumber;
     } else {
       return `${mobileNumber?.slice(0, 4)}******`;
     }
   };
-
 
   const formatMobileForCall = (mobileNumber) => {
     return `tel:${mobileNumber}`;
@@ -84,34 +101,6 @@ export const Tableview = (props) => {
     }
     return null;
   };
-  const handleButtonClick = (button) => {
-    setActiveButton(button);
-    filterData(button);
-  };
-
-
-  const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(event.target.value);
-  };
-
-  const onPage = (event) => {
-    setFirst(event.first);
-  };
-
-  const sno = (rowData, { rowIndex }) => (
-    <div>{rowIndex + 1}</div>
-  );
-
-  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup', 'Lead Submitted',];
-  const subDispositionOptionsMap = {
-    'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
-    'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
-    'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
-    'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
-    'Followup': ['Option M', 'Option N', 'Option O'],
-    'Future Followup': ['Option W', 'Option X', 'Option Y'],
-    'Lead Submitted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
-  };
 
   const handleDispositionChange = (rowData, e) => {
     const updatedRowData = rowDataState.map(row => {
@@ -122,9 +111,7 @@ export const Tableview = (props) => {
     });
     setRowDataState(updatedRowData);
   };
-  
 
-  
   const handleSubDispositionChange = (rowData, e) => {
     const updatedRowData = rowDataState.map(row => {
       if (row === rowData) {
@@ -134,7 +121,7 @@ export const Tableview = (props) => {
     });
     setRowDataState(updatedRowData);
   };
-  
+
   const handleRemarksChange = (rowData, value) => {
     const updatedRowData = rowDataState.map(row => {
       if (row === rowData) {
@@ -144,6 +131,7 @@ export const Tableview = (props) => {
     });
     setRowDataState(updatedRowData);
   };
+
   const saveData = async (rowData) => {
     try {
       const requestBody = {
@@ -164,32 +152,23 @@ export const Tableview = (props) => {
       console.log(err);
     }
   };
-  const filterData = (filter) => {
-    const filteredData = tabledata.filter(row => {
-      const disposition = parseDispositionValue(row.Disposition);
-      const subDisposition = parseSubDispositionValue(row.Sub_Disposition);
+  const onPage = (event) => {
+    setFirst(event.first);
+  };
 
-      if (filter === null) {
-        // Show all data except dispositions that have a specific section (Allocated Leads)
-        return !['Followup', 'Future Followup', 'Call Back', 'DNE', 'Not Int', 'Submit Lead', 'Lead Submitted'].includes(disposition);
-      } else if (filter === 'Followups') {
-        return disposition === 'Followup' || disposition === 'Future Followup';
-      } else if (filter === 'Workableleads') {
-        return disposition === 'Call Back';
-      } else if (filter === 'Nonworkableleads') {
-        return disposition === 'DNE' || disposition === 'Not Int';
-      } else if (filter === 'Lead Submitted') {
-        return disposition === 'Submit Lead' || disposition === 'Lead Submitted';
-      }
-      return false;
-    }).map(row => ({
-      ...row,
-      selectedDisposition: parseDispositionValue(row.Disposition),
-      selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
-      timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
-    }));
+  const sno = (rowData, { rowIndex }) => (
+    <div>{rowIndex + 1}</div>
+  );
 
-    setRowDataState(filteredData);
+  const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup', 'Lead Submitted',];
+  const subDispositionOptionsMap = {
+    'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
+    'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
+    'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
+    'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
+    'Followup': ['Option M', 'Option N', 'Option O'],
+    'Future Followup': ['Option W', 'Option X', 'Option Y'],
+    'Lead Submitted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
   };
 
   const columnOptions = [
@@ -210,16 +189,17 @@ export const Tableview = (props) => {
     { label: 'Date & Time', value: 'timestamp' },
     { label: 'Remarks', value: 'Remarks' },
   ];
+
   return (
     <div>
       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
-        <button onClick={() => handleButtonClick(null)} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'cyan'}-500 rounded-t-lg`}>
+        <button onClick={() => handleButtonClick('Allocated Leads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Allocated Leads' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>
           Allocated Leads
         </button>
-        <button onClick={() => handleButtonClick('Workableleads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Workableleads' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>
+        <button onClick={() => handleButtonClick('Call Back')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Call Back' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>
           Workable Leads
         </button>
-        <button onClick={() => handleButtonClick('Nonworkableleads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Nonworkableleads' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>
+        <button onClick={() => handleButtonClick('Non Workable Leads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Non Workable Leads' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>
           Non Workable Leads
         </button>
         <button onClick={() => handleButtonClick('Followups')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Followups' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>
@@ -261,22 +241,30 @@ export const Tableview = (props) => {
           scrollHeight="550px"
           filters={{ ...filters, ...filters1, ...filters2 }}
         >
-           {selectedColumns.includes('sno') && (
-          <Column field="sno" header="S.No" body={sno} /> )}
-           {selectedColumns.includes('Region') && (
-          <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} /> )}
+          {selectedColumns.includes('sno') && (
+            <Column field="sno" header="S.No" body={sno} />
+          )}
+          {selectedColumns.includes('Region') && (
+            <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} />
+          )}
           {selectedColumns.includes('Location') && (
-          <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />)}
-           {selectedColumns.includes('Product') && (
-          <Column field="Product" header="Product" /> )}
-           {selectedColumns.includes('Name') && (
-          <Column field="Name" header="Name" sortable style={{ width: '25%' }} /> )}
+            <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />
+          )}
+          {selectedColumns.includes('Product') && (
+            <Column field="Product" header="Product" />
+          )}
+          {selectedColumns.includes('Name') && (
+            <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
+          )}
           {selectedColumns.includes('Firm_Name') && (
-          <Column field="Firm_Name" header="Firm Name" /> )}
+            <Column field="Firm_Name" header="Firm Name" />
+          )}
           {selectedColumns.includes('Mobile1') && (
-          <Column field="Mobile1" header="Mobile 1" body={(rowData) => formatMobileNumber(rowData.Mobile1, userdetails())} /> )}
+            <Column field="Mobile1" header="Mobile 1" body={(rowData) => formatMobileNumber(rowData.Mobile1, userdetails())} />
+          )}
           {selectedColumns.includes('Mobile2') && (
-          <Column field="Mobile2" header="Mobile 2" body={(rowData) => formatMobileNumber(rowData.Mobile2, userdetails())} /> )}
+            <Column field="Mobile2" header="Mobile 2" body={(rowData) => formatMobileNumber(rowData.Mobile2, userdetails())} />
+          )}
           <Column field="Call" header="Call"
             body={(rowData) => (
               <a href={formatMobileForCall(rowData.Mobile1, userdetails())}>
@@ -284,96 +272,96 @@ export const Tableview = (props) => {
               </a>
             )}
           />
-           {selectedColumns.includes('Campaign_Name') && (
-          <Column field="Campaign_Name" header="Campaign Name" filter filterElement={campaignFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply2} filterClear={filterClear2} sortable style={{ width: '25%' }} /> )}
-           {selectedColumns.includes('selectedTeamLeader') && (
-          <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} /> )}
-           {selectedColumns.includes('selectedTelecaller') && (
-          <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} /> )}
-        {selectedColumns.includes('Disposition') && (
-  <Column
-    field="Disposition"
-    header="Disposition"
-    body={(rowData) => (
-      <Dropdown
-        value={rowData.selectedDisposition}
-        options={dispositionOptions}
-        onChange={(e) => handleDispositionChange(rowData, e)}
-        placeholder="Select Disposition"
-        optionLabel={(option) => option}
-        optionStyle={(option) => ({
-          color: 'white',
-          backgroundColor: getDispositionColor(option),
-        })}
-        style={{
-          width: '150px',
-          backgroundColor: getDispositionColor(rowData.selectedDisposition),
-        }}
-      />
-    )}
-    width="150px"
-  />
-)}
+          {selectedColumns.includes('Campaign_Name') && (
+            <Column field="Campaign_Name" header="Campaign Name" filter filterElement={campaignFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply2} filterClear={filterClear2} sortable style={{ width: '25%' }} />
+          )}
+          {selectedColumns.includes('selectedTeamLeader') && (
+            <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
+          )}
+          {selectedColumns.includes('selectedTelecaller') && (
+            <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
+          )}
+          {selectedColumns.includes('Disposition') && (
+            <Column
+              field="Disposition"
+              header="Disposition"
+              body={(rowData) => (
+                <Dropdown
+                  value={rowData.selectedDisposition}
+                  options={dispositionOptions}
+                  onChange={(e) => handleDispositionChange(rowData, e)}
+                  placeholder="Select Disposition"
+                  optionLabel={(option) => option}
+                  optionStyle={(option) => ({
+                    color: 'white',
+                    backgroundColor: getDispositionColor(option),
+                  })}
+                  style={{
+                    width: '150px',
+                    backgroundColor: getDispositionColor(rowData.selectedDisposition),
+                  }}
+                />
+              )}
+              width="150px"
+            />
+          )}
           {selectedColumns.includes('Sub_Disposition') && (
-  <Column
-    field="Sub_Disposition"
-    header="Sub Disposition"
-    body={(rowData) => (
-      <Dropdown
-        value={rowData.selectedSubDisposition}
-        options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
-        onChange={(e) => handleSubDispositionChange(rowData, e)}
-        placeholder="Select Sub Disposition"
-        optionLabel={(option) => option}
-        optionStyle={(option) => ({
-          color: 'white',
-          backgroundColor: getSubDispositionColor(option),
-        })}
-        style={{
-          width: '150px',
-          backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition),
-        }}
-      />
-    )}
-    width="150px"
-  />
-)}
+            <Column
+              field="Sub_Disposition"
+              header="Sub Disposition"
+              body={(rowData) => (
+                <Dropdown
+                  value={rowData.selectedSubDisposition}
+                  options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
+                  onChange={(e) => handleSubDispositionChange(rowData, e)}
+                  placeholder="Select Sub Disposition"
+                  optionLabel={(option) => option}
+                  optionStyle={(option) => ({
+                    color: 'white',
+                    backgroundColor: getSubDispositionColor(option),
+                  })}
+                  style={{
+                    width: '150px',
+                    backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition),
+                  }}
+                />
+              )}
+              width="150px"
+            />
+          )}
           {selectedColumns.includes('timestamp') && (
-          <Column field="timestamp" header="Date & Time"
-            body={(rowData) => ( <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div> )}
-            style={{ minWidth: '10rem' }}
-          /> )}
-        {selectedColumns.includes('Remarks') && (
-  <Column
-    field="Remarks"
-    header="Remarks"
-    width="200px"
-    body={(rowData) => (
-      <InputTextarea
-        value={rowData.Remarks}
-        onChange={(e) => handleRemarksChange(rowData, e.target.value)}
-        rows={3}
-        className="w-full"
-      />
-    )}
-  />
-)}
+            <Column field="timestamp" header="Date & Time"
+              body={(rowData) => (<div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>)}
+              style={{ minWidth: '10rem' }}
+            />
+          )}
+          {selectedColumns.includes('Remarks') && (
+            <Column
+              field="Remarks"
+              header="Remarks"
+              width="200px"
+              body={(rowData) => (
+                <InputTextarea
+                  value={rowData.Remarks}
+                  onChange={(e) => handleRemarksChange(rowData, e.target.value)}
+                  rows={3}
+                  className="w-full"
+                />
+              )}
+            />
+          )}
           <Column
-  body={(rowData) => (
-    <button
-      onClick={() => saveData(rowData)}
-      disabled={!rowData.selectedDisposition || !rowData.selectedSubDisposition}
-      className={`p-2 px-4 text-white rounded-lg ${
-        rowData.selectedDisposition && rowData.selectedSubDisposition
-          ? 'bg-blue-500'
-          : 'bg-gray-400 cursor-not-allowed'
-      }`}
-    >
-      Submit
-    </button>
-  )}
-  style={{ minWidth: '10rem' }}
-/>
+            body={(rowData) => (
+              <button
+                onClick={() => saveData(rowData)}
+                disabled={!rowData.selectedDisposition || !rowData.selectedSubDisposition}
+                className={`p-2 px-4 text-white rounded-lg ${rowData.selectedDisposition && rowData.selectedSubDisposition ? 'bg-blue-500' : 'bg-gray-400 cursor-not-allowed'}`}
+              >
+                Submit
+              </button>
+            )}
+            style={{ minWidth: '10rem' }}
+          />
         </DataTable>
       )}
     </div>
