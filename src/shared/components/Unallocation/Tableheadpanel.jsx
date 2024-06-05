@@ -6,6 +6,7 @@ import useAuth from '../../services/store/useAuth';
 import { getalltelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation';
 import { allocateteamleader } from '../../services/apiunallocation/apiunallocation';
 import toast from 'react-hot-toast';
+import { NavLink } from 'react-router-dom';
 
 export default function Tableheadpanel(props) {
     const { handleDeleteAll, Uploadform, setglobalfilter, tabledata, updateTableData,loading,setLoading } = props;
@@ -112,28 +113,61 @@ export default function Tableheadpanel(props) {
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">Unallocation Data</h2>
             </div>
             <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
-                <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
-                <div className="py-2">
+               
+                <div className="flex gap-2 py-2">
+                <NavLink
+                    to={"/unallocation"}
+                    isActive={(match, location) => {
+                        if (location.pathname === '/unallocation' || location.pathname === '/') {
+                            return true;
+                        }
+                        return false;
+                    }}
+                    className={({ isActive }) =>
+                        `flex items-center font-semibold py-2 px-2.5 ${isActive ? "bg-blue-500" : "bg-gray-500"
+                        } text-sm text-white  rounded-lg `
+                    }
+                >
+                    UnAllocated
+                </NavLink>
+                <NavLink
+                    to={"/allocation"}
+                    isActive={(match, location) => {
+                        if (location.pathname === '/allocation') {
+                            return true;
+                        }
+                        return false;
+                    }}
+                    className={({ isActive }) =>
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        } text-sm text-white  rounded-lg  `
+                    }
+                >
+                    Allocated
+                </NavLink>
                     {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
-                        <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
+                        <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-gray-600 border border-transparent rounded-lg gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
                             <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
                         </button>
                     )}
                 {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
-    <>
-    {loading && <span className="inline-block w-4 h-4 mr-2 text-blue-500 border-2 border-current rounded-full animate-spin border-t-transparent" aria-label="loading"></span>}
-        <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-            <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
-        </button>
+                    <>
+                    {loading && <span className="inline-block w-4 h-4 mr-2 text-blue-500 border-2 border-current rounded-full animate-spin border-t-transparent" aria-label="loading"></span>}
+                        <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-gray-600 border border-transparent rounded-lg gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
+                            <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
+                        </button>
 
-        {userdetails()?.Role === 'SuperAdmin' && (
-            <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
-                <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
-            </button>
-        )}
-    </>
-)}
+                        {userdetails()?.Role === 'SuperAdmin' && (
+                            <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
+                                <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
+                            </button>
+                        )}
+                    </>
+                )}
 
+                </div>
+                <div className='py-2'>
+                    <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
                 </div>
             </div>
             <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal className="p-4 bg-white rounded-lg w-[600px]">

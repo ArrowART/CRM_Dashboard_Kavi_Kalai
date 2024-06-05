@@ -22,12 +22,15 @@ export default function Userspage(){
     const [filtervalues,setfiltervalues]=useState([]);
     const [teamLeaders, setTeamLeaders] = useState([]);
     const [teleCallers, setTeleCallers] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
 
     let isMounted = true;
     const fetchAllUsers = useCallback(async () => {
         console.log({ first, rows, ...colfilter });
         try {
             const res = await getallusers({ first, rows, globalfilter, ...colfilter });
+            setIsLoading(false);
             setTabledata(res?.resdata);
             setTotalRecords(res?.totallength);
         } catch (error) {
@@ -105,7 +108,7 @@ export default function Userspage(){
                 teleCallers={teleCallers} />
 
                 <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} editfrom={editfrom} 
-                cusfilter={cusfilter} filtervalues={filtervalues} onPage={onPage} handledelete={handledelete} />
+                cusfilter={cusfilter} filtervalues={filtervalues} onPage={onPage} handledelete={handledelete} isLoading={isLoading}/>
 
                 <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
 
