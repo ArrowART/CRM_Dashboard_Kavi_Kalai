@@ -159,7 +159,7 @@ const CrmSidebar = (props) => {
               </NavLink>
             </Tooltip>
 
-            {userdetails()?.Role === "SuperAdmin" && (
+            {(userdetails()?.Role === "SuperAdmin" || userdetails()?.Role === "TeamLeader" )&& (
               <Tooltip content="Users & Teams" placement="left-end">
                 <NavLink
                   to={"/users"}
@@ -176,7 +176,7 @@ const CrmSidebar = (props) => {
                 <NavLink
                   to={"/unallocation"}
                   onClick={handleLinkClick}
-                  className={({ isActive }) => `p-2 rounded-lg ${isActive ? "bg-amber-200" : "bg-white"}`}
+                  className={({ isActive }) => `p-2 rounded-lg ${isActiveAllocationAndUnallocation || isActive ? "bg-amber-200" : "bg-white"}`}
                 >
                   <img src="/images/dataallocation1.png" alt="" className="w-9 h-9" />
                 </NavLink>

@@ -103,7 +103,41 @@ export default function Tableheadpanel(props) {
             </div>
             
             <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
-                <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
+            <div className="flex gap-2 py-2">
+                <NavLink
+                    to={"/unallocation"}
+                    isActive={(match, location) => {
+                        if (location.pathname === '/unallocation' || location.pathname === '/') {
+                            return true;
+                        }
+                        return false;
+                    }}
+                    className={({ isActive }) =>
+                        `flex items-center font-semibold py-2 px-2.5 ${isActive ? "bg-blue-500" : "bg-gray-500"
+                        } text-sm text-white  rounded-lg `
+                    }
+                >
+                    UnAllocated
+                </NavLink>
+                <NavLink
+                    to={"/allocation"}
+                    isActive={(match, location) => {
+                        if (location.pathname === '/allocation') {
+                            return true;
+                        }
+                        return false;
+                    }}
+                    className={({ isActive }) =>
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        } text-sm text-white  rounded-lg  `
+                    }
+                >
+                    Allocated
+                </NavLink>
+                </div>
+                <div className='py-2'>
+                     <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
+                </div>
                 <div className="py-2">
                     {/* {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
                         <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 mr-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none">
