@@ -2,9 +2,10 @@
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import useAuth from '../../services/store/useAuth';
+import { Skeleton } from 'primereact/skeleton';
 
 export const Teamtable = (props) => {
-  const { telecallerData, globalfilter, first, editfrom, handledelete } = props;
+  const { telecallerData, globalfilter, first, editfrom, handledelete, isLoading } = props;
   const { userdetails } = useAuth();
   const sno = (rowData, rowIndex) => {
     return (
@@ -30,27 +31,37 @@ export const Teamtable = (props) => {
       </div>
     );
   };
-  
+
 
   return (
-    <div className="container mx-auto">
-      <DataTable
-        value={telecallerData}
-        resizableColumns 
-        stripedRows
-        showGridlines tableStyle={{ minWidth: '50rem' }}
-        globalFilter={globalfilter}
-        className="!text-sm overflow-hidden"
-      >
-        <Column className="flex justify-center" header="S.No" style={{ minWidth: '40px' }} body={sno} />
-        {(userdetails()?.Role === 'SuperAdmin') && (
-        <Column header="Action" style={{ minWidth: '60px' }} body={actionbotton} />
-        )}
-        <Column header="Team Leader ID" body={(rowData) => rowData.teamleader?.map((leader, index) => <div key={index}>{leader.UserName}</div>)} />
-        <Column header="Team Leader Name" body={(rowData) => rowData.teamleader?.map((leader, index) => <div key={index}>{leader.First_Name}</div>)} />
-        <Column header="Telecaller ID" body={(rowData) => rowData.telecaller?.map((caller, index) => <div key={index}>{caller.UserName}</div>)} />
-        <Column header="Telecaller Name" body={(rowData) => rowData.telecaller?.map((caller, index) => <div key={index}>{caller.First_Name}</div>)} />
-      </DataTable>
-    </div>
+    <>
+      <div className="container mx-auto">
+      {isLoading ? (
+        <div className="p-4">
+          <Skeleton height="3rem" className="mb-2"></Skeleton>
+          <Skeleton height="3rem" className="mb-2"></Skeleton>
+          <Skeleton height="3rem" width="100%"></Skeleton>
+        </div>
+      ) : (
+        <DataTable
+          value={telecallerData}
+          resizableColumns
+          stripedRows
+          showGridlines tableStyle={{ minWidth: '50rem' }}
+          globalFilter={globalfilter}
+          className="!text-sm overflow-hidden"
+        >
+          <Column className="flex justify-center" header="S.No" style={{ minWidth: '40px' }} body={sno} />
+          {(userdetails()?.Role === 'SuperAdmin') && (
+            <Column header="Action" style={{ minWidth: '60px' }} body={actionbotton} />
+          )}
+          <Column header="Team Leader ID" body={(rowData) => rowData.teamleader?.map((leader, index) => <div key={index}>{leader.UserName}</div>)} />
+          <Column header="Team Leader Name" body={(rowData) => rowData.teamleader?.map((leader, index) => <div key={index}>{leader.First_Name}</div>)} />
+          <Column header="Telecaller ID" body={(rowData) => rowData.telecaller?.map((caller, index) => <div key={index}>{caller.UserName}</div>)} />
+          <Column header="Telecaller Name" body={(rowData) => rowData.telecaller?.map((caller, index) => <div key={index}>{caller.First_Name}</div>)} />
+        </DataTable>
+      )}
+      </div>
+    </>
   )
 }

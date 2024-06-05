@@ -6,6 +6,7 @@ import { MultiSelect } from 'primereact/multiselect';
 import { savetelecallerallocation, updatetelecallerallocation } from '../../services/apitelecalleralloaction/apitelecallerallocation'; 
 import toast from 'react-hot-toast';
 import useAuth from '../../services/store/useAuth';
+import { NavLink } from 'react-router-dom';
 
 export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setTelecallerData, telecallerData, visible, setVisible, formdata, setFormdata }) => {
     const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
@@ -126,22 +127,57 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                     Team Allocation
                 </h2>
             </div>
-            <div>
-                <div className="inline-flex lg:gap-x-2 gap-x-3">
-                    <input
+            <div className='flex-none px-2 lg:flex lg:gap-x-2 gap-x-3'>
+                <div className="flex gap-2 py-2">
+
+                <NavLink
+                    to={"/users"}
+                    isActive={(match, location) => {
+                        if (location.pathname === '/users' || location.pathname === '/') {
+                            return true;
+                        }
+                        return false;
+                    }}
+                    className={({ isActive }) =>
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        } text-sm text-white  rounded-lg `
+                    }
+                >
+                    Users
+                </NavLink>
+                <NavLink
+                    to={"/teams"}
+                    isActive={(match, location) => {
+                        if (location.pathname === '/teams') {
+                            return true;
+                        }
+                        return false;
+                    }}
+                    className={({ isActive }) =>
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        } text-sm text-white  rounded-lg `
+                    }
+                >
+                    Teams
+                </NavLink>
+                    
+                    {(user.Role === 'SuperAdmin' || user.Role === '') && (
+                    <button
+                        onClick={handleAllocate}
+                        className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-gray-600 border border-transparent rounded-lg gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none"
+                    >
+                        <span className="">Allocate</span>
+                    </button>
+                     )}
+                </div>
+
+                <div className='py-2'>
+                <input
                         type="text"
                         placeholder="Search..."
                         className="px-4 py-2 border outline-none rounded-xl w-[200px] lg:w-[250px]"
                         onChange={handleFilterChange}
                     />
-                    {(user.Role === 'SuperAdmin' || user.Role === '') && (
-                    <button
-                        onClick={handleAllocate}
-                        className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border border-transparent rounded-lg gap-x-2 bg-primary hover:bg-blue-800 disabled:opacity-50 disabled:pointer-events-none"
-                    >
-                        <span className="">Allocate</span>
-                    </button>
-                     )}
                 </div>
                 
             </div>

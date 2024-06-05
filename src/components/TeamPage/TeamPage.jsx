@@ -21,10 +21,13 @@ export const TeamPage = () => {
   const [colfilter, setcolFilter] = useState({});
   const isMounted = useRef(false);
   const isMounted1 = useRef(false);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const fetchAllUsers = useCallback(async () => {
     try {
       const res = await getallusers({ first, rows, globalfilter, ...colfilter });
+      setIsLoading(false);
       setTotalRecords(res?.totallength);
       const teamLeaders = res?.resdata.filter(user => user.Role === "TeamLeader");
       const teleCallers = res?.resdata.filter(user => user.Role === "Telecaller");
@@ -116,6 +119,7 @@ export const TeamPage = () => {
         cusfilter={cusfilter}
         editfrom={editfrom}
         handledelete={handledelete}
+        isLoading={isLoading}
       />
       <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
       <ConfirmDialog />

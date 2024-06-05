@@ -116,7 +116,8 @@ export default function AllocationPage(){
         <div>
             <div className="bg-white border rounded-2xl">
                 <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform} handleDeleteAll={handleDeleteAll} 
-                    tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData} />
+                    tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData} loading={loading}
+                    setLoading={setLoading} />
 
                 <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} rows={rows} 
                     onPageChange={onPageChange} editfrom={editfrom} cusfilter={cusfilter} filtervalues={filtervalues}  isLoading={isLoading} />     

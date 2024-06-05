@@ -4,33 +4,36 @@ import { DataTable } from "primereact/datatable";
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { useState } from "react";
 import { MultiSelect } from "primereact/multiselect";
+import { Skeleton } from "primereact/skeleton";
 
 export const Tableview = (props) => {
-    const { tabledata, editfrom, cusfilter, first, handledelete} = props;
+    const { tabledata, editfrom, cusfilter, first, handledelete, isLoading } = props;
     const [selectedRoles, setSelectedRoles] = useState([]);
     const [activeButton, setActiveButton] = useState(null);
     const [filters, setFilters] = useState({
         Role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.IN }] },
     });
+
     const handleButtonClick = (role) => {
         setSelectedRoles([]);
         setActiveButton(role);
         filterByRole(role);
     };
+
     const actionbotton = (rowData) => {
         return (
             <div className="flex gap-4">
-            <div className="flex gap-2">
-                <button onClick={() => editfrom(rowData)} className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 " >
-          <i className="fi fi-rr-pen-circle"></i>
-        </button>
+                <div className="flex gap-2">
+                    <button onClick={() => editfrom(rowData)} className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 ">
+                        <i className="fi fi-rr-pen-circle"></i>
+                    </button>
+                </div>
+                <div className="flex gap-2">
+                    <button onClick={() => handledelete(rowData?._id)} className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
+                        <i className="fi fi-rr-trash"></i>
+                    </button>
+                </div>
             </div>
-            <div className="flex gap-2">
-            <button onClick={() => handledelete(rowData?._id)} className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
-            <i className="fi fi-rr-trash"></i>
-    </button>
-        </div>
-        </div>
         )
     }
 
@@ -83,6 +86,16 @@ export const Tableview = (props) => {
         )
     }
 
+    const statusBodyTemplate = (rowData) => {
+        const status = rowData.User_Status;
+        const statusClassName = status === 'Active' ? 'bg-green-500 p-1 rounded-md text-white' : 'bg-red-500 p-1 rounded-md text-white';
+        return (
+            <span className={statusClassName}>
+                {status}
+            </span>
+        );
+    };
+
     const columns = [
         { field: 'UserName', header: 'User Name', width: "140px" },
         { field: 'First_Name', header: 'First Name', width: "200px" },
@@ -90,7 +103,7 @@ export const Tableview = (props) => {
         { field: 'Email', header: 'Email', width: "200px" },
         { field: 'Password', header: 'Password', width: "140px" },
         { field: 'Role', header: 'Role', width: "200px", filter: true, filterElement: statusFilterTemplate },
-        { field: 'User_Status', header: 'Status', width: "200px" },
+        { field: 'User_Status', header: 'Status', width: "200px", body: statusBodyTemplate },
     ];
 
     const filterByRole = (role) => {
@@ -106,18 +119,26 @@ export const Tableview = (props) => {
                 <button onClick={() => handleButtonClick('TeamLeader')} className={`flex-shrink-0 px-3 text-sm text-white ${activeButton === 'TeamLeader' ? 'bg-blue-600' : 'bg-cyan-500 hover:bg-cyan-400'} rounded-t-lg`}>Team Leaders</button>
                 <button onClick={() => handleButtonClick('Telecaller')} className={`flex-shrink-0 px-3 text-sm text-white ${activeButton === 'Telecaller' ? 'bg-blue-600' : 'bg-cyan-500 hover:bg-cyan-400'} rounded-t-lg`}>Telecallers</button>
             </div>
-            <DataTable value={tabledata} scrollable scrollHeight="600px" className='!text-sm overflow-hidden' 
-            filters={filters} stateStorage="session" stateKey="dt-state-demo-local"  resizableColumns 
-            stripedRows
-            showGridlines tableStyle={{ minWidth: '50rem' }}>
+            {isLoading ? (
+        <div className="p-4">
+          <Skeleton height="3rem" className="mb-2"></Skeleton>
+          <Skeleton height="3rem" className="mb-2"></Skeleton>
+          <Skeleton height="3rem" width="100%"></Skeleton>
+        </div>
+      ) : (
+            <DataTable value={tabledata} scrollable scrollHeight="600px" className='!text-sm overflow-hidden'
+                filters={filters} stateStorage="session" stateKey="dt-state-demo-local" resizableColumns
+                stripedRows
+                showGridlines tableStyle={{ minWidth: '50rem' }}>
                 <Column className="flex justify-center" header="S.No" style={{ minWidth: '30px' }} body={sno} />
                 <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
                 {columns.map((col, i) => (
-                        <Column key={i} field={col.field} filterApply={() => filterapply(col.field)} showFilterMatchModes={false} showFilterMenuOptions={false}
-                        filterClear={() => filterclear(col.field)} filter={col.filter} filterElement={col.filterElement} 
-                        header={col.header} />
-                    ))}
+                    <Column key={i} field={col.field} filterApply={() => filterapply(col.field)} showFilterMatchModes={false} showFilterMenuOptions={false}
+                        filterClear={() => filterclear(col.field)} filter={col.filter} filterElement={col.filterElement}
+                        header={col.header} body={col.body} />
+                ))}
             </DataTable>
+      )}
         </div>
     )
 }

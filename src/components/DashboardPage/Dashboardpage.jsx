@@ -46,12 +46,12 @@ export const Dashboardpage = () => {
               {
                 data: [roleCount.TeamLeader, roleCount.Telecaller],
                 backgroundColor: [
-                  '#4CC9F0', 
-                  '#4361EE', 
+                  '#9D51F2', 
+                  '#3196ED', 
                 ],
                 hoverBackgroundColor: [
-                  '#4CC9F1', 
-                  '#4361EE', 
+                  '#9D51F2', 
+                  '#3196ED', 
                 ]
               }
             ]
@@ -59,14 +59,8 @@ export const Dashboardpage = () => {
           
 
           const options = {
-            plugins: {
-              legend: {
-                labels: {
-                  usePointStyle: true
-                }
-              }
-            }
-          };
+            cutout: '60%'
+        };
 
           setChartData(data);
           setChartOptions(options);
@@ -323,26 +317,20 @@ useEffect(() => {
             {
               data: [statusCount.Allocate, statusCount.UnAllocate],
               backgroundColor: [
-                '#b388eb',
-                '#8093f1',
+                '#9D51F2',
+                '#3196ED',
               ],
               hoverBackgroundColor: [
-                '#b388eb',
-                '#8093f1',
+                '#9D51F2',
+                '#3196ED',
               ]
             }
           ]
         };
 
         const options = {
-          plugins: {
-            legend: {
-              labels: {
-                usePointStyle: true
-              }
-            }
-          }
-        };
+          cutout: '60%'
+      };
 
         setAllocationChartData(data);
         setAllocationChartOptions(options);
