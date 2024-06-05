@@ -4,7 +4,7 @@ import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { allocateteamleader, getallselectedteamleaderandtelecaller } from "../../services/apiunallocation/apiunallocation";
+import { allocateteamleader } from "../../services/apiunallocation/apiunallocation";
 import { InputTextarea } from "primereact/inputtextarea";
 import { getDispositionColor, getSubDispositionColor } from "./ProductivityoptionColors";
 import useRegionFilter from "../Unallocation/RegionFilters";
@@ -14,7 +14,7 @@ import { MultiSelect } from 'primereact/multiselect';
 import { Skeleton } from "primereact/skeleton";
 
 export const Tableview = (props) => {
-  const { tabledata, first, setFirst, cusfilter,updateData,isLoading } = props;
+  const { tabledata, first, setFirst, cusfilter, updateData, isLoading, setProductivityStatus } = props;
   const [rowDataState, setRowDataState] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [activeButton, setActiveButton] = useState(null);
@@ -42,6 +42,10 @@ export const Tableview = (props) => {
     { label: 'Date & Time', value: 'timestamp' },
     { label: 'Remarks', value: 'Remarks' },
   ];
+
+  useEffect(() => {
+    setFirst(0); // Reset pagination when changing the active button
+  }, [activeButton]);
 
   useEffect(() => {
     if (tabledata) {
@@ -153,6 +157,7 @@ export const Tableview = (props) => {
     });
     setRowDataState(updatedRowData);
   };
+
   const handleSubDispositionChange = (rowData, e) => {
     const updatedRowData = rowDataState.map(row => {
       if (row === rowData) {
@@ -162,6 +167,7 @@ export const Tableview = (props) => {
     });
     setRowDataState(updatedRowData);
   };
+
   const saveData = async (rowData) => {
     try {
       const requestBody = {
@@ -183,58 +189,22 @@ export const Tableview = (props) => {
       console.log(err);
     }
   };
-  // const filterByProductivitystatus = (role) => {
-  //   setActiveButton(role);
-  //   if (role) {
-  //     const filteredData = tabledata.filter(item => item.Productivity_Status.trim() === role.trim());
-  //     setRowDataState(filteredData.map(row => ({
-  //       ...row,
-  //       selectedDisposition: parseDispositionValue(row.Disposition),
-  //       selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
-  //       timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
-  //     })));
-  //   } else {
-  //     setRowDataState(tabledata.map(row => ({
-  //       ...row,
-  //       selectedDisposition: parseDispositionValue(row.Disposition),
-  //       selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
-  //       timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
-  //     })));
-  //   }
-  // };
+
   const filterByProductivitystatus = (role) => {
     setActiveButton(role);
-    let filteredData = [];
-    if (role) {
-      if (role === 'Lead Accepted') {
-        filteredData = tabledata.filter(item => ['Lead Accepted', 'Logged', 'Accepted', 'Disbursed', 'Lead Declined'].includes(item.Productivity_Status.trim()));
-      } else {
-        filteredData = tabledata.filter(item => item.Productivity_Status.trim() === role.trim());
-      }
-      setRowDataState(filteredData.map(row => ({
-        ...row,
-        selectedDisposition: parseDispositionValue(row.Disposition),
-        selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
-        timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
-      })));
-    } else {
-      setRowDataState(tabledata.map(row => ({
-        ...row,
-        selectedDisposition: parseDispositionValue(row.Disposition),
-        selectedSubDisposition: parseSubDispositionValue(row.Sub_Disposition),
-        timestamp: parseTimestamp(row.Disposition) || parseTimestamp(row.Sub_Disposition)
-      })));
-    }
+    setProductivityStatus(role); // Update the productivity status in the parent component
   };
-  
+
   return (
     <div>
       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
-        <button onClick={() => filterByProductivitystatus(null)} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'cyan'}-500 rounded-t-lg`}>All Leads</button>
+        <button onClick={() => filterByProductivitystatus('')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'cyan'}-500 rounded-t-lg`}>All Leads</button>
         <button onClick={() => filterByProductivitystatus('Worked Leads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Worked Leads' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Worked Leads</button>
         <button onClick={() => filterByProductivitystatus('Reached')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Reached' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Reached Leads</button>
         <button onClick={() => filterByProductivitystatus('Not Reached')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Reached' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Not Reached Leads</button>
+        <button onClick={() => filterByProductivitystatus('Submit Leads')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Submit Leads' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Lead Submitted Leads</button>
         <button onClick={() => filterByProductivitystatus('Lead Accepted')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Lead Accepted' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Lead Accepted Leads</button>
+        <button onClick={() => filterByProductivitystatus('Declined')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Declined' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Lead Declined Leads</button>
         <button onClick={() => filterByProductivitystatus('Not Updated')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Updated' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Not Updated Leads</button>
       </div>
       <div className="mx-4 mb-4">
@@ -386,4 +356,3 @@ export const Tableview = (props) => {
 
   );
 };
-

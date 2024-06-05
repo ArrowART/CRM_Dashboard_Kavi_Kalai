@@ -56,7 +56,7 @@ export const TelecallerleadsPage = () => {
                 filter = ['Followup', 'Future Followup'];
                 break;
             case 'Lead Submitted':
-                filter = ['Submit Lead', 'Lead Submitted'];
+                filter = ['Submit Lead', 'Lead Submitted','Lead Accepted','Lead Declined'];
                 break;
             default:
                 filter = [button];
