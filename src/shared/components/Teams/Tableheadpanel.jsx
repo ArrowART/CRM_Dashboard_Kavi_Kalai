@@ -139,7 +139,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                         return false;
                     }}
                     className={({ isActive }) =>
-                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
                         } text-sm text-white  rounded-lg `
                     }
                 >
@@ -154,7 +154,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                         return false;
                     }}
                     className={({ isActive }) =>
-                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
                         } text-sm text-white  rounded-lg `
                     }
                 >
@@ -164,7 +164,7 @@ export const Tableheadpanel = ({ setglobalfilter, teamLeaders, teleCallers, setT
                     {(user.Role === 'SuperAdmin' || user.Role === '') && (
                     <button
                         onClick={handleAllocate}
-                        className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-gray-600 border border-transparent rounded-lg gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none"
+                        className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none"
                     >
                         <span className="">Allocate</span>
                     </button>

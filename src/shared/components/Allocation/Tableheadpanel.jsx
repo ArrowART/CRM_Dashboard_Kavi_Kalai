@@ -113,7 +113,7 @@ export default function Tableheadpanel(props) {
                         return false;
                     }}
                     className={({ isActive }) =>
-                        `flex items-center font-semibold py-2 px-2.5 ${isActive ? "bg-blue-500" : "bg-gray-500"
+                        `flex items-center font-semibold py-2 px-2.5 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
                         } text-sm text-white  rounded-lg `
                     }
                 >
@@ -128,7 +128,7 @@ export default function Tableheadpanel(props) {
                         return false;
                     }}
                     className={({ isActive }) =>
-                        `flex items-center font-semibold gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
                         } text-sm text-white  rounded-lg  `
                     }
                 >

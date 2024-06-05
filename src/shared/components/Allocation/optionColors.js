@@ -43,6 +43,7 @@ export const getSubDispositionColor = (option) => {
         case 'Call Not Connected':
         case 'Doesnt Exisit':
         case 'Customer is irate':
+         case 'Switched Off':
             return '#95D5B2';
         case 'Option M':
         case 'Option N':

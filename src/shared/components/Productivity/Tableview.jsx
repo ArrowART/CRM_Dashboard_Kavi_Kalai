@@ -61,7 +61,10 @@ export const Tableview = (props) => {
 
   useEffect(() => {
     const defaultSelectedColumns = ['timestamp', 'Remarks', 'sno', 'Productivity_Status'];
-    if (tabledata && tabledata.length > 0) {
+    const savedColumns1 = localStorage.getItem('selectedColumns1');
+    if (savedColumns1) {
+      setSelectedColumns(JSON.parse(savedColumns1));
+    } else if (tabledata && tabledata.length > 0) {
       const allColumns = Object.keys(tabledata[0]);
       const validColumns = allColumns.filter(col => columnOptions.some(option => option.value === col));
       const initialSelectedColumns = [...new Set([...defaultSelectedColumns, ...validColumns])];
@@ -130,7 +133,7 @@ export const Tableview = (props) => {
     'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
     'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
     'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
-    'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
+    'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate', 'Switched Off'],
     'Followup': ['Option M', 'Option N', 'Option O'],
     'Future Followup': ['Option W', 'Option X', 'Option Y'],
     'Lead Submitted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
@@ -168,6 +171,23 @@ export const Tableview = (props) => {
     setRowDataState(updatedRowData);
   };
 
+  const actionbotton = () => {
+    return (
+        <div className="flex gap-4">
+            <div className="flex gap-2">
+                <button className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 ">
+                    <i className="fi fi-rr-pen-circle"></i>
+                </button>
+            </div>
+            <div className="flex gap-2">
+                <button className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
+                    <i className="fi fi-rr-trash"></i>
+                </button>
+            </div>
+        </div>
+    )
+}
+
   const saveData = async (rowData) => {
     try {
       const requestBody = {
@@ -195,6 +215,12 @@ export const Tableview = (props) => {
     setProductivityStatus(role); // Update the productivity status in the parent component
   };
 
+  const handleColumnChange = (e) => {
+    const newSelectedColumns = e.value;
+    setSelectedColumns(newSelectedColumns);
+    localStorage.setItem('selectedColumns1', JSON.stringify(newSelectedColumns));
+  };
+
   return (
     <div>
       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
@@ -211,7 +237,7 @@ export const Tableview = (props) => {
         <MultiSelect
           value={selectedColumns}
           options={columnOptions}
-          onChange={(e) => setSelectedColumns(e.value)}
+          onChange={handleColumnChange}
           optionLabel="label"
           placeholder="Select Columns"
           maxSelectedLabels={4}
@@ -229,6 +255,7 @@ export const Tableview = (props) => {
         selection={selectedProducts} columnResizeMode="expand"
         onSelectionChange={e => setSelectedProducts(e.value)} value={rowDataState} rows={rowsPerPage}
         first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="550px" filters={{ ...filters, ...filters1, ...filters2 }}>
+            <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
         {selectedColumns.includes('sno') && (
           <Column field="sno" header="S.No" body={sno} />
         )}

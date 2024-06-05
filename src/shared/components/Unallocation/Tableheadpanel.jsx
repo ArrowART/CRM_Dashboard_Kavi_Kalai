@@ -124,7 +124,7 @@ export default function Tableheadpanel(props) {
                         return false;
                     }}
                     className={({ isActive }) =>
-                        `flex items-center font-semibold py-2 px-2.5 ${isActive ? "bg-blue-500" : "bg-gray-500"
+                        `flex items-center font-semibold py-2 px-2.5 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
                         } text-sm text-white  rounded-lg `
                     }
                 >
@@ -139,26 +139,26 @@ export default function Tableheadpanel(props) {
                         return false;
                     }}
                     className={({ isActive }) =>
-                        `flex items-center font-semibold gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
                         } text-sm text-white  rounded-lg  `
                     }
                 >
                     Allocated
                 </NavLink>
                     {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
-                        <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-gray-600 border border-transparent rounded-lg gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
+                        <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
                             <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
                         </button>
                     )}
                 {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
                     <>
                     {loading && <span className="inline-block w-4 h-4 mr-2 text-blue-500 border-2 border-current rounded-full animate-spin border-t-transparent" aria-label="loading"></span>}
-                        <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-gray-600 border border-transparent rounded-lg gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
+                        <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
                             <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
                         </button>
 
                         {userdetails()?.Role === 'SuperAdmin' && (
-                            <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-red-600 border border-transparent rounded-lg gap-x-2 hover:bg-red-800">
+                            <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-red-400 to-red-600 gap-x-2 hover:bg-red-800">
                                 <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
                             </button>
                         )}

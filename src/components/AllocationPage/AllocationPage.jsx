@@ -19,23 +19,20 @@ export default function AllocationPage(){
     const [filtervalues, setfiltervalues]=useState([]);
     const [UploadVisible,setUploadVisible]=useState(false);
     const [File, setFile] = useState([]);
-    const [productCounts, setProductCounts] = useState({});
+    const [productTypes, setProductTypes] = useState([]);
+    const [activeButton, setActiveButton] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     let isMounted = true;
+
     const getallallocations = useCallback(async ()=>{
         const res= await getallallocation({first,rows,globalfilter,...colfilter});
         setTabledata(res?.resdata);
         setIsLoading(false);
         setTotalRecords(res?.totallength);
-        const counts = res?.resdata.reduce((acc, item) => {
-            const product = item.Product;
-            if (product === 'PL' || product === 'DL' || product === 'BL' || product === 'STPL') {
-                acc.ALL = (acc.ALL || 0) + 1;
-                acc[product] = (acc[product] || 0) + 1;
-            }
-            return acc;
-        }, {});
-        setProductCounts(counts);
+        
+        const uniqueProductTypes = Array.from(new Set(res?.resdata.map(item => item.Product)));
+        setProductTypes(uniqueProductTypes);
+
     },[first,rows,globalfilter,colfilter]);
 
     useEffect(()=>{
@@ -116,11 +113,22 @@ export default function AllocationPage(){
         <div>
             <div className="bg-white border rounded-2xl">
                 <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform} handleDeleteAll={handleDeleteAll} 
-                    tabledata={tabledata} productCounts={productCounts} updateTableData={updateTableData} loading={loading}
+                    tabledata={tabledata} updateTableData={updateTableData} loading={loading}
                     setLoading={setLoading} />
 
-                <Tableview tabledata={tabledata} totalRecords={totalRecords} first={first} rows={rows} 
-                    onPageChange={onPageChange} editfrom={editfrom} cusfilter={cusfilter} filtervalues={filtervalues}  isLoading={isLoading} />     
+                <Tableview 
+                    tabledata={tabledata} 
+                    totalRecords={totalRecords} 
+                    first={first} 
+                    rows={rows} 
+                    onPageChange={onPageChange} 
+                    cusfilter={cusfilter} 
+                    filtervalues={filtervalues} 
+                    isLoading={isLoading} 
+                    productTypes={productTypes} 
+                    activeButton={activeButton}
+                    setActiveButton={setActiveButton}
+                />     
                 <UploadForm uploadfile={uploadfile} handleupload={handleupload} UploadVisible={UploadVisible} setUploadVisible={setUploadVisible} 
                 />
                 <ConfirmDialog />

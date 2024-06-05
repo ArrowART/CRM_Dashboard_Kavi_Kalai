@@ -66,6 +66,23 @@ export const Tableview = (props) => {
     }
   }, [tabledata]);
 
+  const actionbotton = () => {
+    return (
+        <div className="flex gap-4">
+            <div className="flex gap-2">
+                <button className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 ">
+                    <i className="fi fi-rr-pen-circle"></i>
+                </button>
+            </div>
+            <div className="flex gap-2">
+                <button className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
+                    <i className="fi fi-rr-trash"></i>
+                </button>
+            </div>
+        </div>
+    )
+}
+
   const parseDispositionValue = (dispositionValue) => {
     if (dispositionValue) {
       let [value] = dispositionValue.split(' (');
@@ -169,7 +186,7 @@ export const Tableview = (props) => {
     'Submit Lead': ['Docs to be collected', 'Login Pending', 'Interested'],
     'Not Int': ['No Need Loan', 'No Need as of Now', 'High ROI', 'Recently Availed', 'Reason Not Mentioned'],
     'Call Back': ['RNR', 'Call Waiting', 'Call Not Reachable', 'Busy Call after Some time'],
-    'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate'],
+    'DNE': ['Wrong No', 'Call Not Connected', 'Doesnt Exisit', 'Customer is irate', 'Switched Off'],
     'Followup': ['Option M', 'Option N', 'Option O'],
     'Future Followup': ['Option W', 'Option X', 'Option Y'],
     'Lead Submitted': ['Logged WIP', 'In Credit', 'ABND', 'Login Pending', 'Declined Re-look', 'Fully Declined', 'Docs to be collected'],
@@ -251,6 +268,7 @@ export const Tableview = (props) => {
           scrollHeight="550px"
           filters={{ ...filters, ...filters1, ...filters2 }}
         >
+            <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
           {selectedColumns.includes('sno') && (
             <Column field="sno" header="S.No" body={sno} />
           )}

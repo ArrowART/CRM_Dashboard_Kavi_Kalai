@@ -72,7 +72,7 @@ export default function Tableheadpanel ( props ) {
                         return false;
                     }}
                     className={({ isActive }) =>
-                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
                         } text-sm text-white  rounded-lg `
                     }
                 >
@@ -87,14 +87,14 @@ export default function Tableheadpanel ( props ) {
                         return false;
                     }}
                     className={({ isActive }) =>
-                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-blue-500" : "bg-gray-600"
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-4 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
                         } text-sm text-white  rounded-lg `
                     }
                 >
                     Teams
                 </NavLink>
 
-                    <button onClick={newform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-gray-600 border border-transparent rounded-lg gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
+                    <button onClick={newform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
                     <i className="fi fi-rr-add"></i> <span className="hidden md:block">Add New</span>
                     </button>
                 </div>

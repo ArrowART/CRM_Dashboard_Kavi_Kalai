@@ -27,15 +27,6 @@ const Tableview = (props) => {
     const handleRowsPerPageChange = (event) => {
         setRowsPerPage(event.target.value);
     };
-    const actionbotton = (rowData) => {
-        return (
-            <div className="flex gap-2">
-                <button onClick={() => handledelete(rowData?._id)} className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
-                    <i className="fi fi-rr-trash"></i>
-                </button>
-            </div>
-        )
-    }
     const onPage = (event) => {
         setFirst(event.first);
     };
@@ -53,7 +44,22 @@ const Tableview = (props) => {
             className="p-column-filter"
         />
     );
-
+    const actionbotton = () => {
+        return (
+            <div className="flex gap-4">
+                <div className="flex gap-2">
+                    <button className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 ">
+                        <i className="fi fi-rr-pen-circle"></i>
+                    </button>
+                </div>
+                <div className="flex gap-2">
+                    <button className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
+                        <i className="fi fi-rr-trash"></i>
+                    </button>
+                </div>
+            </div>
+        )
+    }
     const sno = (rowData, { rowIndex }) => (
         <div>{rowIndex + 1}</div>
       );
@@ -158,7 +164,7 @@ const Tableview = (props) => {
                     filters={{ ...filters, ...filters1 }}
                     filterDisplay="menu"
                 >
-                     {/* <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} /> */}
+                     <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
                     <Column field="sno" header="S.No" body={sno} />
                     <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} />
                     <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />

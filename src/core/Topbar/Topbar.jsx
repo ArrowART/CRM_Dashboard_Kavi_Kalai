@@ -115,6 +115,7 @@ export default function Topbar(props) {
                 <DropdownItem key="profile" className="gap-2 h-14">
                   <p className="font-semibold">Signed in as</p>
                   <p className="font-semibold">{userdetails()?.Role}</p>
+                  <p className="font-semibold text-blue-500">{userdetails()?.First_Name} ({userdetails()?.UserName})</p>
                 </DropdownItem>
                 <DropdownItem key="logout" onPress={handleLogout}>
                   Log Out

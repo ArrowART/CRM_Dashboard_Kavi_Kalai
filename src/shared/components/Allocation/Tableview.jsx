@@ -10,18 +10,18 @@ import useRegionFilter from './RegionFilters';
 import useLocationFilter from './LocationFilters';
 
 const Tableview = (props) => {
-    const { tabledata, filtervalues, handlefiltervalue, cusfilter,totalRecords,isLoading } = props;
-    const [activeButton, setActiveButton] = useState(null);
+    const { tabledata, filtervalues, handlefiltervalue, cusfilter, isLoading, productTypes, setActiveButton, activeButton } = props;
     const [rowDataState, setRowDataState] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(20);
-    const [first, setFirst] = useState(0); // Added state for 'first'
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [first, setFirst] = useState(0); 
+
     const { filters, regionFilterTemplate, filterApply, filterClear } = useRegionFilter(tabledata, cusfilter);
     const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
 
     useEffect(() => {
-        if (tabledata) {
-            setRowDataState(tabledata.map(row => ({ ...row, selectedDisposition: null, selectedSubDisposition: null })));
-        }
+        setRowDataState(tabledata.map(row => ({ ...row, selectedDisposition: null, selectedSubDisposition: null })));
+        setTotalRecords(tabledata.length);
     }, [tabledata]);
 
     const handleRowsPerPageChange = (event) => {
@@ -50,14 +50,17 @@ const Tableview = (props) => {
         <div>{rowIndex + 1}</div>
       );
 
-    const filterByProduct = (role) => {
-        setActiveButton(role);
-        if (role) {
-            const filteredData = tabledata.filter(item => item.Product === role);
+      const filterByProduct = (product) => {
+        setActiveButton(product);
+        if (product) {
+            const filteredData = tabledata.filter(item => item.Product === product);
             setRowDataState(filteredData);
+            setTotalRecords(filteredData.length);
         } else {
             setRowDataState(tabledata);
+            setTotalRecords(tabledata.length);
         }
+        setFirst(0); 
     };
 
     const dispositionOptions = ['Submit Lead', 'Not Int', 'Call Back', 'DNE', 'Followup', 'Future Followup'];
@@ -104,17 +107,20 @@ const Tableview = (props) => {
         <div>
             <div className='max-w-[70rem] mx-auto flex justify-between'>
                 <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
-                    <button onClick={() => filterByProduct(null)} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === null ? 'blue' : 'cyan'}-500 rounded-t-lg`}>ALL</button>
-                    <button onClick={() => filterByProduct('STPL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'STPL' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>STPL Products</button>
-                    <button onClick={() => filterByProduct('BL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'BL' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>BL Products</button>
-                    <button onClick={() => filterByProduct('PL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'PL' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>PL Products</button>
-                    <button onClick={() => filterByProduct('DL')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'DL' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>DL Products</button>
+                    {productTypes.map((type) => (
+                        <button 
+                            key={type} 
+                            onClick={() => filterByProduct(type)} 
+                            className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === type ? 'blue' : 'cyan'}-500 rounded-t-lg`}
+                        >
+                            {type} Products
+                        </button>
+                    ))}
                 </div>
                 <div>
-                     <h1 className='justify-end py-4 font-semibold '>Total Records : {totalRecords}</h1>
+                    <h1 className='justify-end py-4 font-semibold'>Total Records : {totalRecords}</h1>
                 </div>
             </div>
-           
             <div className="flex items-center justify-end mb-4">
                 <span>Show:</span>
                 <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-3">
@@ -133,7 +139,6 @@ const Tableview = (props) => {
                     <Skeleton height="3rem" width="100%"></Skeleton>
                 </div>
             ) : (
-                <>
                 <DataTable
                     resizableColumns
                     stripedRows
@@ -171,66 +176,49 @@ const Tableview = (props) => {
                                 onChange={(e) => handleDispositionChange(rowIndex, e)}
                                 placeholder="Select Disposition"
                                 optionLabel={(option) => option}
-                                optionStyle={(option) => ({                                color: 'white',
-                                backgroundColor: getDispositionColor(option)
-                            })}
-                            style={{
-                                width: '150px',
-                                backgroundColor: getDispositionColor(rowData.selectedDisposition)
-                            }}
-                        />
-                    )}
-                    filter
-                    filterElement={statusFilterTemplate}
-                    width="150px"
-                />
-                <Column field="Sub_Disposition" header="Sub Disposition"
-                    body={(rowData) => (
-                        <Dropdown
-                            value={rowData.selectedSubDisposition}
-                            options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
-                            onChange={(e) => handleSubDispositionChange(rowData, e)}
-                            placeholder="Select Sub Disposition"
-                            optionLabel={(option) => option}
-                            optionStyle={(option) => ({
-                                color: 'white',
-                                backgroundColor: getSubDispositionColor(option)
-                            })}
-                            style={{
-                                width: '150px',
-                                backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition)
-                            }}
-                        />
-                    )}
-                    filter
-                    // header="Date & Time"
-                    // body={(rowData) => (
-                    //     <div>{rowData.timestamp ? new Date(rowData.timestamp).toLocaleString() : ''}</div>
-                    // )}
-                    style={{ minWidth: '10rem' }}
-                />
-                <Column
-                    field="Remarks"
-                    header="Remarks"
-                    width="200px"
-                    filter
-                    filterElement={statusFilterTemplate}
-                    // body={(rowData, { rowIndex }) => (
-                    //     <InputTextarea
-                    //         value={rowData.Remarks}
-                    //         onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
-                    //         rows={3}
-                    //         className="w-full"
-                    //     />
-                    // )}
-                />
-            </DataTable>
-            </>
-        )}
-    </div>
-);
+                                optionStyle={(option) => ({ color: 'white', backgroundColor: getDispositionColor(option) })}
+                                style={{ width: '150px', backgroundColor: getDispositionColor(rowData.selectedDisposition) }}
+                            />
+                        )}
+                        filter
+                        filterElement={statusFilterTemplate}
+                        width="150px"
+                    />
+                    <Column field="Sub_Disposition" header="Sub Disposition"
+                        body={(rowData) => (
+                            <Dropdown
+                                value={rowData.selectedSubDisposition}
+                                options={subDispositionOptionsMap[rowData.selectedDisposition] || []}
+                                onChange={(e) => handleSubDispositionChange(rowData, e)}
+                                placeholder="Select Sub Disposition"
+                                optionLabel={(option) => option}
+                                optionStyle={(option) => ({ color: 'white', backgroundColor: getSubDispositionColor(option) })}
+                                style={{ width: '150px', backgroundColor: getSubDispositionColor(rowData.selectedSubDisposition) }}
+                            />
+                        )}
+                        filter
+                        style={{ minWidth: '10rem' }}
+                    />
+                    <Column
+                        field="Remarks"
+                        header="Remarks"
+                        width="200px"
+                        filter
+                        filterElement={statusFilterTemplate}
+                        body={(rowData, { rowIndex }) => (
+                            <InputTextarea
+                                value={rowData.Remarks}
+                                onChange={(e) => handleRemarksChange(rowIndex, e.target.value)}
+                                rows={3}
+                                className="w-full"
+                            />
+                        )}
+                    />
+                </DataTable>
+            )}
+        </div>
+    );
 };
 
 export default Tableview;
 
-                                   
