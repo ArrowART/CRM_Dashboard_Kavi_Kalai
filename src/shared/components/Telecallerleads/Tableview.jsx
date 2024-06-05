@@ -27,6 +27,7 @@ export const Tableview = (props) => {
   useEffect(() => {
     setFirst(0); // Reset pagination when changing the active button
   }, [activeButton]);
+
   useEffect(() => {
     const filteredData = tabledata.filter(row => {
       if (activeButton === 'Allocated Leads') {
@@ -38,7 +39,7 @@ export const Tableview = (props) => {
       } else if (activeButton === 'Followups') {
         return ['Followup', 'Future Followup'].includes(parseDispositionValue(row.Disposition));
       } else if (activeButton === 'Lead Submitted') {
-        return ['Submit Lead', 'Lead Submitted'].includes(parseDispositionValue(row.Disposition));
+        return ['Submit Lead', 'Lead Submitted', 'Lead Accepted', 'Lead Declined'].includes(parseDispositionValue(row.Disposition));
       }
       return true;
     });
@@ -52,7 +53,10 @@ export const Tableview = (props) => {
 
   useEffect(() => {
     const defaultSelectedColumns = ['timestamp', 'Remarks', 'sno', 'Productivity_Status'];
-    if (tabledata && tabledata.length > 0) {
+    const savedColumns = localStorage.getItem('selectedColumns');
+    if (savedColumns) {
+      setSelectedColumns(JSON.parse(savedColumns));
+    } else if (tabledata && tabledata.length > 0) {
       const allColumns = Object.keys(tabledata[0]);
       const validColumns = allColumns.filter(col => columnOptions.some(option => option.value === col));
       const initialSelectedColumns = [...new Set([...defaultSelectedColumns, ...validColumns])];
@@ -190,6 +194,12 @@ export const Tableview = (props) => {
     { label: 'Remarks', value: 'Remarks' },
   ];
 
+  const handleColumnChange = (e) => {
+    const newSelectedColumns = e.value;
+    setSelectedColumns(newSelectedColumns);
+    localStorage.setItem('selectedColumns', JSON.stringify(newSelectedColumns));
+  };
+
   return (
     <div>
       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
@@ -213,7 +223,7 @@ export const Tableview = (props) => {
         <MultiSelect
           value={selectedColumns}
           options={columnOptions}
-          onChange={(e) => setSelectedColumns(e.value)}
+          onChange={handleColumnChange}
           optionLabel="label"
           placeholder="Select Columns"
           maxSelectedLabels={4}
