@@ -3,17 +3,90 @@ import mongoose from "mongoose";
 import jwt from 'jsonwebtoken';
 
 
+// export const getallunallocation = async (req, res, next) => {
+//   try {
+//     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
+//     const filter = Role === 'SuperAdmin' ? {Status:{$ne: "Allocate"}} : Role === 'TeamLeader' ?{Status:{$ne: "Allocate"}}|| { selectedTeamLeader: UserName,selectedTelecaller:{$exists:false} } : Role === 'Telecaller' ? { selectedTelecaller: UserName } : {};
+//     const { globalfilter } = req.query;
+//     let filterQuery = Allocation.find(filter);
+//     if (globalfilter) {
+//       const regex = { $regex: globalfilter, $options: 'i' };
+//       const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
+//       if (stringFields.length > 0) {filterQuery = filterQuery.or(stringFields.map(field => ({ [field]: regex })));}
+//     }
+//     const resdata = await filterQuery.exec();
+//     const totallength = resdata.length;
+//     res.send({ resdata, totallength });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({ error: 'Internal Server Error' });
+//   }
+// };
+
+// export const getallunallocation = async (req, res, next) => {
+//   try {
+//     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
+//     const filter = Role === 'SuperAdmin' ? { Status: { $ne: "Allocate" } }
+//                 : Role === 'TeamLeader' ? { $or: [{ Status: { $ne: "Allocate" } }, { selectedTeamLeader: UserName, selectedTelecaller: { $exists: false } }] }
+//                 : Role === 'Telecaller' ? { selectedTelecaller: UserName }
+//                 : {};
+
+//     const { globalfilter, Region, Location, Product, Campaign_Name } = req.query;
+
+//     if (Region) filter.Region = Region;
+//     if (Location) filter.Location = Location;
+//     if (Product) filter.Product = Product;
+//     if (Campaign_Name) filter.Campaign_Name = Campaign_Name;
+
+//     let filterQuery = Allocation.find(filter);
+
+//     if (globalfilter) {
+//       const regex = { $regex: globalfilter, $options: 'i' };
+//       const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
+//       if (stringFields.length > 0) {
+//         filterQuery = filterQuery.or(stringFields.map(field => ({ [field]: regex })));
+//       }
+//     }
+
+//     console.log("Filter Query: ", filterQuery); // Add this line to debug the query
+//     const resdata = await filterQuery.exec();
+//     const totallength = resdata.length;
+//     res.send({ resdata, totallength });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({ error: 'Internal Server Error' });
+//   }
+// };
+
 export const getallunallocation = async (req, res, next) => {
   try {
     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
-    const filter = Role === 'SuperAdmin' ? {Status:{$ne: "Allocate"}} : Role === 'TeamLeader' ?{Status:{$ne: "Allocate"}}|| { selectedTeamLeader: UserName,selectedTelecaller:{$exists:false} } : Role === 'Telecaller' ? { selectedTelecaller: UserName } : {};
-    const { globalfilter } = req.query;
+
+    // Basic filter based on role
+    const filter = Role === 'SuperAdmin' ? { Status: { $ne: "Allocate" } }
+                : Role === 'TeamLeader' ? { $or: [{ Status: { $ne: "Allocate" } }, { selectedTeamLeader: UserName, selectedTelecaller: { $exists: false } }] }
+                : Role === 'Telecaller' ? { selectedTelecaller: UserName }
+                : {};
+
+    // Adding dynamic filters from query parameters
+    Object.keys(req.query).forEach(key => {
+      if (key !== 'globalfilter' && key !== 'first' && key !== 'rows') {
+        filter[key] = req.query[key];
+      }
+    });
+
     let filterQuery = Allocation.find(filter);
-    if (globalfilter) {
-      const regex = { $regex: globalfilter, $options: 'i' };
+
+    // Handling global filter
+    if (req.query.globalfilter) {
+      const regex = { $regex: req.query.globalfilter, $options: 'i' };
       const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
-      if (stringFields.length > 0) {filterQuery = filterQuery.or(stringFields.map(field => ({ [field]: regex })));}
+      if (stringFields.length > 0) {
+        filterQuery = filterQuery.or(stringFields.map(field => ({ [field]: regex })));
+      }
     }
+
+    console.log("Filter Query: ", filterQuery); // Debugging the query
     const resdata = await filterQuery.exec();
     const totallength = resdata.length;
     res.send({ resdata, totallength });
@@ -22,6 +95,7 @@ export const getallunallocation = async (req, res, next) => {
     res.status(500).send({ error: 'Internal Server Error' });
   }
 };
+
 
 export const savebulkunallocation = async (req, res) => {
   try {
@@ -103,8 +177,10 @@ export const getSelectedTeamLeaderAndTelecallerData = async (req, res, next) => 
     let filter = {};
     if (Role === 'SuperAdmin') {
       filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
+      // filter.$or = [{ selectedTeamLeader: { $exists: true, $ne: null } }];
     } else if (Role === 'TeamLeader') {
-      filter.selectedTeamLeader = UserName;
+      // filter.selectedTeamLeader = UserName;
+      filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
     } else if (Role === 'Telecaller') {
       filter.selectedTelecaller = UserName;
     } else {
@@ -275,31 +351,46 @@ export const allocateTeamLeader = async (req, res) => {
   }
 };
 
-
-
 // export const allocateTeamLeader = async (req, res) => {
 //   try {
-//     const { data, selectedTeamLeader, selectedTelecaller, Productivity_Status } = req.body; 
-//     console.log(req.body)
+//     const { data, selectedTeamLeader, selectedTelecaller } = req.body;
 //     const result = await Promise.all(
-//       (Array.isArray(data) ? data : [data]).map(async (item) => {
-//         const productivityStatus = Productivity_Status || ({"Submit Lead": "Worked Leads","Not Int": "Reached","Followup": "Reached","Future Followup": "Reached","Call Back": "Not Reached","Lead Accepted": "Lead Accepted",}[item.selectedDisposition] || "Not Updated");
+//       data.map(async (item) => {
+//         let productivityStatus;
+//         if (item.selectedDisposition === "Lead Accepted") {
+//           if (["Logged", "Accepted", "Disbursed"].includes(item.Productivity_Status)) {
+//             productivityStatus = item.Productivity_Status;
+//           } else {
+//             productivityStatus = "Lead Accepted";
+//           }
+//         } else {
+//           productivityStatus = {
+//             "Submit Lead": "Worked Leads",
+//             "Not Int": "Reached",
+//             "DNE": "Reached",
+//             "Followup": "Reached",
+//             "Future Followup": "Reached",
+//             "Call Back": "Not Reached",
+//             "Lead Submitted": "Submit Leads",
+//             "Lead Declined": "Declined",
+//           }[item.selectedDisposition] || "Not Updated";
+//         }
 //         const updatedFields = {
 //           selectedTeamLeader: selectedTeamLeader || item.selectedTeamLeader,
 //           selectedTelecaller: selectedTelecaller || undefined,
 //           Remarks: item.Remarks,
-//           Productivity_Status: Productivity_Status||item.Productivity_Status,
+//           Productivity_Status: productivityStatus,
 //         };
 //         const currentTimestamp = new Date().toISOString();
 //         if (item.selectedDisposition) {
 //           updatedFields.Disposition = `${item.selectedDisposition} (${currentTimestamp})`;
 //         } else {
-//           updatedFields.Disposition = `unchanged (${currentTimestamp})`;
+//           updatedFields.Disposition = `Allocated Leads (${currentTimestamp})`;
 //         }
 //         if (item.selectedSubDisposition) {
 //           updatedFields.Sub_Disposition = `${item.selectedSubDisposition} (${currentTimestamp})`;
 //         } else {
-//           updatedFields.Sub_Disposition = `unchanged (${currentTimestamp})`;
+//           updatedFields.Sub_Disposition = `Allocated Leads (${currentTimestamp})`;
 //         }
 //         const allocation = await Allocation.findByIdAndUpdate(item._id, updatedFields, { new: true });
 //         if (selectedTeamLeader) {
@@ -309,7 +400,6 @@ export const allocateTeamLeader = async (req, res) => {
 //         return allocation;
 //       })
 //     );
-
 //     return res.status(200).json({
 //       success: true,
 //       message: "Team leader, telecaller, and remarks saved successfully",
@@ -320,6 +410,9 @@ export const allocateTeamLeader = async (req, res) => {
 //     return res.status(500).json({ success: false, message: "Internal server error" });
 //   }
 // };
+
+
+
 
 
 export const deleteallallocation = async (req, res) => {
