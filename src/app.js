@@ -10,7 +10,7 @@ app.use(morgan('dev'))
 app.use(compression())
 app.use('/uploads', express.static('uploads'))
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://192.168.0.20:5173', 'http://192.168.0.125:5173', 'http://192.168.0.25:5173', 'http://192.168.0.26:5173', 'http://192.168.0.130:5173'],
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://192.168.0.20:5173', 'http://192.168.0.125:5173', 'http://192.168.0.25:5173', 'http://192.168.0.26:5173', 'http://192.168.0.130:5173','http://192.168.0.25:5174'],
   credentials: true
 }))
 

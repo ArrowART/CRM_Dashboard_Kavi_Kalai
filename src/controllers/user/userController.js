@@ -1,24 +1,48 @@
 import mongoose from "mongoose";
 import User from "../../models/UserModel.js";
+import jwt from 'jsonwebtoken';
 import { generateUniqueUserName } from "../../services/uniqueidService.js";
+import TelecallerAllocation from "../../models/TelecallerallocationModel.js";
 
-
+// export const getallUsers = async (req, res, next) => {
+//     try {
+//       const { first, rows, globalfilter, ...othersdata } = req.query
+//       const individualFilters = Object.keys(othersdata).map(field => ({ [field]: { $regex: req.query[field] ?? '' } }))
+//       const fieldArray = Object.keys(User.schema.obj)
+//       const globalFilter = globalfilter ? { $or: fieldArray.filter((field1) => User.schema.path(field1) instanceof mongoose.Schema.Types.String).map(field => ({ [field]:{ $regex: globalfilter, $options: 'i' } })) } : {}
+//       const filter = { $and: [globalFilter, ...individualFilters] }
+//       const resdata = await User.find(filter).skip(first).limit(rows)
+//       const totallength = await User.countDocuments(filter)
+//       res.send({ resdata, totallength })
+//     } catch (err) {
+//       console.error(err)
+//     }
+//   }
 
 export const getallUsers = async (req, res, next) => {
-    try {
-      const { first, rows, globalfilter, ...othersdata } = req.query
-      const individualFilters = Object.keys(othersdata).map(field => ({ [field]: { $regex: req.query[field] ?? '' } }))
-      const fieldArray = Object.keys(User.schema.obj)
-      const globalFilter = globalfilter ? { $or: fieldArray.filter((field1) => User.schema.path(field1) instanceof mongoose.Schema.Types.String).map(field => ({ [field]:{ $regex: globalfilter, $options: 'i' } })) } : {}
-      const filter = { $and: [globalFilter, ...individualFilters] }
-      const resdata = await User.find(filter).skip(first).limit(rows)
-      const totallength = await User.countDocuments(filter)
-      res.send({ resdata, totallength })
-    } catch (err) {
-      console.error(err)
-    }
+  try {
+    const { first = 0, rows = 10, globalfilter, ...othersdata } = req.query;
+    const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
+    const individualFilters = Object.keys(othersdata).map(field => ({ [field]: { $regex: req.query[field] ?? '', $options: 'i' }}));
+    const fieldArray = Object.keys(User.schema.obj);
+    const globalFilter = globalfilter ? { $or: fieldArray .filter((field1) => User.schema.path(field1) instanceof mongoose.Schema.Types.String) .map(field => ({ [field]: { $regex: globalfilter, $options: 'i' } }))} : {};
+    let roleFilter = {};
+    if (Role === 'SuperAdmin') {
+    } else if (Role === 'TeamLeader') {
+      const allocation = await TelecallerAllocation.findOne({ 'teamleader.UserName': UserName });
+      const telecallerUserNames = allocation ? allocation.telecaller.map(tc => tc.UserName) : [];
+      roleFilter = { UserName: { $in: [UserName, ...telecallerUserNames] } };
+    } else if (Role === 'Telecaller') {roleFilter = { UserName: UserName };}
+    const filter = { $and: [globalFilter, roleFilter, ...individualFilters] };
+    const resdata = await User.find(filter).skip(parseInt(first)).limit(parseInt(rows));
+    const totallength = await User.countDocuments(filter);
+    res.send({ resdata, totallength });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: 'Internal Server Error' });
   }
-  
+};
+
   export const getuniquevaluebyfield = async (req, res, next) => {
     try {
       const { field } = req.query
