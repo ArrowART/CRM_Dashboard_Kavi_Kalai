@@ -14,6 +14,7 @@ import useAuth from "../../services/store/useAuth";
 import { MultiSelect } from "primereact/multiselect";
 import useCampanignFilter from "../Unallocation/CampaingnFilters";
 import useProductFilter from "../Unallocation/ProductFilters";
+import { Button } from "primereact/button";
 
 export const Tableview = (props) => {
   const { tabledata, first, setFirst, updateData, cusfilter, isLoading, handleButtonClick, activeButton } = props;
@@ -220,6 +221,12 @@ export const Tableview = (props) => {
     localStorage.setItem('selectedColumns', JSON.stringify(newSelectedColumns));
   };
 
+  const handleRefresh = () => {
+    updateData();
+    setFirst(0); 
+    setRowDataState([]);
+  };
+
   return (
     <div>
       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
@@ -239,7 +246,8 @@ export const Tableview = (props) => {
           Lead Submitted Leads
         </button>
       </div>
-      <div className="mx-4 mb-4">
+    
+      <div className="flex gap-2 mx-4 mb-4">
         <MultiSelect
           value={selectedColumns}
           options={columnOptions}
@@ -249,6 +257,10 @@ export const Tableview = (props) => {
           maxSelectedLabels={4}
           className="border-2 border-cyan-300 w-fit md:w-20rem"
         />
+       <button onClick={handleRefresh} className="p-2 mr-5 text-white bg-blue-500 rounded-lg">
+            <i className="fi fi-br-rotate-right"></i>
+         </button>
+       
       </div>
       {isLoading ? (
         <div className="p-4">

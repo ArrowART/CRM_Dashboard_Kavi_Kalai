@@ -109,9 +109,18 @@ const Tableview = (props) => {
         setRowDataState(updatedRowData);
     };
 
+    const handleRefresh = () => {
+        updateData();
+        setFirst(0); 
+        setRowDataState([]);
+      };
+
     return (
         <div>
             <div className='max-w-[70rem] mx-auto flex justify-between'>
+            <button onClick={handleRefresh} className="p-2 mb-3 text-white bg-blue-500 rounded-lg">
+                <i className="fi fi-br-rotate-right"></i>
+            </button>  
                 <div className="flex justify-start gap-4 p-3 overflow-x-auto lg:justify-center">
                     {productTypes.map((type) => (
                         <button 
@@ -123,6 +132,7 @@ const Tableview = (props) => {
                         </button>
                     ))}
                 </div>
+              
                 <div className="justify-end mb-3">
                     <span>Show:</span>
                         <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-3">
