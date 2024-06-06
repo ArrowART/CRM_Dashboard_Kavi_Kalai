@@ -12,6 +12,7 @@ import useLocationFilter from "../Unallocation/LocationFilters";
 import useCampanignFilter from "../Unallocation/CampaingnFilters";
 import { MultiSelect } from 'primereact/multiselect';
 import { Skeleton } from "primereact/skeleton";
+import { Button } from "primereact/button";
 
 export const Tableview = (props) => {
   const { tabledata, first, setFirst, cusfilter, updateData, isLoading, setProductivityStatus } = props;
@@ -221,6 +222,12 @@ export const Tableview = (props) => {
     localStorage.setItem('selectedColumns1', JSON.stringify(newSelectedColumns));
   };
 
+  const handleRefresh = () => {
+    updateData();
+    setFirst(0); 
+    setRowDataState([]);
+  };
+
   return (
     <div>
       <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
@@ -233,7 +240,7 @@ export const Tableview = (props) => {
         <button onClick={() => filterByProductivitystatus('Declined')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Declined' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Lead Declined Leads</button>
         <button onClick={() => filterByProductivitystatus('Not Updated')} className={`flex-shrink-0 p-2 px-3 text-sm text-white bg-${activeButton === 'Not Updated' ? 'blue' : 'cyan'}-500 rounded-t-lg`}>Not Updated Leads</button>
       </div>
-      <div className="mx-4 mb-4">
+      <div className="flex gap-2 mx-4 mb-4">
         <MultiSelect
           value={selectedColumns}
           options={columnOptions}
@@ -243,6 +250,9 @@ export const Tableview = (props) => {
           maxSelectedLabels={4}
           className="border-2 border-cyan-300 w-fit md:w-20rem"
         />
+         <button onClick={handleRefresh} className="p-2 mr-5 text-white bg-blue-500 rounded-lg">
+            <i className="fi fi-br-rotate-right"></i>
+         </button>    
       </div>
       {isLoading ? (
                 <div className="p-4">
