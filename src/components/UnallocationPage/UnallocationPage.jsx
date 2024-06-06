@@ -23,32 +23,39 @@ export default function UnallocationPage(){
     const [File, setFile] = useState([]);
     const [productCounts, setProductCounts] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedRows, setSelectedRows] = useState([]);
     let isMounted = true;
-    const getallallocations = useCallback(async ()=>{
-        const res = await getallunallocation({first, rows, globalfilter, ...colfilter});
-        setIsLoading(false);
-        setTabledata(res?.resdata);
-        setTotalRecords(res?.totallength);
-        const counts = res?.resdata.reduce((acc, item) => {
-            const product = item.Product;
-            if (product === 'PL' || product === 'DL' || product === 'BL' || product === 'STPL') {
-                acc.ALL = (acc.ALL || 0) + 1;
-                acc[product] = (acc[product] || 0) + 1;
-            }
-            return acc;
-        }, {});
-        setProductCounts(counts);
+
+    const getallallocations = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const res = await getallunallocation({ first, rows, globalfilter, ...colfilter });
+            setTabledata(res?.resdata);
+            setTotalRecords(res?.totallength);
+            const counts = res?.resdata.reduce((acc, item) => {
+                const product = item.Product;
+                if (product === 'PL' || product === 'DL' || product === 'BL' || product === 'STPL') {
+                    acc.ALL = (acc.ALL || 0) + 1;
+                    acc[product] = (acc[product] || 0) + 1;
+                }
+                return acc;
+            }, {});
+            setProductCounts(counts);
+        } finally {
+            setIsLoading(false);
+        }
     }, [first, rows, globalfilter, colfilter]);
 
     useEffect(() => {
         if (isMounted) {
             getallallocations();
         }
-        return (() => isMounted = false);
-    }, [first, rows, globalfilter, colfilter]);
+        return () => isMounted = false;
+    }, [getallallocations]);
 
     const cusfilter = (field, value) => {
-        setcolFilter({...colfilter, ...{[field]:value}});
+        setcolFilter(prev => ({ ...prev, [field]: value }));
+        setFirst(0); // Reset to first page when applying a new filter
     };
 
     const updateTableData = async () => {
@@ -148,6 +155,7 @@ export default function UnallocationPage(){
                     updateTableData={updateTableData}
                     loading={loading}
                     setLoading={setLoading}
+                    selectedRows={selectedRows}
                 />
                 <Tableview 
                     tabledata={tabledata} 
@@ -160,6 +168,9 @@ export default function UnallocationPage(){
                     filtervalues={filtervalues} 
                     handledelete={handledelete}
                     isLoading={isLoading}
+                    selectedRows={selectedRows} // Pass the selected rows to Tableview
+                    setSelectedRows={setSelectedRows} // Pass the setSelectedRows function to Tableview
+            
                 />     
                 <UploadForm 
                     uploadfile={uploadfile} 
