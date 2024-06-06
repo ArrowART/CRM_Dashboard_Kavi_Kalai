@@ -13,6 +13,7 @@ import useLocationFilter from "../Unallocation/LocationFilters";
 import useAuth from "../../services/store/useAuth";
 import { MultiSelect } from "primereact/multiselect";
 import useCampanignFilter from "../Unallocation/CampaingnFilters";
+import useProductFilter from "../Unallocation/ProductFilters";
 
 export const Tableview = (props) => {
   const { tabledata, first, setFirst, updateData, cusfilter, isLoading, handleButtonClick, activeButton } = props;
@@ -23,6 +24,8 @@ export const Tableview = (props) => {
   const { filters, regionFilterTemplate, filterApply, filterClear } = useRegionFilter(tabledata, cusfilter);
   const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
   const { filters2, campaignFilterTemplate, filterApply2, filterClear2 } = useCampanignFilter(tabledata, cusfilter);
+  const { filters3, productFilterTemplate, filterApply3, filterClear3 } = useProductFilter(tabledata, cusfilter);
+
 
   useEffect(() => {
     setFirst(0); // Reset pagination when changing the active button
@@ -266,7 +269,7 @@ export const Tableview = (props) => {
           className="text-sm"
           scrollable
           scrollHeight="550px"
-          filters={{ ...filters, ...filters1, ...filters2 }}
+          filters={{ ...filters, ...filters1, ...filters2, ...filters3 }}
         >
             <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
           {selectedColumns.includes('sno') && (
@@ -279,7 +282,7 @@ export const Tableview = (props) => {
             <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />
           )}
           {selectedColumns.includes('Product') && (
-            <Column field="Product" header="Product" />
+            <Column field="Product" header="Product" filter filterElement={productFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply3} filterClear={filterClear3} sortable style={{ width: '25%' }}/>
           )}
           {selectedColumns.includes('Name') && (
             <Column field="Name" header="Name" sortable style={{ width: '25%' }} />

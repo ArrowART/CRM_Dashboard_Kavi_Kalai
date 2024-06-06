@@ -109,12 +109,9 @@ export default function Tableheadpanel(props) {
 
     return (
         <div className="flex items-center justify-between px-6 py-4 lg:space-y-0">
-            <div>
+            <div className='flex py-2'>
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">Unallocation Data</h2>
-            </div>
-            <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
-               
-                <div className="flex gap-2 py-2">
+                <div className='flex gap-2 mx-5'>
                 <NavLink
                     to={"/unallocation"}
                     isActive={(match, location) => {
@@ -145,6 +142,9 @@ export default function Tableheadpanel(props) {
                 >
                     Allocated
                 </NavLink>
+            </div>
+            </div>
+            <div className="flex px-2 gap-x-3">
                     {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
                         <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
                             <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
@@ -164,11 +164,7 @@ export default function Tableheadpanel(props) {
                         )}
                     </>
                 )}
-
-                </div>
-                <div className='py-2'>
-                    <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
-                </div>
+                <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
             </div>
             <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal className="p-4 bg-white rounded-lg w-[600px]">
     <div className="p-fluid">

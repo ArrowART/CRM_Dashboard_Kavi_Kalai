@@ -98,13 +98,10 @@ export default function Tableheadpanel(props) {
 
     return (
         <div className="flex items-center justify-between px-6 py-4 lg:space-y-0">
-            <div>
+            <div className='flex py-2'>
                 <h2 className="mx-1 text-xl font-semibold text-gray-800">Allocation Data</h2>
-            </div>
-            
-            <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
-            <div className="flex gap-2 py-2">
-                <NavLink
+                <div className='flex gap-2 mx-5'>
+            <NavLink
                     to={"/unallocation"}
                     isActive={(match, location) => {
                         if (location.pathname === '/unallocation' || location.pathname === '/') {
@@ -134,7 +131,14 @@ export default function Tableheadpanel(props) {
                 >
                     Allocated
                 </NavLink>
-                </div>
+            </div>
+            </div>
+
+           
+
+            
+            <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
+         
                 <div className='py-2'>
                      <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
                 </div>

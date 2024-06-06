@@ -8,6 +8,8 @@ import { getDispositionColor, getSubDispositionColor } from './optionColors';
 import { Skeleton } from 'primereact/skeleton';
 import useRegionFilter from './RegionFilters';
 import useLocationFilter from './LocationFilters';
+import useCampanignFilter from '../Unallocation/CampaingnFilters';
+import useProductFilter from '../Unallocation/ProductFilters';
 
 const Tableview = (props) => {
     const { tabledata, filtervalues, handlefiltervalue, cusfilter, isLoading, productTypes, setActiveButton, activeButton } = props;
@@ -18,6 +20,10 @@ const Tableview = (props) => {
 
     const { filters, regionFilterTemplate, filterApply, filterClear } = useRegionFilter(tabledata, cusfilter);
     const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
+    const { filters2, campaignFilterTemplate, filterApply2, filterClear2 } = useCampanignFilter(tabledata, cusfilter);
+    const { filters3, productFilterTemplate, filterApply3, filterClear3 } = useProductFilter(tabledata, cusfilter);
+
+
 
     useEffect(() => {
         setRowDataState(tabledata.map(row => ({ ...row, selectedDisposition: null, selectedSubDisposition: null })));
@@ -106,7 +112,7 @@ const Tableview = (props) => {
     return (
         <div>
             <div className='max-w-[70rem] mx-auto flex justify-between'>
-                <div className="flex justify-start gap-4 p-3 mb-4 overflow-x-auto lg:justify-center">
+                <div className="flex justify-start gap-4 p-3 overflow-x-auto lg:justify-center">
                     {productTypes.map((type) => (
                         <button 
                             key={type} 
@@ -117,20 +123,17 @@ const Tableview = (props) => {
                         </button>
                     ))}
                 </div>
-                <div>
-                    <h1 className='justify-end py-4 font-semibold'>Total Records : {totalRecords}</h1>
+                <div className="justify-end mb-3">
+                    <span>Show:</span>
+                        <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-3">
+                            <option value={10}>10</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                            <option value={100}>100</option>
+                            <option value={500}>1000</option>
+                        </select>
+                    <span>rows per page</span>
                 </div>
-            </div>
-            <div className="flex items-center justify-end mb-4">
-                <span>Show:</span>
-                <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-3">
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                    <option value={500}>1000</option>
-                </select>
-                <span>rows per page</span>
             </div>
             {isLoading ? (
                 <div className="p-4">
@@ -152,18 +155,18 @@ const Tableview = (props) => {
                     scrollable
                     scrollHeight="550px"
                     className="text-sm"
-                    filters={{ ...filters, ...filters1 }}
+                    filters={{ ...filters, ...filters1, ...filters2, ...filters3 }}
                     filterDisplay="menu"
                 >
                     <Column field="sno" header="S.No" body={sno} />
                     <Column field="Region" header="Region" filter filterElement={regionFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply} filterClear={filterClear} sortable style={{ width: '25%' }} />
                     <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />
-                    <Column field="Product" header="Product" />
+                    <Column field="Product" header="Product" filter filterElement={productFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply3} filterClear={filterClear3} sortable style={{ width: '25%' }}  />
                     <Column field="Name" header="Name" sortable style={{ width: '25%' }} />
                     <Column field="Firm_Name" header="Firm Name" />
                     <Column field="Mobile1" header="Mobile 1" />
                     <Column field="Mobile2" header="Mobile 2" />
-                    <Column field="Campaign_Name" header="Campaign Name" />
+                    <Column field="Campaign_Name" header="Campaign Name" filter filterElement={campaignFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply2} filterClear={filterClear2} sortable style={{ width: '20%' }}  />
                     <Column field="selectedTeamLeader" header="Team Leader" style={{ minWidth: '10rem' }} />
                     <Column field="selectedTelecaller" header="Tele Caller" style={{ minWidth: '10rem' }} />
                     <Column
@@ -216,6 +219,9 @@ const Tableview = (props) => {
                     />
                 </DataTable>
             )}
+            <div className='flex justify-end mr-3'>
+                    <h1 className='justify-end py-4'>Total Records : {totalRecords}</h1>
+                </div>
         </div>
     );
 };
