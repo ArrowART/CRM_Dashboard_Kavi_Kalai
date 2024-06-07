@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import Tableheadpanel from '../../shared/components/Telecallerleads/Tableheadpanel';
 import { Tableview } from '../../shared/components/Telecallerleads/Tableview';
 import { getallselectedteamleaderandtelecaller } from "../../shared/services/apiunallocation/apiunallocation";
-import Tablepagination from "../../shared/components/others/Tablepagination";
+import Tablepagination from "../../shared/components/others/Tablepagination"
 import toast from "react-hot-toast";
 
 export const TelecallerleadsPage = () => {
@@ -13,14 +13,15 @@ export const TelecallerleadsPage = () => {
     const [tabledata, setTabledata] = useState([]);
     const [colfilter, setcolFilter] = useState({});
     const [globalfilter, setglobalfilter] = useState('');
-    const [filtervalues, setfiltervalues] = useState([]);
+    const [filtervalues, setfiltervalues] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const [activeButton, setActiveButton] = useState('Allocated Leads'); // Initialize the activeButton state
+    const [activeButton, setActiveButton] = useState('Allocated Leads');
     let isMounted = true;
 
-    const getallteamleaderandtelecaller= useCallback(async () => {
+    const getallteamleaderandtelecaller = useCallback(async () => {
+        setIsLoading(true);  // Set loading to true before data fetch
         const res = await getallselectedteamleaderandtelecaller({ first, rows, globalfilter, ...colfilter });
-        setIsLoading(false);
+        setIsLoading(false);  // Set loading to false after data fetch
         setTabledata(res?.resdata);
         setTotalRecords(res?.totallength);
     }, [first, rows, globalfilter, colfilter]);
@@ -30,10 +31,14 @@ export const TelecallerleadsPage = () => {
             getallteamleaderandtelecaller();
         }
         return () => isMounted = false;
-    }, [first, rows, globalfilter, colfilter]);
+    }, [first, rows, globalfilter, colfilter, getallteamleaderandtelecaller]);
 
-    const cusfilter = (field, value) => {
-        setcolFilter({ ...colfilter, ...{ [field]: value } });
+    const cusfilter = async (field, value) => {
+        setcolFilter(prev => ({ ...prev, [field]: value }));
+        setFirst(0);
+        setIsLoading(true);
+        await getallteamleaderandtelecaller();  // Trigger data fetch with new filter
+        setIsLoading(false);
     };
 
     const updateData = async () => {
@@ -57,7 +62,7 @@ export const TelecallerleadsPage = () => {
                 filter = ['Followup', 'Future Followup'];
                 break;
             case 'Lead Submitted':
-                filter = ['Submit Lead', 'Lead Submitted','Lead Accepted','Lead Declined'];
+                filter = ['Submit Lead', 'Lead Submitted', 'Lead Accepted', 'Lead Declined'];
                 break;
             default:
                 filter = [button];
@@ -66,18 +71,20 @@ export const TelecallerleadsPage = () => {
     };
 
     const updateDataWithFilter = async (filter) => {
+        setIsLoading(true);
         try {
             const params = {
                 first,
                 rows,
                 globalfilter,
-                dispositionfilter: filter.join('|') // Joining multiple filters with a pipe character
+                dispositionfilter: filter.join('|')
             };
             const res = await getallselectedteamleaderandtelecaller(params);
             setIsLoading(false);
             setTabledata(res?.resdata);
             setTotalRecords(res?.totallength);
         } catch (error) {
+            setIsLoading(false);
             console.error(error);
             toast.error('Failed to fetch data');
         }
@@ -94,8 +101,9 @@ export const TelecallerleadsPage = () => {
                 setFirst={setFirst}
                 updateData={updateData}
                 isLoading={isLoading}
-                handleButtonClick={handleButtonClick} // Pass the handleButtonClick function
-                activeButton={activeButton} // Pass the activeButton state
+                cusfilter={cusfilter}
+                handleButtonClick={handleButtonClick}
+                activeButton={activeButton}
             />
             <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
         </div>
