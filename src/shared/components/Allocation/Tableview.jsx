@@ -12,7 +12,7 @@ import useCampanignFilter from '../Unallocation/CampaingnFilters';
 import useProductFilter from '../Unallocation/ProductFilters';
 
 const Tableview = (props) => {
-    const { tabledata, filtervalues, handlefiltervalue, cusfilter, isLoading, productTypes, setActiveButton, activeButton } = props;
+    const { tabledata, filtervalues, handlefiltervalue, cusfilter, isLoading, productTypes, setActiveButton, activeButton, updateTableData } = props; // Add updateData to props
     const [rowDataState, setRowDataState] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(20);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -22,8 +22,6 @@ const Tableview = (props) => {
     const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
     const { filters2, campaignFilterTemplate, filterApply2, filterClear2 } = useCampanignFilter(tabledata, cusfilter);
     const { filters3, productFilterTemplate, filterApply3, filterClear3 } = useProductFilter(tabledata, cusfilter);
-
-
 
     useEffect(() => {
         setRowDataState(tabledata.map(row => ({ ...row, selectedDisposition: null, selectedSubDisposition: null })));
@@ -54,9 +52,9 @@ const Tableview = (props) => {
 
     const sno = (rowData, { rowIndex }) => (
         <div>{rowIndex + 1}</div>
-      );
+    );
 
-      const filterByProduct = (product) => {
+    const filterByProduct = (product) => {
         setActiveButton(product);
         if (product) {
             const filteredData = tabledata.filter(item => item.Product === product);
@@ -110,18 +108,31 @@ const Tableview = (props) => {
     };
 
     const handleRefresh = () => {
-        updateData();
+        updateTableData(); // Call updateData function to fetch the latest data
         setFirst(0); 
         setRowDataState([]);
-      };
+    };
 
     return (
         <div>
-            <div className='max-w-[70rem] mx-auto flex justify-between'>
-            <button onClick={handleRefresh} className="p-2 mb-3 text-white bg-blue-500 rounded-lg">
-                <i className="fi fi-br-rotate-right"></i>
-            </button>  
-                <div className="flex justify-start gap-4 p-3 overflow-x-auto lg:justify-center">
+            <div className='flex justify-start mx-5'>
+                <div className="justify-end mb-3 mr-3">
+                    <span>Show:</span>
+                    <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-3">
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                        <option value={500}>1000</option>
+                    </select>
+                    <span>rows per page</span>
+                </div>
+                <button onClick={handleRefresh} className="p-2 mb-3 text-white bg-blue-500 rounded-lg h-9">
+                    <i className="fi fi-br-rotate-right"></i>
+                </button>
+             
+            </div>
+            <div className="flex gap-4 p-3 overflow-x-auto lg:justify-center">
                     {productTypes.map((type) => (
                         <button 
                             key={type} 
@@ -132,19 +143,6 @@ const Tableview = (props) => {
                         </button>
                     ))}
                 </div>
-              
-                <div className="justify-end mb-3">
-                    <span>Show:</span>
-                        <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-3">
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
-                            <option value={100}>100</option>
-                            <option value={500}>1000</option>
-                        </select>
-                    <span>rows per page</span>
-                </div>
-            </div>
             {isLoading ? (
                 <div className="p-4">
                     <Skeleton height="3rem" className="mb-2"></Skeleton>
@@ -230,11 +228,10 @@ const Tableview = (props) => {
                 </DataTable>
             )}
             <div className='flex justify-end mr-3'>
-                    <h1 className='justify-end py-4'>Total Records : {totalRecords}</h1>
-                </div>
+                <h1 className='justify-end py-4'>Total Records : {totalRecords}</h1>
+            </div>
         </div>
     );
 };
 
 export default Tableview;
-

@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { getDispositionColor, getSubDispositionColor } from './optionColors';
 
-const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfrom, cusfilter, filtervalues, handledelete, isLoading,selectedRows,setSelectedRows  }) => {
+const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfrom, cusfilter, filtervalues, handledelete, isLoading,selectedRows,setSelectedRows,updateTableData  }) => {
     const [rowsPerPage, setRowsPerPage] = useState(rows);
     const [tempFilterValues, setTempFilterValues] = useState(filtervalues);
     const [rowDataState, setRowDataState] = useState([]);
@@ -127,8 +127,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
     );
 
     const handleRefresh = () => {
-        updateData();
-        setFirst(0); 
+        updateTableData();
         setRowDataState([]);
       };
     return (
@@ -146,7 +145,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                     </select>
                     <span>rows per page</span>
                 </div>
-                <button onClick={handleRefresh} className="p-2 mb-3 text-white bg-blue-500 rounded-lg">
+                <button onClick={handleRefresh} className="p-2 mb-3 text-white bg-blue-500 rounded-lg h-9">
                 <i className="fi fi-br-rotate-right"></i>
             </button>
             </div>

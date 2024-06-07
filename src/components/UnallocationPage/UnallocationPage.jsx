@@ -168,6 +168,7 @@ export default function UnallocationPage(){
                     filtervalues={filtervalues} 
                     handledelete={handledelete}
                     isLoading={isLoading}
+                    updateTableData={updateTableData}
                     selectedRows={selectedRows} // Pass the selected rows to Tableview
                     setSelectedRows={setSelectedRows} // Pass the setSelectedRows function to Tableview
             

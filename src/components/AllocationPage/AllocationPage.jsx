@@ -109,6 +109,8 @@ export default function AllocationPage(){
         setLoading(false);
     };
 
+    
+
     return (
         <div>
             <div className="bg-white border rounded-2xl">
@@ -121,6 +123,7 @@ export default function AllocationPage(){
                     totalRecords={totalRecords} 
                     first={first} 
                     rows={rows} 
+                    updateTableData={updateTableData}
                     onPageChange={onPageChange} 
                     cusfilter={cusfilter} 
                     filtervalues={filtervalues} 
