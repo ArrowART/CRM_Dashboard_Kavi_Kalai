@@ -61,23 +61,17 @@ import jwt from 'jsonwebtoken';
 export const getallunallocation = async (req, res, next) => {
   try {
     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
-
-    // Basic filter based on role
     const filter = Role === 'SuperAdmin' ? { Status: { $ne: "Allocate" } }
-                : Role === 'TeamLeader' ? { $or: [{ Status: { $ne: "Allocate" } }, { selectedTeamLeader: UserName, selectedTelecaller: { $exists: false } }] }
+                // : Role === 'TeamLeader' ? { $or: [{ Status: { $ne: "Allocate" } }, { selectedTeamLeader: UserName, selectedTelecaller: { $exists: false } }] }
+                :Role === 'TeamLeader' ? { $or: [{ Status: { $ne: "Allocate" } }] }
                 : Role === 'Telecaller' ? { selectedTelecaller: UserName }
                 : {};
-
-    // Adding dynamic filters from query parameters
     Object.keys(req.query).forEach(key => {
       if (key !== 'globalfilter' && key !== 'first' && key !== 'rows') {
         filter[key] = req.query[key];
       }
     });
-
     let filterQuery = Allocation.find(filter);
-
-    // Handling global filter
     if (req.query.globalfilter) {
       const regex = { $regex: req.query.globalfilter, $options: 'i' };
       const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
@@ -85,8 +79,6 @@ export const getallunallocation = async (req, res, next) => {
         filterQuery = filterQuery.or(stringFields.map(field => ({ [field]: regex })));
       }
     }
-
-    console.log("Filter Query: ", filterQuery); // Debugging the query
     const resdata = await filterQuery.exec();
     const totallength = resdata.length;
     res.send({ resdata, totallength });
@@ -109,38 +101,19 @@ export const savebulkunallocation = async (req, res) => {
   }
 };
 
-// export const getSelectedTeamLeaderAndTelecallerData = async (req, res, next) => {
-//   try {
-//     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
-//     let filter = {};
-//     if (Role === 'SuperAdmin') {filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
-//     } else if (Role === 'TeamLeader') {filter.selectedTeamLeader = UserName;
-//     } else if (Role === 'Telecaller') {filter.selectedTelecaller = UserName;
-//     } else {return res.status(200).json({ resdata: [], totallength: 0 });
-//     }
-//     const { first = 0, rows = 0, globalfilter } = req.query;
-//     if (globalfilter) {
-//       const regex = new RegExp(globalfilter, 'i');
-//       const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
-//       if (stringFields.length > 0) {filter.$or = stringFields.map(field => ({ [field]: regex })); }
-//     }
-//     const resdata = await Allocation.find(filter).skip(parseInt(first)).limit(parseInt(rows));
-//     const totallength = await Allocation.countDocuments(filter);
-//     res.send({ resdata, totallength });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send({ error: 'Internal Server Error' });
-//   }
+
+
 
 // export const getSelectedTeamLeaderAndTelecallerData = async (req, res, next) => {
 //   try {
 //     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
 //     let filter = {};
-    
 //     if (Role === 'SuperAdmin') {
 //       filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
+//       // filter.$or = [{ selectedTeamLeader: { $exists: true, $ne: null } }];
 //     } else if (Role === 'TeamLeader') {
-//       filter.selectedTeamLeader = UserName;
+//       // filter.selectedTeamLeader = UserName;
+//       filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
 //     } else if (Role === 'Telecaller') {
 //       filter.selectedTelecaller = UserName;
 //     } else {
@@ -148,17 +121,17 @@ export const savebulkunallocation = async (req, res) => {
 //     }
     
 //     const { first = 0, rows = 0, globalfilter, dispositionfilter } = req.query;
-
-//     if (dispositionfilter && dispositionfilter !== 'Allocated Leads') {
-//       filter.Disposition = new RegExp(dispositionfilter, 'i');
-//     }
-
+    
 //     if (globalfilter) {
 //       const regex = new RegExp(globalfilter, 'i');
 //       const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
 //       if (stringFields.length > 0) {
 //         filter.$or = stringFields.map(field => ({ [field]: regex }));
 //       }
+//     }
+    
+//     if (dispositionfilter) {
+//       filter.Disposition = new RegExp(`^${dispositionfilter}`);
 //     }
 
 //     const resdata = await Allocation.find(filter).skip(parseInt(first)).limit(parseInt(rows));
@@ -173,40 +146,41 @@ export const savebulkunallocation = async (req, res) => {
 
 export const getSelectedTeamLeaderAndTelecallerData = async (req, res, next) => {
   try {
-    const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
-    let filter = {};
-    if (Role === 'SuperAdmin') {
-      filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
-      // filter.$or = [{ selectedTeamLeader: { $exists: true, $ne: null } }];
-    } else if (Role === 'TeamLeader') {
-      // filter.selectedTeamLeader = UserName;
-      filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
-    } else if (Role === 'Telecaller') {
-      filter.selectedTelecaller = UserName;
-    } else {
-      return res.status(200).json({ resdata: [], totallength: 0 });
-    }
-    
-    const { first = 0, rows = 0, globalfilter, dispositionfilter } = req.query;
-    
-    if (globalfilter) {
-      const regex = new RegExp(globalfilter, 'i');
-      const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
-      if (stringFields.length > 0) {
-        filter.$or = stringFields.map(field => ({ [field]: regex }));
+      const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
+      let filter = {};
+      if (Role === 'SuperAdmin') {
+          filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
+      } else if (Role === 'TeamLeader') {
+          filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
+      } else if (Role === 'Telecaller') {
+          filter.selectedTelecaller = UserName;
+      } else {
+          return res.status(200).json({ resdata: [], totallength: 0 });
       }
-    }
-    
-    if (dispositionfilter) {
-      filter.Disposition = new RegExp(`^${dispositionfilter}`);
-    }
-
-    const resdata = await Allocation.find(filter).skip(parseInt(first)).limit(parseInt(rows));
-    const totallength = await Allocation.countDocuments(filter);
-    res.send({ resdata, totallength });
+      const { first = 0, rows = 20, globalfilter, dispositionfilter, ...otherFilters } = req.query;
+      if (globalfilter) {
+          const regex = new RegExp(globalfilter, 'i');
+          const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
+          if (stringFields.length > 0) {
+              filter.$or = stringFields.map(field => ({ [field]: regex }));
+          }
+      }
+      if (dispositionfilter) {
+          filter.Disposition = new RegExp(`^${dispositionfilter}`);
+      }
+      Object.keys(otherFilters).forEach(key => {
+          if (Array.isArray(otherFilters[key])) {
+              filter[key] = { $in: otherFilters[key] };
+          } else {
+              filter[key] = { $in: otherFilters[key].split(',') };
+          }
+      });
+      const resdata = await Allocation.find(filter).skip(parseInt(first)).limit(parseInt(rows));
+      const totallength = await Allocation.countDocuments(filter);
+      res.send({ resdata, totallength });
   } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: 'Internal Server Error' });
+      console.error(err);
+      res.status(500).send({ error: 'Internal Server Error' });
   }
 };
 
