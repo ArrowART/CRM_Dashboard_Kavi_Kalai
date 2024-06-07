@@ -7,8 +7,9 @@ import { Skeleton } from 'primereact/skeleton';
 import { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { getDispositionColor, getSubDispositionColor } from './optionColors';
+import { MultiSelect } from 'primereact/multiselect';
 
-const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfrom, cusfilter, filtervalues, handledelete, isLoading,selectedRows,setSelectedRows,updateTableData  }) => {
+const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfrom, cusfilter, filtervalues, handledelete, isLoading, selectedRows, setSelectedRows,updateTableData }) => {
     const [rowsPerPage, setRowsPerPage] = useState(rows);
     const [tempFilterValues, setTempFilterValues] = useState(filtervalues);
     const [rowDataState, setRowDataState] = useState([]);
@@ -45,7 +46,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
 
     const renderColumnFilter = (key) => (
         <div>
-            <Dropdown
+            <MultiSelect
                 value={tempFilterValues[key]}
                 options={[...new Set(tabledata.map(item => item[key]))].map(value => ({ label: value, value }))}
                 onChange={(e) => setTempFilterValues(prev => ({ ...prev, [key]: e.value }))}
@@ -53,8 +54,8 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                 className="p-column-filter"
             />
             <div className="flex justify-between mt-8">
-                <Button label="Clear" onClick={() => handleClearFilters(key)} className="p-button-secondary p-button-sm" />
-                <Button label="Apply" onClick={() => handleApplyFilters(key)} className="p-button-primary p-button-sm" />
+                <Button label="Clear" onClick={() => handleClearFilters(key)} className="p-1 text-white bg-blue-500" />
+                <Button label="Apply" onClick={() => handleApplyFilters(key)} className="p-1 mx-1 text-white bg-blue-500" />
             </div>
         </div>
     );
@@ -128,8 +129,10 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
 
     const handleRefresh = () => {
         updateTableData();
+        setFirst(0); 
         setRowDataState([]);
       };
+
     return (
         <div>
             <div className='flex justify-start mx-5 '>
@@ -169,8 +172,12 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                         scrollable
                         scrollHeight="550px"
                         className="text-sm"
-                        selection={selectedRows} // Set the selection state
-                        onSelectionChange={(e) => setSelectedRows(e.value)} // Update the selection state
+                        selection={selectedRows}
+                        onSelectionChange={(e) => {
+                            const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
+                            const newSelectedRows = e.value.filter(row => currentPageRows.includes(row));
+                            setSelectedRows(newSelectedRows);
+                        }}
                     >
                         <Column selectionMode="multiple" headerStyle={{ width: '3em' }} />
                         <Column header="Action" style={{ minWidth: '80px' }} body={actionButton} />
