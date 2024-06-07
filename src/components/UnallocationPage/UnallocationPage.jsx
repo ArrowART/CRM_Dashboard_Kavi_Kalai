@@ -15,6 +15,8 @@ export default function UnallocationPage() {
     const [visible, setVisible] = useState(false);
     const [formdata, setFormdata] = useState({});
     const [loading, setLoading] = useState(false);
+    const [loading1, setLoading1] = useState(false);
+
     const [tabledata, setTabledata] = useState([]);
     const [colfilter, setcolFilter] = useState({});
     const [globalfilter, setglobalfilter] = useState('');
@@ -156,6 +158,7 @@ export default function UnallocationPage() {
                     loading={loading}
                     setLoading={setLoading}
                     selectedRows={selectedRows}
+                    loading1={loading1}
                 />
                 <Tableview
                     tabledata={tabledata}

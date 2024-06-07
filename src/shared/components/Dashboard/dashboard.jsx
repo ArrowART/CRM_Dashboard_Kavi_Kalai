@@ -2,7 +2,8 @@
 // import { useRef } from 'react';
 import { Chart } from 'primereact/chart';
 import useAuth from '../../services/store/useAuth';
-// import CanvasJSReact from '@canvasjs/react-charts';
+import ApexCharts from 'apexcharts';
+import { useEffect } from 'react';
 
 export default function Dashboard(props) {  
 
@@ -10,7 +11,6 @@ export default function Dashboard(props) {
   const { chartData, chartOptions, barchartData, barchartOptions, procuctsbarchartData, productsbarchartOptions,
     productivitybarchartData, productivitybarchartOptions, allocationchartData, allocationchartOptions } = props;
 
-  // const pyramidChartRef = useRef(null);
   const getGreeting = () => {
     const now = new Date();
     const hour = now.getHours();
@@ -23,42 +23,98 @@ export default function Dashboard(props) {
     }
   };
 
-  // var CanvasJS = CanvasJSReact.CanvasJS;
-  // var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+  useEffect(() => {
 
-  var dataPoint;
-  var total;
-  const options = {
-    animationEnabled: true,
-    title: {
-      text: "Recruitment Analysis - July 2016"
-    },
-    data: [{
-      type: "funnel",
-      indexLabel: "{label} - {y}",
-      toolTipContent: "<b>{label}</b>: {y} <b>({percentage}%)</b>",
-      neckWidth: 20,
-      neckHeight: 0,
-      valueRepresents: "area",
-      dataPoints: [
-        { y: 265, label: "Applications" },
-        { y: 134, label: "Interviewed" },
-        { y: 48, label: "Assessment" },
-        { y: 26, label: "Hired" }
-      ]
-    }]
-  };
-
-  // calculate percentage
-  dataPoint = options.data[0].dataPoints;
-  total = dataPoint[0].y;
-  for (var i = 0; i < dataPoint.length; i++) {
-    if (i === 0) {
-      options.data[0].dataPoints[i].percentage = 100;
-    } else {
-      options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
+  const getChartOptions = () => {
+    return {
+      series: [35.1, 23.5, 2.4, 5.4],
+      colors: ["#1C64F2", "#16BDCA", "#FDBA8C", "#E74694"],
+      chart: {
+        height: 320,
+        width: "100%",
+        type: "donut",
+      },
+      stroke: {
+        colors: ["transparent"],
+        lineCap: "",
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            labels: {
+              show: true,
+              name: {
+                show: true,
+                fontFamily: "Inter, sans-serif",
+                offsetY: 20,
+              },
+              total: {
+                showAlways: true,
+                show: true,
+                label: "Unique visitors",
+                fontFamily: "Inter, sans-serif",
+                formatter: function (w) {
+                  const sum = w.globals.seriesTotals.reduce((a, b) => {
+                    return a + b
+                  }, 0)
+                  return '$' + sum + 'k'
+                },
+              },
+              value: {
+                show: true,
+                fontFamily: "Inter, sans-serif",
+                offsetY: -20,
+                formatter: function (value) {
+                  return value + "k"
+                },
+              },
+            },
+            size: "80%",
+          },
+        },
+      },
+      grid: {
+        padding: {
+          top: -2,
+        },
+      },
+      labels: ["Direct", "Sponsor", "Affiliate", "Email marketing"],
+      dataLabels: {
+        enabled: false,
+      },
+      legend: {
+        position: "bottom",
+        fontFamily: "Inter, sans-serif",
+      },
+      yaxis: {
+        labels: {
+          formatter: function (value) {
+            return value + "k"
+          },
+        },
+      },
+      xaxis: {
+        labels: {
+          formatter: function (value) {
+            return value  + "k"
+          },
+        },
+        axisTicks: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+      },
     }
   }
+  
+  if (document.getElementById("donut-chart") && typeof ApexCharts !== 'undefined') {
+    const chart = new ApexCharts(document.getElementById("donut-chart"), getChartOptions());
+    chart.render(); 
+  }
+}, []);
+  
 
   return (
     <>
@@ -136,13 +192,15 @@ export default function Dashboard(props) {
           </div>
         )}
 
-        {/* <div className='bg-white rounded-xl shadow-small'>
-          <CanvasJSChart options={options} onRef={ref => pyramidChartRef.current = ref} />
-        </div> */}
-      </div>
-     
         
      
+      </div>
+      {/* <div className="w-full max-w-sm p-4 mt-5 bg-white rounded-lg shadow dark:bg-gray-800 md:p-6">
+        <div className="flex items-center justify-center">
+          <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white pe-1">Website traffic</h5>
+        </div>
+        <div className="py-6" id="donut-chart"></div>
+      </div> */}
       
     </>
   );

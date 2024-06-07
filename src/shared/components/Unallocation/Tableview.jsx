@@ -138,7 +138,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
             <div className='flex justify-start mx-5 '>
                 <div className="justify-end mb-3 mr-3">
                     <span>Show:</span>
-                    <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-3">
+                    <select value={rowsPerPage} onChange={handleRowsPerPageChange} className="p-2 mx-2 rounded-lg border-1">
                         <option value={10}>10</option>
                         <option value={20}>20</option>
                         <option value={50}>50</option>
@@ -148,7 +148,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                     </select>
                     <span>rows per page</span>
                 </div>
-                <button onClick={handleRefresh} className="p-2 mb-3 text-white bg-blue-500 rounded-lg">
+                <button onClick={handleRefresh} className="p-2 mb-3 text-white bg-blue-500 rounded-lg h-9">
                 <i className="fi fi-br-rotate-right"></i>
             </button>
             </div>
@@ -179,7 +179,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                             setSelectedRows(newSelectedRows);
                         }}
                     >
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em' }} />
+                        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
                         <Column header="Action" style={{ minWidth: '80px' }} body={actionButton} />
                         <Column field="sno" header="S.No" body={(rowData, { rowIndex }) => <div>{rowIndex + 1}</div>} />
                         <Column field="Region" header="Region" filter filterElement={renderColumnFilter('Region')} showFilterMenuOptions={false} showFilterMatchModes={false} showApplyButton={false} showClearButton={false} sortable style={{ width: '25%' }} />

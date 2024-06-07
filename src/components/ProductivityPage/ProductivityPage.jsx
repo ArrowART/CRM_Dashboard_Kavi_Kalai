@@ -60,7 +60,7 @@ export const ProductivityPage = () => {
         setProductivityStatus={setProductivityStatus}
         setFirst={setFirst}
       />
-      <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage} />
+      <Tablepagination page={page} first={first} rows={rows} totalRecords={totalRecords} onPage={onPage}  />
     </div>
   );
 };

@@ -250,7 +250,7 @@ export const Tableview = (props) => {
           maxSelectedLabels={4}
           className="border-2 border-cyan-300 w-fit md:w-20rem"
         />
-         <button onClick={handleRefresh} className="p-2 mr-5 text-white bg-blue-500 rounded-lg">
+         <button onClick={handleRefresh} className="p-2 mr-5 text-white bg-blue-500 rounded-lg h-9">
             <i className="fi fi-br-rotate-right"></i>
          </button>    
       </div>

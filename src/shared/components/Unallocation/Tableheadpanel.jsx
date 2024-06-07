@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
@@ -99,67 +100,64 @@ export default function Tableheadpanel(props) {
     }, [selectedTeamLeader]);
 
     return (
-        <div className="flex items-center justify-between px-6 py-4 lg:space-y-0">
-            <div className='flex py-2'>
-                <h2 className="mx-1 text-xl font-semibold text-gray-800">Unallocation Data</h2>
-                <div className='flex gap-2 mx-5'>
+        <>
+        <div className="flex flex-col items-center justify-between px-6 py-4 space-y-4 lg:flex-row lg:space-y-0">
+            <div className='flex gap-2'>
+                <h2 className="text-xl font-semibold text-gray-800 ">Unallocation Data</h2>
+
                 <NavLink
-                        to={"/unallocation"}
-                        isActive={(match, location) => {
-                            if (location.pathname === '/unallocation' || location.pathname === '/') {
-                                return true;
-                            }
-                            return false;
-                        }}
-                        className={({ isActive }) =>
-                            `flex items-center font-semibold py-2 px-2.5 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
-                            } text-sm text-white  rounded-lg `
+                    to={"/unallocation"}
+                    isActive={(match, location) => {
+                        if (location.pathname === '/unallocation' || location.pathname === '/') {
+                            return true;
                         }
-                    >
-                        UnAllocated
-                    </NavLink>
-                    <NavLink
-                        to={"/allocation"}
-                        isActive={(match, location) => {
-                            if (location.pathname === '/allocation') {
-                                return true;
-                            }
-                            return false;
-                        }}
-                        className={({ isActive }) =>
-                            `flex items-center font-semibold gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
-                            } text-sm text-white  rounded-lg  `
+                        return false;
+                    }}
+                    className={({ isActive }) =>
+                        `flex items-center font-semibold py-2 px-2.5 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
+                        } text-sm text-white  rounded-lg `
+                    }
+                >
+                    UnAllocated
+                </NavLink>
+                <NavLink
+                    to={"/allocation"}
+                    isActive={(match, location) => {
+                        if (location.pathname === '/allocation') {
+                            return true;
                         }
-                    >
-                        Allocated
-                    </NavLink>
-                    </div>
+                        return false;
+                    }}
+                    className={({ isActive }) =>
+                        `flex items-center font-semibold gap-x-3.5 py-2 px-2.5 ${isActive ? "bg-gradient-to-b from-cyan-400 to-cyan-600" : "bg-gradient-to-b from-gray-400 to-gray-600"
+                        } text-sm text-white  rounded-lg  `
+                    }
+                >
+                    Allocated
+                </NavLink>
             </div>
-            <div className="flex-none px-2 lg:flex lg:gap-x-2 gap-x-3">
-                <div className="flex gap-2 py-2">
-            
-                    {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
-                        <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
-                            <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
+
+            <div className="flex px-2 py-2 lg:flex-row gap-x-2">
+                {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
+                    <button onClick={toggleModal} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
+                        <i className="fi fi-rr-add"></i> <span className="hidden md:block">Allocate</span>
+                    </button>
+                )}
+                {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
+                    <>
+                        {loading && <span className="inline-block w-4 h-4 mr-2 text-blue-500 border-2 border-current rounded-full animate-spin border-t-transparent" aria-label="loading"></span>}
+                        <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
+                            <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
                         </button>
-                    )}
-                    {(userdetails()?.Role === 'SuperAdmin' || userdetails()?.Role === 'TeamLeader') && (
-                        <>
-                            {loading && <span className="inline-block w-4 h-4 mr-2 text-blue-500 border-2 border-current rounded-full animate-spin border-t-transparent" aria-label="loading"></span>}
-                            <button onClick={Uploadform} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-gray-400 to-gray-600 gap-x-2 hover:bg-gray-800 disabled:opacity-50 disabled:pointer-events-none">
-                                <i className="fi fi-rr-file-upload"></i> <span className="hidden md:block">Upload</span>
+                        {userdetails()?.Role === 'SuperAdmin' && (
+                            <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-red-400 to-red-600 gap-x-2 hover:bg-red-800">
+                                <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
                             </button>
-                            {userdetails()?.Role === 'SuperAdmin' && (
-                                <button onClick={handleDeleteAll} className="inline-flex items-center px-3 py-2 text-sm font-semibold text-white border-transparent rounded-lg bg-gradient-to-b from-red-400 to-red-600 gap-x-2 hover:bg-red-800">
-                                    <i className="fi fi-rr-trash"></i><span className="hidden md:block"> Delete All</span>
-                                </button>
-                            )}
-                        </>
-                    )}
-                </div>
-                <div className='py-2'>
-                    <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
-                </div>
+                        )}
+                    </>
+                )}
+                <input type="input" placeholder="Search..." className="px-4 py-2 border outline-none rounded-xl w-[170px] lg:w-[250px] mr-2" onChange={(e) => setglobalfilter(e.target.value)} />
+            </div>
             </div>
             <Dialog header="Allocate Users" visible={showModal} onHide={() => setShowModal(false)} modal className="p-4 bg-white rounded-lg w-[600px]">
                 <div className="p-fluid">
@@ -251,6 +249,7 @@ export default function Tableheadpanel(props) {
                     <Button label="Allocate" className="px-2 text-white bg-green-500 p-button-text hover:bg-green-600" onClick={handleAllocateConfirm} autoFocus disabled={loading} />
                 </div>
             </Dialog>
-        </div>
+       
+        </>
     );
 }

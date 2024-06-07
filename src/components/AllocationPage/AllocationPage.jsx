@@ -142,6 +142,8 @@ export default function AllocationPage() {
         });
     };
 
+    
+
     return (
         <div>
             <div className="bg-white border rounded-2xl">
