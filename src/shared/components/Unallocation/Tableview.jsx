@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { getDispositionColor, getSubDispositionColor } from './optionColors';
 
-const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfrom, cusfilter, filtervalues, handledelete, isLoading,selectedRows,setSelectedRows  }) => {
+const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfrom, cusfilter, filtervalues, handledelete, isLoading, selectedRows, setSelectedRows }) => {
     const [rowsPerPage, setRowsPerPage] = useState(rows);
     const [tempFilterValues, setTempFilterValues] = useState(filtervalues);
     const [rowDataState, setRowDataState] = useState([]);
@@ -131,6 +131,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
         setFirst(0); 
         setRowDataState([]);
       };
+
     return (
         <div>
             <div className='flex justify-start mx-5 '>
@@ -170,8 +171,12 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                         scrollable
                         scrollHeight="550px"
                         className="text-sm"
-                        selection={selectedRows} // Set the selection state
-                        onSelectionChange={(e) => setSelectedRows(e.value)} // Update the selection state
+                        selection={selectedRows}
+                        onSelectionChange={(e) => {
+                            const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
+                            const newSelectedRows = e.value.filter(row => currentPageRows.includes(row));
+                            setSelectedRows(newSelectedRows);
+                        }}
                     >
                         <Column selectionMode="multiple" headerStyle={{ width: '3em' }} />
                         <Column header="Action" style={{ minWidth: '80px' }} body={actionButton} />
