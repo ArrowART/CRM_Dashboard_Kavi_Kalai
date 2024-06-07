@@ -1,67 +1,79 @@
 import { useCallback, useEffect, useState } from "react";
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import * as XLSX from 'xlsx';
-import { deleteAllAllocation, getallallocation, savebulkallocation } from "../../shared/services/apiunallocation/apiunallocation";
-import UploadForm from "../../shared/components/Allocation/Upload";
 import Tableview from "../../shared/components/Allocation/Tableview";
 import Tableheadpanel from "../../shared/components/Allocation/Tableheadpanel";
+import UploadForm from "../../shared/components/Allocation/Upload";
+import { deleteAllAllocation, getallallocation, savebulkallocation } from "../../shared/services/apiallocation/apiallocation";
+import toast from "react-hot-toast";
+import { deleteSingleAllocation } from "../../shared/services/apiallocation/apiallocation";
 
-export default function AllocationPage(){
+export default function AllocationPage() {
     const [totalRecords, setTotalRecords] = useState(0);
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(20);
     const [visible, setVisible] = useState(false);
-    const [formdata, setFormdata]=useState({});
+    const [formdata, setFormdata] = useState({});
     const [loading, setLoading] = useState(false);
-    const [tabledata, setTabledata]=useState([]);
+    const [tabledata, setTabledata] = useState([]);
     const [colfilter, setcolFilter] = useState({});
-    const [globalfilter, setglobalfilter]=useState('');
-    const [filtervalues, setfiltervalues]=useState([]);
-    const [UploadVisible,setUploadVisible]=useState(false);
+    const [globalfilter, setglobalfilter] = useState('');
+    const [filtervalues, setfiltervalues] = useState([]);
+    const [UploadVisible, setUploadVisible] = useState(false);
     const [File, setFile] = useState([]);
-    const [productTypes, setProductTypes] = useState([]);
-    const [activeButton, setActiveButton] = useState(null);
+    const [productCounts, setProductCounts] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedRows, setSelectedRows] = useState([]);
     let isMounted = true;
 
-    const getallallocations = useCallback(async ()=>{
-        const res= await getallallocation({first,rows,globalfilter,...colfilter});
-        setTabledata(res?.resdata);
-        setIsLoading(false);
-        setTotalRecords(res?.totallength);
-        
-        const uniqueProductTypes = Array.from(new Set(res?.resdata.map(item => item.Product)));
-        setProductTypes(uniqueProductTypes);
+    const getallallocations = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const res = await getallallocation({ first, rows, globalfilter, ...colfilter });
+            setTabledata(res?.resdata);
+            setTotalRecords(res?.totallength);
+            const counts = res?.resdata.reduce((acc, item) => {
+                const product = item.Product;
+                if (product === 'PL' || product === 'DL' || product === 'BL' || product === 'STPL') {
+                    acc.ALL = (acc.ALL || 0) + 1;
+                    acc[product] = (acc[product] || 0) + 1;
+                }
+                return acc;
+            }, {});
+            setProductCounts(counts);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [first, rows, globalfilter, colfilter]);
 
-    },[first,rows,globalfilter,colfilter]);
-
-    useEffect(()=>{
-        if(isMounted){
+    useEffect(() => {
+        if (isMounted) {
             getallallocations();
         }
-        return(()=>isMounted = false);
-    },[first,rows,globalfilter,colfilter]);
+        return () => isMounted = false;
+    }, [getallallocations]);
 
     const cusfilter = (field, value) => {
-        setcolFilter({...colfilter,...{[field]:value}})
+        setcolFilter(prev => ({ ...prev, [field]: value }));
+        setFirst(0); // Reset to first page when applying a new filter
     };
 
     const updateTableData = async () => {
         await getallallocations();
     };
 
-    const newform=()=>{
+    const newform = () => {
         setFormdata({});
-        setVisible(true)
+        setVisible(true);
     };
 
-    const Uploadform=()=>{
-        setUploadVisible(true)
+    const Uploadform = () => {
+        setUploadVisible(true);
     };
-    
-    const editfrom=(data)=>{
+
+    const editfrom = (data) => {
         setFormdata(data);
-        setVisible(true)
+        setVisible(true);
     };
 
     const onPageChange = (event) => {
@@ -69,7 +81,7 @@ export default function AllocationPage(){
         setRows(event.rows);
     };
 
-    const handleDeleteAll =()=>{
+    const handleDeleteAll = () => {
         confirmDialog({
             message: 'Do you want to delete all this record?',
             header: 'Delete Confirmation',
@@ -85,7 +97,7 @@ export default function AllocationPage(){
         });
     };
 
-    const handleupload = (e)=>{
+    const handleupload = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -99,37 +111,74 @@ export default function AllocationPage(){
         reader.readAsArrayBuffer(file);
     };
 
-    const uploadfile = async (e)=>{
+    const uploadfile = async (e) => {
         e.preventDefault();
-        setUploadVisible(true);
         setLoading(true);
-        await savebulkallocation(File);
-        getallallocations();
-        setUploadVisible(false);
-        setLoading(false);
+        try {
+            await savebulkallocation(File);
+            getallallocations();
+            toast.success("File uploaded successfully!");
+        } catch (error) {
+            toast.error("Failed to upload file. Please try again.");
+        } finally {
+            setLoading(false);
+            setUploadVisible(false);
+        }
+    };
+
+    const handledelete = (id) => {
+        confirmDialog({
+            message: 'Do you want to delete this record?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            defaultFocus: 'reject',
+            acceptClassName: 'bg-red-500 ml-2 text-white p-2',
+            rejectClassName: 'p-2 outline-none border-0',
+            accept: async () => {
+                await deleteSingleAllocation(id);
+                toast.success("Successfully deleted");
+                getallallocations();
+            }
+        });
     };
 
     return (
         <div>
             <div className="bg-white border rounded-2xl">
-                <Tableheadpanel newform={newform} setglobalfilter={setglobalfilter} Uploadform={Uploadform} handleDeleteAll={handleDeleteAll} 
-                    tabledata={tabledata} updateTableData={updateTableData} loading={loading}
-                    setLoading={setLoading} />
+                <Tableheadpanel
+                    newform={newform}
+                    setglobalfilter={setglobalfilter}
+                    Uploadform={Uploadform}
+                    handleDeleteAll={handleDeleteAll}
+                    tabledata={tabledata}
+                    productCounts={productCounts}
+                    updateTableData={updateTableData}
+                    loading={loading}
+                    setLoading={setLoading}
+                    selectedRows={selectedRows}
+                />
+                <Tableview
+                    tabledata={tabledata}
+                    totalRecords={totalRecords}
+                    first={first}
+                    rows={rows}
+                    updateTableData={updateTableData}
+                    onPageChange={onPageChange}
+                    editfrom={editfrom}
+                    cusfilter={cusfilter}
+                    filtervalues={filtervalues}
+                    handledelete={handledelete}
+                    isLoading={isLoading}
+                    selectedRows={selectedRows} // Pass the selected rows to Tableview
+                    setSelectedRows={setSelectedRows} // Pass the setSelectedRows function to Tableview
 
-                <Tableview 
-                    tabledata={tabledata} 
-                    totalRecords={totalRecords} 
-                    first={first} 
-                    rows={rows} 
-                    onPageChange={onPageChange} 
-                    cusfilter={cusfilter} 
-                    filtervalues={filtervalues} 
-                    isLoading={isLoading} 
-                    productTypes={productTypes} 
-                    activeButton={activeButton}
-                    setActiveButton={setActiveButton}
-                />     
-                <UploadForm uploadfile={uploadfile} handleupload={handleupload} UploadVisible={UploadVisible} setUploadVisible={setUploadVisible} 
+                />
+                <UploadForm
+                    uploadfile={uploadfile}
+                    handleupload={handleupload}
+                    UploadVisible={UploadVisible}
+                    setUploadVisible={setUploadVisible}
+                    loading={loading}
                 />
                 <ConfirmDialog />
             </div>

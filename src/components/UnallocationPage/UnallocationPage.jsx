@@ -8,7 +8,7 @@ import { deleteAllAllocation, getallunallocation, savebulkallocation } from "../
 import toast from "react-hot-toast";
 import { deleteSingleAllocation } from "../../shared/services/apiallocation/apiallocation";
 
-export default function UnallocationPage(){
+export default function UnallocationPage() {
     const [totalRecords, setTotalRecords] = useState(0);
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(20);
@@ -145,37 +145,38 @@ export default function UnallocationPage(){
     return (
         <div>
             <div className="bg-white border rounded-2xl">
-                <Tableheadpanel 
-                    newform={newform} 
-                    setglobalfilter={setglobalfilter} 
+                <Tableheadpanel
+                    newform={newform}
+                    setglobalfilter={setglobalfilter}
                     Uploadform={Uploadform}
-                    handleDeleteAll={handleDeleteAll} 
-                    tabledata={tabledata} 
-                    productCounts={productCounts} 
+                    handleDeleteAll={handleDeleteAll}
+                    tabledata={tabledata}
+                    productCounts={productCounts}
                     updateTableData={updateTableData}
                     loading={loading}
                     setLoading={setLoading}
                     selectedRows={selectedRows}
                 />
-                <Tableview 
-                    tabledata={tabledata} 
-                    totalRecords={totalRecords} 
-                    first={first} 
-                    rows={rows} 
-                    onPageChange={onPageChange} 
-                    editfrom={editfrom} 
-                    cusfilter={cusfilter} 
-                    filtervalues={filtervalues} 
+                <Tableview
+                    tabledata={tabledata}
+                    totalRecords={totalRecords}
+                    first={first}
+                    rows={rows}
+                    updateTableData={updateTableData}
+                    onPageChange={onPageChange}
+                    editfrom={editfrom}
+                    cusfilter={cusfilter}
+                    filtervalues={filtervalues}
                     handledelete={handledelete}
                     isLoading={isLoading}
                     selectedRows={selectedRows} // Pass the selected rows to Tableview
                     setSelectedRows={setSelectedRows} // Pass the setSelectedRows function to Tableview
-            
-                />     
-                <UploadForm 
-                    uploadfile={uploadfile} 
-                    handleupload={handleupload} 
-                    UploadVisible={UploadVisible} 
+
+                />
+                <UploadForm
+                    uploadfile={uploadfile}
+                    handleupload={handleupload}
+                    UploadVisible={UploadVisible}
                     setUploadVisible={setUploadVisible}
                     loading={loading}
                 />
