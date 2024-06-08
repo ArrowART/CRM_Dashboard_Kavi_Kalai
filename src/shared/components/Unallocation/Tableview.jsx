@@ -175,7 +175,12 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                         selection={selectedRows}
                         onSelectionChange={(e) => {
                             const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
-                            const newSelectedRows = e.value.filter(row => currentPageRows.includes(row));
+                            let newSelectedRows;
+                            if (e.value.some(selectedRow => selectedRows.includes(selectedRow))) {
+                                newSelectedRows = selectedRows.filter(row => !e.value.includes(row));
+                            } else {
+                                newSelectedRows = [...selectedRows, ...e.value.filter(row => currentPageRows.includes(row))];
+                            }
                             setSelectedRows(newSelectedRows);
                         }}
                     >
