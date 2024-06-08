@@ -10,9 +10,10 @@ import { getDispositionColor, getSubDispositionColor } from "./Productivityoptio
 import useRegionFilter from "../Unallocation/RegionFilters";
 import useLocationFilter from "../Unallocation/LocationFilters";
 import useCampanignFilter from "../Unallocation/CampaingnFilters";
+import useProductFilter from "../Unallocation/ProductFilters";
 import { MultiSelect } from 'primereact/multiselect';
 import { Skeleton } from "primereact/skeleton";
-import { Button } from "primereact/button";
+
 
 export const Tableview = (props) => {
   const { tabledata, first, setFirst, cusfilter, updateData, isLoading, setProductivityStatus } = props;
@@ -24,6 +25,8 @@ export const Tableview = (props) => {
   const { filters, regionFilterTemplate, filterApply, filterClear } = useRegionFilter(tabledata, cusfilter);
   const { filters1, LocationFilterTemplate, filterApply1, filterClear1 } = useLocationFilter(tabledata, cusfilter);
   const { filters2, campaignFilterTemplate, filterApply2, filterClear2 } = useCampanignFilter(tabledata, cusfilter);
+  const { filters3, productFilterTemplate, filterApply3, filterClear3 } = useProductFilter(tabledata, cusfilter);
+
 
   const columnOptions = [
     { label: 'S.No', value: 'sno' },
@@ -264,7 +267,7 @@ export const Tableview = (props) => {
       <DataTable resizableColumns stripedRows showGridlines tableStyle={{ minWidth: '50rem' }}
         selection={selectedProducts} columnResizeMode="expand"
         onSelectionChange={e => setSelectedProducts(e.value)} value={rowDataState} rows={rowsPerPage}
-        first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="550px" filters={{ ...filters, ...filters1, ...filters2 }}>
+        first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="550px" filters={{ ...filters, ...filters1, ...filters2,...filters3 }}>
             <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
         {selectedColumns.includes('sno') && (
           <Column field="sno" header="S.No" body={sno} />
@@ -276,7 +279,7 @@ export const Tableview = (props) => {
           <Column field="Location" header="Location" filter filterElement={LocationFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply1} filterClear={filterClear1} sortable style={{ width: '25%' }} />
         )}
         {selectedColumns.includes('Product') && (
-          <Column field="Product" header="Product" />
+          <Column field="Product" header="Product" filter filterElement={productFilterTemplate} showFilterMatchModes={false} showFilterMenuOptions={false} filterApply={filterApply3} filterClear={filterClear3} sortable style={{ width: '25%' }} />
         )}
         {selectedColumns.includes('Name') && (
           <Column field="Name" header="Name" sortable style={{ width: '25%' }} />

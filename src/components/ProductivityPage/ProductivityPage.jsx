@@ -8,7 +8,7 @@ export const ProductivityPage = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [first, setFirst] = useState(0);
   const [page, setPage] = useState(1);
-  const [rows, setRows] = useState(20);
+  const [rows, setRows] = useState(50);
   const [tabledata, setTabledata] = useState([]);
   const [colfilter, setcolFilter] = useState({});
   const [globalfilter, setglobalfilter] = useState('');

@@ -64,3 +64,14 @@ export const getallallProductivity = async(params)=>{
    }
 };
 
+export const updateAllocation = async (data) => {
+   try {
+     const response = await axios.put(`${apiurl()}/unallocation/apiupdatallocation`, data, {
+       headers: { "Authorization": `Bearer ${gettoken()}` }
+     });
+     return response.data;
+   } catch (error) {
+     console.error('Error updating data:', error);
+     throw error;
+   }
+ };
