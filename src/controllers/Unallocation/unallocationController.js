@@ -143,63 +143,18 @@ export const savebulkunallocation = async (req, res) => {
 //   }
 // };
 
-
 export const getSelectedTeamLeaderAndTelecallerData = async (req, res, next) => {
-  try {
-      const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
-      let filter = {};
-      if (Role === 'SuperAdmin') {
-          filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
-      } else if (Role === 'TeamLeader') {
-          filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
-      } else if (Role === 'Telecaller') {
-          filter.selectedTelecaller = UserName;
-      } else {
-          return res.status(200).json({ resdata: [], totallength: 0 });
-      }
-      const { first = 0, rows = 20, globalfilter, dispositionfilter, ...otherFilters } = req.query;
-      if (globalfilter) {
-          const regex = new RegExp(globalfilter, 'i');
-          const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
-          if (stringFields.length > 0) {
-              filter.$or = stringFields.map(field => ({ [field]: regex }));
-          }
-      }
-      if (dispositionfilter) {
-          filter.Disposition = new RegExp(`^${dispositionfilter}`);
-      }
-      Object.keys(otherFilters).forEach(key => {
-          if (Array.isArray(otherFilters[key])) {
-              filter[key] = { $in: otherFilters[key] };
-          } else {
-              filter[key] = { $in: otherFilters[key].split(',') };
-          }
-      });
-      const resdata = await Allocation.find(filter).skip(parseInt(first)).limit(parseInt(rows));
-      const totallength = await Allocation.countDocuments(filter);
-      res.send({ resdata, totallength });
-  } catch (err) {
-      console.error(err);
-      res.status(500).send({ error: 'Internal Server Error' });
-  }
-};
-
-
-export const getProductivityStatus = async (req, res) => {
   try {
     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
     let filter = {};
-    if (Role === 'SuperAdmin') {
-      filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
-    } else if (Role === 'TeamLeader') {
-      filter.selectedTeamLeader = UserName;
-    } else if (Role === 'Telecaller') {
-      filter.selectedTelecaller = UserName;
+    if (Role === 'SuperAdmin') { filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
+    } else if (Role === 'TeamLeader') { filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
+    } else if (Role === 'Telecaller') { filter.selectedTelecaller = UserName;
     } else {
       return res.status(200).json({ resdata: [], totallength: 0 });
     }
-    
-    const { first = 0, rows = 20, globalfilter, productivityStatus } = req.query;
+
+    const { first = 0, rows = 20, globalfilter, dispositionfilter, ...otherFilters } = req.query;
     if (globalfilter) {
       const regex = new RegExp(globalfilter, 'i');
       const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
@@ -207,20 +162,95 @@ export const getProductivityStatus = async (req, res) => {
         filter.$or = stringFields.map(field => ({ [field]: regex }));
       }
     }
-    
-    if (productivityStatus) {
-      filter.Productivity_Status = productivityStatus;
-    }
-    
+    if (dispositionfilter) {  filter.Disposition = new RegExp(`^${dispositionfilter}`);}
+    Object.keys(otherFilters).forEach(key => {
+      if (Array.isArray(otherFilters[key])) {
+        filter[key] = { $in: otherFilters[key] };
+      } else {
+        filter[key] = { $in: otherFilters[key].split(',') };
+      }
+    });
     const resdata = await Allocation.find(filter).skip(parseInt(first)).limit(parseInt(rows));
     const totallength = await Allocation.countDocuments(filter);
-    
+    res.send({ resdata, totallength });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
+};
+
+
+
+// export const getProductivityStatus = async (req, res) => {
+//   try {
+//     const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
+//     let filter = {};
+//     if (Role === 'SuperAdmin') {
+//       filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
+//     } else if (Role === 'TeamLeader') {
+//       filter.selectedTeamLeader = UserName;
+//     } else if (Role === 'Telecaller') {
+//       filter.selectedTelecaller = UserName;
+//     } else {
+//       return res.status(200).json({ resdata: [], totallength: 0 });
+//     }
+//     const { first = 0, rows = 20, globalfilter, productivityStatus } = req.query;
+//     if (globalfilter) {
+//       const regex = new RegExp(globalfilter, 'i');
+//       const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
+//       if (stringFields.length > 0) {
+//         filter.$or = stringFields.map(field => ({ [field]: regex }));
+//       }
+//     }
+//     if (productivityStatus) {
+//       filter.Productivity_Status = productivityStatus;
+//     }
+//     const resdata = await Allocation.find(filter).skip(parseInt(first)).limit(parseInt(rows));
+//     const totallength = await Allocation.countDocuments(filter);
+//     res.send({ resdata, totallength });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({ error: 'Internal Server Error' });
+//   }
+// }
+
+
+
+
+export const getProductivityStatus = async (req, res) => {
+  try {
+    const { Role, UserName } = jwt.decode(req.headers.authorization.split(' ')[1]);
+    let filter = {};
+    if (Role === 'SuperAdmin') {filter.$or = [{ selectedTelecaller: { $exists: true, $ne: null } }];
+  } else if (Role === 'TeamLeader') {filter.selectedTeamLeader = UserName;
+    } else if (Role === 'Telecaller') { filter.selectedTelecaller = UserName;
+    } else {return res.status(200).json({ resdata: [], totallength: 0 });}
+    const { first = 0, rows = 20, globalfilter, productivityStatus, ...otherFilters } = req.query;
+    if (globalfilter) {
+      const regex = new RegExp(globalfilter, 'i');
+      const stringFields = Object.keys(Allocation.schema.paths).filter(field => Allocation.schema.paths[field].instance === 'String');
+      if (stringFields.length > 0) { filter.$or = stringFields.map(field => ({ [field]: regex })); } }
+    if (productivityStatus) {filter.Productivity_Status = productivityStatus;}
+    Object.keys(otherFilters).forEach(key => {
+      if (otherFilters[key]) {
+        if (Array.isArray(otherFilters[key])) {
+          filter[key] = { $in: otherFilters[key] };
+        } else {
+          filter[key] = { $in: otherFilters[key].split(',') };
+        }
+      }
+    });
+    const resdata = await Allocation.find(filter).skip(parseInt(first)).limit(parseInt(rows));
+    const totallength = await Allocation.countDocuments(filter);
     res.send({ resdata, totallength });
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: 'Internal Server Error' });
   }
 }
+
+
+
 
 
 
@@ -412,11 +442,12 @@ export const deleteallocation = async (req, res, next) => {
 
 export const updateAllocation = async (req, res, next) => {
   try {
-      const { _id, newData } = req.body;
-      const updatedData = await Allocation.findByIdAndUpdate(_id, newData, { new: true });
-      res.json(updatedData);
+    const { _id, newData } = req.body;
+    const updatedData = await Allocation.findByIdAndUpdate(_id, newData, { new: true });
+    res.json(updatedData);
   } catch (error) {
-      console.error("Error updating record:", error);
-      res.status(500).json({ message: "Internal server error" });
+    console.error("Error updating record:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
+
