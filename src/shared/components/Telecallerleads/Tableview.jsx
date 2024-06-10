@@ -281,9 +281,7 @@ export const Tableview = (props) => {
   };
 
   const handleRefresh = () => {
-    updateData();
-    setFirst(0);
-    setRowDataState([]);
+    window.location.reload();
   };
 
   const renderEditableCell = (rowData, options) => {
@@ -291,17 +289,19 @@ export const Tableview = (props) => {
 
     if (editing) {
       return (
-        <div>
+        <div className="flex gap-2">
           <InputTextarea
             value={editRowData[options.field]}
             onChange={(e) => handleInputChange(options.field, e.target.value)}
-            rows={3}
-            className="w-full"
+            rows={2}
+            className="w-32"
+            autoResize
           />
-          <div className="flex justify-between mt-2">
-            <Button label="Cancel" onClick={handleCancelEdit} className="p-1 text-white bg-red-500" />
-            <Button label="Update" onClick={handleUpdateData} className="p-1 mx-1 text-white bg-blue-500" />
-          </div>
+          <button className="h-8 p-2 text-white bg-red-500 rounded-lg "  onClick={handleCancelEdit} ><i className="w-5 h-5 fi fi-sr-cross-circle"></i></button>
+          <button className="h-8 p-2 text-white bg-blue-500 rounded-lg"  onClick={handleUpdateData} ><i className="fi fi-ss-check-circle"></i></button>
+            {/* <Button label="Cancel" onClick={handleCancelEdit} className="p-1 text-white bg-red-500" />
+            <Button label="Update" onClick={handleUpdateData} className="p-1 mx-1 text-white bg-blue-500" /> */}
+        
         </div>
       );
     }
@@ -338,7 +338,7 @@ export const Tableview = (props) => {
           maxSelectedLabels={4}
           className="border-2 border-cyan-300 w-fit md:w-20rem"
         />
-        <button onClick={handleRefresh} className="p-2 mr-5 text-white bg-blue-500 rounded-lg">
+        <button onClick={handleRefresh} className="p-2 mr-5 text-white bg-blue-500 rounded-lg h-9">
           <i className="fi fi-br-rotate-right"></i>
         </button>
       </div>
@@ -387,7 +387,7 @@ export const Tableview = (props) => {
           {selectedColumns.includes('Mobile2') && (
             <Column field="Mobile2" header="Mobile 2" body={(rowData, options) => renderEditableCell(rowData, { ...options, field: 'Mobile2' })} />
           )}
-          <Column field="Call" header="Call"
+          <Column field="Call" header="Call" className="w-10 h-10"
             body={(rowData) => (
               <a href={formatMobileForCall(rowData.Mobile1, userdetails())}>
                 <img src="./images/phonecall.png" alt="Call" />

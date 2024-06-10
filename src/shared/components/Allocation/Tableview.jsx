@@ -13,6 +13,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
     const [rowsPerPage, setRowsPerPage] = useState(rows);
     const [tempFilterValues, setTempFilterValues] = useState(filtervalues);
     const [rowDataState, setRowDataState] = useState([]);
+    const [allSelected, setAllSelected] = useState(false);
 
     useEffect(() => {
         setTempFilterValues(filtervalues);
@@ -54,7 +55,7 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                 className="p-column-filter"
             />
             <div className="flex justify-between mt-8">
-                <Button label="Clear" onClick={() => handleClearFilters(key)} className="p-1 text-white bg-blue-500" />
+                <Button label="Clear " onClick={() => handleClearFilters(key)} className="p-1 text-white bg-blue-500" />
                 <Button label="Apply" onClick={() => handleApplyFilters(key)} className="p-1 mx-1 text-white bg-blue-500" />
             </div>
         </div>
@@ -127,10 +128,27 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
         />
     );
 
+    const handleSelectionChange = (e) => {
+        setSelectedRows(e.value);
+    };
+
+    const handleSelectAllChange = (e) => {
+        if (e.checked) {
+            const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
+            setSelectedRows(currentPageRows);
+        } else {
+            setSelectedRows([]);
+        }
+        setAllSelected(e.checked);
+    };
+
+    useEffect(() => {
+        const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
+        const allCurrentPageRowsSelected = currentPageRows.every(row => selectedRows.includes(row));
+        setAllSelected(allCurrentPageRowsSelected);
+    }, [selectedRows, rowDataState, first, rowsPerPage]);
     const handleRefresh = () => {
-        updateTableData();
-        setFirst(0); 
-        setRowDataState([]);
+       window.location.reload();
     };
 
     return (
@@ -173,13 +191,11 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                         scrollHeight="550px"
                         className="text-sm"
                         selection={selectedRows}
-                        onSelectionChange={(e) => {
-                            const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
-                            const newSelectedRows = e.value.filter(row => currentPageRows.includes(row));
-                            setSelectedRows(newSelectedRows);
-                        }}
+                        onSelectionChange={handleSelectionChange}
+                        selectAll={allSelected}
+                        onSelectAllChange={handleSelectAllChange}
                     >
-                        <Column selectionMode="multiple" headerStyle={{ width: '3em' }} />
+                        <Column selectionMode="multiple" headerStyle={{ width: '3em' }} headerCheckbox />
                         <Column header="Action" style={{ minWidth: '80px' }} body={actionButton} />
                         <Column field="sno" header="S.No" body={(rowData, { rowIndex }) => <div>{rowIndex + 1}</div>} />
                         <Column field="Region" header="Region" filter filterElement={renderColumnFilter('Region')} showFilterMenuOptions={false} showFilterMatchModes={false} showApplyButton={false} showClearButton={false} sortable style={{ width: '25%' }} />

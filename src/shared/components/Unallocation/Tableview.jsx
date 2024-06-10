@@ -9,10 +9,11 @@ import { Button } from 'primereact/button';
 import { getDispositionColor, getSubDispositionColor } from './optionColors';
 import { MultiSelect } from 'primereact/multiselect';
 
-const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfrom, cusfilter, filtervalues, handledelete, isLoading, selectedRows, setSelectedRows,updateTableData }) => {
+const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfrom, cusfilter, filtervalues, handledelete, isLoading, selectedRows, setSelectedRows, updateTableData }) => {
     const [rowsPerPage, setRowsPerPage] = useState(rows);
     const [tempFilterValues, setTempFilterValues] = useState(filtervalues);
     const [rowDataState, setRowDataState] = useState([]);
+    const [allSelected, setAllSelected] = useState(false);
 
     useEffect(() => {
         setTempFilterValues(filtervalues);
@@ -128,10 +129,28 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
     );
 
     const handleRefresh = () => {
-        updateTableData();
-        setFirst(0); 
-        setRowDataState([]);
-      };
+       window.location.reload();
+    };
+
+    const handleSelectionChange = (e) => {
+        setSelectedRows(e.value);
+    };
+
+    const handleSelectAllChange = (e) => {
+        if (e.checked) {
+            const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
+            setSelectedRows(currentPageRows);
+        } else {
+            setSelectedRows([]);
+        }
+        setAllSelected(e.checked);
+    };
+
+    useEffect(() => {
+        const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
+        const allCurrentPageRowsSelected = currentPageRows.every(row => selectedRows.includes(row));
+        setAllSelected(allCurrentPageRowsSelected);
+    }, [selectedRows, rowDataState, first, rowsPerPage]);
 
     return (
         <div>
@@ -144,13 +163,12 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                         <option value={50}>50</option>
                         <option value={100}>100</option>
                         <option value={1000}>1000</option>
-
                     </select>
                     <span>rows per page</span>
                 </div>
                 <button onClick={handleRefresh} className="p-2 mb-3 text-white bg-blue-500 rounded-lg h-9">
-                <i className="fi fi-br-rotate-right"></i>
-            </button>
+                    <i className="fi fi-br-rotate-right"></i>
+                </button>
             </div>
             {isLoading ? (
                 <div className="p-4">
@@ -173,18 +191,11 @@ const Tableview = ({ tabledata, totalRecords, first, rows, onPageChange, editfro
                         scrollHeight="550px"
                         className="text-sm"
                         selection={selectedRows}
-                        onSelectionChange={(e) => {
-                            const currentPageRows = rowDataState.slice(first, first + rowsPerPage);
-                            let newSelectedRows;
-                            if (e.value.some(selectedRow => selectedRows.includes(selectedRow))) {
-                                newSelectedRows = selectedRows.filter(row => !e.value.includes(row));
-                            } else {
-                                newSelectedRows = [...selectedRows, ...e.value.filter(row => currentPageRows.includes(row))];
-                            }
-                            setSelectedRows(newSelectedRows);
-                        }}
+                        onSelectionChange={handleSelectionChange}
+                        selectAll={allSelected}
+                        onSelectAllChange={handleSelectAllChange}
                     >
-                        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
+                        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} headerCheckbox />
                         <Column header="Action" style={{ minWidth: '80px' }} body={actionButton} />
                         <Column field="sno" header="S.No" body={(rowData, { rowIndex }) => <div>{rowIndex + 1}</div>} />
                         <Column field="Region" header="Region" filter filterElement={renderColumnFilter('Region')} showFilterMenuOptions={false} showFilterMatchModes={false} showApplyButton={false} showClearButton={false} sortable style={{ width: '25%' }} />

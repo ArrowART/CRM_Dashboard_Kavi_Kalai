@@ -175,22 +175,22 @@ export const Tableview = (props) => {
     setRowDataState(updatedRowData);
   };
 
-  const actionbotton = () => {
-    return (
-        <div className="flex gap-4">
-            <div className="flex gap-2">
-                <button className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 ">
-                    <i className="fi fi-rr-pen-circle"></i>
-                </button>
-            </div>
-            <div className="flex gap-2">
-                <button className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
-                    <i className="fi fi-rr-trash"></i>
-                </button>
-            </div>
-        </div>
-    )
-}
+//   const actionbotton = () => {
+//     return (
+//         <div className="flex gap-4">
+//             <div className="flex gap-2">
+//                 <button className="inline-flex items-center text-xl font-medium text-blue-600 gap-x-1 decoration-2 ">
+//                     <i className="fi fi-rr-pen-circle"></i>
+//                 </button>
+//             </div>
+//             <div className="flex gap-2">
+//                 <button className="inline-flex items-center text-xl font-medium text-red-600 gap-x-1 decoration-2 " >
+//                     <i className="fi fi-rr-trash"></i>
+//                 </button>
+//             </div>
+//         </div>
+//     )
+// }
 
   const saveData = async (rowData) => {
     try {
@@ -226,9 +226,7 @@ export const Tableview = (props) => {
   };
 
   const handleRefresh = () => {
-    updateData();
-    setFirst(0); 
-    setRowDataState([]);
+    window.location.reload();
   };
 
   return (
@@ -268,7 +266,7 @@ export const Tableview = (props) => {
         selection={selectedProducts} columnResizeMode="expand"
         onSelectionChange={e => setSelectedProducts(e.value)} value={rowDataState} rows={rowsPerPage}
         first={first} onPage={onPage} className="text-sm" scrollable scrollHeight="550px" filters={{ ...filters, ...filters1, ...filters2,...filters3 }}>
-            <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} />
+            {/* <Column header="Action" style={{ minWidth: '80px' }} body={actionbotton} /> */}
         {selectedColumns.includes('sno') && (
           <Column field="sno" header="S.No" body={sno} />
         )}
